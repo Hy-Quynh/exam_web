@@ -1,0 +1,14 @@
+.custom-side-list {
+  .ant-list-header {
+    padding: 0;
+  }
+  .ant-list-footer {
+    display: none;
+  }
+}
+
+.side-list-info {
+  .ant-list-item.ant-list-item-no-flex{
+    border-bottom: 2px solid #D9D9D9;
+  }
+}
