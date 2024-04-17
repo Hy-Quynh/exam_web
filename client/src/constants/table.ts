@@ -1,0 +1,1 @@
+export const TABLE_ITEM_PER_PAGE = 20

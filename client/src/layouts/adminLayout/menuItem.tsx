@@ -3,6 +3,7 @@ import {
   TeamOutlined,
   SnippetsOutlined,
   BarChartOutlined,
+  SettingOutlined 
 } from '@ant-design/icons';
 import { ROUTER } from '../../enums/auths/router';
 
@@ -40,6 +41,15 @@ export const MenuItem = [
     label: (
       <a href={ROUTER.ADMIN_SUBJECT} className='text-lg'>
         Môn học
+      </a>
+    ),
+  },
+  {
+    key: 'admin-administration',
+    icon: <SettingOutlined />,
+    label: (
+      <a href={ROUTER.ADMIN_ADMINISTRATION} className='text-lg'>
+        Quản trị
       </a>
     ),
   },

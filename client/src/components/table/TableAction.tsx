@@ -1,9 +1,26 @@
-import { Button, Popconfirm, Space } from "antd";
+import { Button, Popconfirm, Space } from 'antd';
 
-const TableAction = () => {
+type TableActionProps = {
+  disableDelete?: boolean;
+  disableUpdate?: boolean;
+  handleUpdate?: () => void;
+  handleDelete?: () => void;
+};
+
+const TableAction = ({
+  disableDelete,
+  disableUpdate,
+  handleUpdate,
+  handleDelete,
+}: TableActionProps) => {
   return (
     <Space size='middle'>
-      <Button type='primary' className='bg-primary'>
+      <Button
+        type='primary'
+        className='bg-primary'
+        disabled={disableUpdate}
+        onClick={() => handleUpdate?.()}
+      >
         Sửa
       </Button>
       <Popconfirm
@@ -13,9 +30,10 @@ const TableAction = () => {
         cancelText='Huỷ'
         okButtonProps={{
           className: 'bg-primary',
+          onClick: () => handleDelete?.()
         }}
       >
-        <Button type='primary' danger>
+        <Button type='primary' danger disabled={disableDelete} >
           Xoá
         </Button>
       </Popconfirm>

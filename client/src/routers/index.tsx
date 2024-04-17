@@ -9,6 +9,7 @@ import ClientLogin from '../pages/auth/clientLogin/ClientLogin';
 import AdminLogin from '../pages/auth/adminLogin/AdminLogin';
 import ClientLayout from '../layouts/clientLayout/ClientLayout';
 import HomePage from '../pages/client/homepage/HomePage';
+import Administration from '../pages/admin/administration/Administration';
 
 const arrRoutes = [
   { path: ROUTER.LOGIN, element: <ClientLogin /> },
@@ -35,6 +36,10 @@ const arrRoutes = [
       {
         path: ROUTER.ADMIN_DISCIPLINE,
         element: <AdminDiscipline />,
+      },
+      {
+        path: ROUTER.ADMIN_ADMINISTRATION,
+        element: <Administration />,
       },
     ],
   },

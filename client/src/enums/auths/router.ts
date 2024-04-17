@@ -5,5 +5,6 @@ export enum ROUTER {
   ADMIN_SUBJECT = '/admin/subject',
   ADMIN_TEACHER = '/admin/teacher',
   ADMIN_DISCIPLINE = '/admin/discipline',
+  ADMIN_ADMINISTRATION = '/admin/administration',
   HOMEPAGE = '/'
 }

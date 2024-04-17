@@ -1,0 +1,1 @@
+export type ModalControlType  = 'CREATE' | 'UPDATE' | 'VIEW' | ''
