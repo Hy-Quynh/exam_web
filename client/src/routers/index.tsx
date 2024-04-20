@@ -16,7 +16,7 @@ import ExamPage from '../pages/client/exam/ExamPage';
 import NotFoundPage from '../pages/notFoundPage/NotFoundPage';
 import ExamDetail from '../pages/client/examDetail/ExamDetail';
 import NewPage from '../pages/client/news/NewPage';
-import Documentpage from '../pages/client/\bdocument/Documentpage';
+import Documentpage from '../pages/client/document/DocumentPage';
 
 const arrRoutes = [
   { path: ROUTER.LOGIN, element: <ClientLogin /> },
