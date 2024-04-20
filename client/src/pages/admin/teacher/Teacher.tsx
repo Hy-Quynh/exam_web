@@ -96,12 +96,13 @@ const AdminTeacher: React.FC = () => {
           ]}
         />
       </div>
-      <div className='flex justify-end mb-[20px]'>
+      <div style={{textAlign: 'center'}}>Tính năng đang được phát triển</div>
+      {/* <div className='flex justify-end mb-[20px]'>
         <Button type='primary' className='bg-primary'>
           Thêm mới
         </Button>
       </div>
-      <Table columns={columns} dataSource={data} />
+      <Table columns={columns} dataSource={data} /> */}
     </div>
   );
 };

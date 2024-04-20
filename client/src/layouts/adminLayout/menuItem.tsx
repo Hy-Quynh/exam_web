@@ -3,9 +3,11 @@ import {
   TeamOutlined,
   SnippetsOutlined,
   BarChartOutlined,
-  SettingOutlined 
+  SettingOutlined,
+  FileTextOutlined,
+  CloudDownloadOutlined
 } from '@ant-design/icons';
-import { ROUTER } from '../../enums/auths/router';
+import { ROUTER } from '../../enums/router/router';
 
 export const MenuItem = [
   {
@@ -21,8 +23,35 @@ export const MenuItem = [
     key: 'admin-discipline',
     icon: <SnippetsOutlined />,
     label: (
-      <a href={ROUTER?.ADMIN_DISCIPLINE} className='text-lg'>
+      <a href={ROUTER?.ADMIN_SUBJECT} className='text-lg'>
         Bộ môn
+      </a>
+    ),
+  },
+  {
+    key: 'admin-subject',
+    icon: <ReadOutlined />,
+    label: (
+      <a href={ROUTER.ADMIN_DISCIPLINE} className='text-lg'>
+        Môn học
+      </a>
+    ),
+  },
+  {
+    key: 'admin-exam',
+    icon: <FileTextOutlined />,
+    label: (
+      <a href={ROUTER.ADMIN_EXAM} className='text-lg'>
+        Đề kiểm tra
+      </a>
+    ),
+  },
+  {
+    key: 'admin-document',
+    icon: <CloudDownloadOutlined />,
+    label: (
+      <a href={ROUTER.ADMIN_DOCUMENT} className='text-lg'>
+        Tài liệu
       </a>
     ),
   },
@@ -32,15 +61,6 @@ export const MenuItem = [
     label: (
       <a href={ROUTER.ADMIN_TEACHER} className='text-lg'>
         Giáo viên
-      </a>
-    ),
-  },
-  {
-    key: 'admin-subject',
-    icon: <ReadOutlined />,
-    label: (
-      <a href={ROUTER.ADMIN_SUBJECT} className='text-lg'>
-        Môn học
       </a>
     ),
   },

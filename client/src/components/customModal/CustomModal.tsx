@@ -6,6 +6,7 @@ type CustomModalProps = {
   okText?: string;
   cancelText?: string;
   isOpen: boolean;
+  width?: string
   handleSubmit?: () => Promise<void>;
   handCanel: () => void;
   children?: React.ReactNode;
@@ -30,6 +31,7 @@ const CustomModal: React.FC<CustomModalProps> = (props) => {
       cancelText={props?.cancelText || 'Huỷ'}
       okButtonProps={{ className: 'bg-primary', loading: isSubmit }}
       maskClosable={false}
+      width={props?.width}
     >
       {props?.children}
     </Modal>

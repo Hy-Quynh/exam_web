@@ -1,0 +1,42 @@
+.question-list-modal {
+  .ant-card-head {
+    background: aliceblue;
+  }
+
+  .answer-list-title {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-start;
+
+    .answer-title {
+      width: 60%;
+    }
+  }
+
+  .answer-item-wrap {
+    display: flex;
+    gap: 16px;
+
+    .answer-item {
+      width: 60%;
+    }
+
+    .answer-checkbox {
+      width: 10%;
+    }
+  }
+
+  .answer-form-item {
+    label {
+      font-weight: 800; 
+      font-size: 14px
+    }
+  }
+
+  .question-form-item {
+    label {
+      font-weight: 800; 
+      font-size: 14px
+    }
+  }
+}

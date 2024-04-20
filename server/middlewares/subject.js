@@ -4,18 +4,18 @@ module.exports = {
   getAllSubject: async (limit, offset, search) => {
     try {
       let getSubject = null;
-      const newSearch = search && search!== 'undefined' ? search : ''
+      const newSearch = search && search !== 'undefined' ? search : '';
 
       if (limit === 'undefined' && offset === 'undefined') {
         getSubject = await Subject.find({
-          name: { $regex: new RegExp(newSearch.toLowerCase(), "i") },
+          name: { $regex: new RegExp(newSearch.toLowerCase(), 'i') },
           isDelete: false,
         })
           .lean()
           .exec();
       } else if (offset === 'undefined' && limit) {
         getSubject = await Subject.find({
-          name: { $regex: new RegExp(newSearch.toLowerCase(), "i") },
+          name: { $regex: new RegExp(newSearch.toLowerCase(), 'i') },
           isDelete: false,
         })
           .skip(0)
@@ -24,29 +24,24 @@ module.exports = {
           .exec();
       } else {
         getSubject = await Subject.find({
-          name: { $regex: new RegExp(newSearch.toLowerCase(), "i") },
+          name: { $regex: new RegExp(newSearch.toLowerCase(), 'i') },
           isDelete: false,
         })
           .skip(offset * limit)
           .limit(limit)
           .lean()
           .exec();
+      }
 
+      if (getSubject) {
         const totalItem = await Subject.find({ isDelete: false }).lean().exec();
 
         return {
           success: true,
           payload: {
             subject: getSubject,
-            totalItem: totalItem?.length,
+            totalItem,
           },
-        };
-      }
-
-      if (getSubject) {
-        return {
-          success: true,
-          payload: getSubject,
         };
       } else {
         throw new Error('Lấy thông tin bộ môn thất bại');
@@ -61,14 +56,14 @@ module.exports = {
     }
   },
 
-  addNewSubject: async ({ name, adminId  }) => {
+  addNewSubject: async ({ name, adminId }) => {
     try {
-      const addRes = await Subject.insertMany([
-        { name, adminId },
-      ]);
+      const addRes = await Subject.insertMany([{ name, adminId }]);
 
       if (addRes) {
-        const getSubject = await Subject.find({ isDelete: false }).lean().exec();
+        const getSubject = await Subject.find({ isDelete: false })
+          .lean()
+          .exec();
 
         return {
           success: true,
@@ -110,12 +105,12 @@ module.exports = {
       };
     }
   },
-  
-  updateSubject: async (subjectId, adminId) => {
+
+  updateSubject: async (subjectId, name) => {
     try {
       const updateRes = await Subject.findOneAndUpdate(
         { _id: subjectId },
-        { adminId}
+        { name }
       );
 
       if (updateRes) {
@@ -137,7 +132,9 @@ module.exports = {
 
   getSubjectById: async (subjectId) => {
     try {
-      const getSubject = await Subject.findOne({_id: subjectId}).lean().exec();
+      const getSubject = await Subject.findOne({ _id: subjectId })
+        .lean()
+        .exec();
 
       if (getSubject) {
         return {
@@ -161,7 +158,7 @@ module.exports = {
     try {
       const updateRes = await Subject.findOneAndUpdate(
         { _id: subjectId },
-        { status}
+        { status }
       );
 
       if (updateRes) {

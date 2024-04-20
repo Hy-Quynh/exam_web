@@ -17,7 +17,8 @@ module.exports = {
       'white': '#ffffff',
       'primary': '#4096ff',
       'adminMenuBg': '#001528',
-      'purple': '#626CB3'
+      'purple': '#626CB3',
+      'yellowDark': '#FFB93C'
     },
   },
   plugins: [],

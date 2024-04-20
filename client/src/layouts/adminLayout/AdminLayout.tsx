@@ -17,6 +17,7 @@ import {
 import { Outlet } from 'react-router-dom';
 import { MenuItem } from './menuItem';
 import AdminIcon from '../../assets/imgs/admin_icon.png';
+import './style.scss';
 
 const { Header, Sider, Content } = Layout;
 const { Paragraph } = Typography;

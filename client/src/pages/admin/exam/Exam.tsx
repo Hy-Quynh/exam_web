@@ -3,27 +3,33 @@ import { Breadcrumb, Button, Switch, Table, message } from 'antd';
 import type { TableProps } from 'antd';
 import TableAction from '../../../components/table/TableAction';
 import { displayDate } from '../../../utils/datetime';
-import { subjectAPI } from '../../../services/subjects';
 import { ModalControlType } from '../../../types/modal';
 import { TABLE_ITEM_PER_PAGE } from '../../../constants/table';
-import ControlSubjecModal from './components/ControlSubjectModal';
+import ControlExamModal from './components/ControlExamModal';
+import { examAPI } from '../../../services/exams';
 
-export interface SubjectType {
+export interface ExamType {
   _id: string;
   index: number;
   name: string;
+  disciplineName: string;
+  disciplineId: string;
+  questionData: any;
+  testTime: number;
+  description: string;
   adminId: string;
   status: boolean;
+  isReverse: boolean;
   createdAt: string;
 }
 
-const SubjectSubject: React.FC = () => {
-  const [subjectList, setSubjectList] = useState<SubjectType[]>([]);
+const AdminExam: React.FC = () => {
+  const [examList, setExamList] = useState<ExamType[]>([]);
   const [openControlModal, setOpenControlModal] = useState<boolean>(false);
-  const [modalInitData, setModalInitData] = useState<SubjectType>();
+  const [modalInitData, setModalInitData] = useState<ExamType>();
   const controlModalType = useRef<ModalControlType>('');
 
-  const columns: TableProps<SubjectType>['columns'] = [
+  const columns: TableProps<ExamType>['columns'] = [
     {
       title: 'STT',
       dataIndex: 'index',
@@ -31,9 +37,14 @@ const SubjectSubject: React.FC = () => {
       render: (_, record, index) => <div>{index + 1}</div>,
     },
     {
-      title: 'Tên bộ môn',
+      title: 'Tên đề',
       dataIndex: 'name',
       key: 'name',
+    },
+    {
+      title: 'Tên môn học',
+      dataIndex: 'disciplineName',
+      key: 'disciplineName',
     },
     {
       title: 'Ngày tạo',
@@ -53,6 +64,17 @@ const SubjectSubject: React.FC = () => {
       ),
     },
     {
+      title: 'Đảo đề',
+      dataIndex: 'isReverse',
+      key: 'isReverse',
+      render: (_, record) => (
+        <Switch
+          checked={record?.isReverse}
+          onChange={(reverse) => handleChangeReverse(record?._id, reverse)}
+        />
+      ),
+    },
+    {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
@@ -64,29 +86,28 @@ const SubjectSubject: React.FC = () => {
             setOpenControlModal(true);
           }}
           handleDelete={() => handleDelete(record?._id)}
-          
         />
       ),
     },
   ];
 
-  const getSubjectList = async () => {
+  const getExamList = async () => {
     try {
-      const res = await subjectAPI.getAllSubject();
+      const res = await examAPI.getAllExam();
 
       if (res?.data?.success) {
-        setSubjectList(res?.data?.payload?.subject);
+        setExamList(res?.data?.payload?.exam);
       } else {
-        message.error('Lấy thông tin bộ môn thất bại');
+        message.error('Lấy thông tin đề kiểm tra thất bại');
       }
     } catch (error) {
-      message.error('Lấy thông tin bộ môn thất bại');
-      console.log('get subject list error >>> ', error);
+      message.error('Lấy thông tin đề kiểm tra thất bại');
+      console.log('get exam list error >>> ', error);
     }
   };
 
   useEffect(() => {
-    getSubjectList();
+    getExamList();
   }, []);
 
   const handleCancelControlModal = () => {
@@ -99,12 +120,12 @@ const SubjectSubject: React.FC = () => {
     setOpenControlModal(true);
   };
 
-  const handleChangeStatus = async (subjectId: string, checked: boolean) => {
+  const handleChangeStatus = async (examId: string, checked: boolean) => {
     try {
-      const res = await subjectAPI.updateSubjectStatus(subjectId, checked);
+      const res = await examAPI.updateExamStatus(examId, checked);
       if (res?.data?.success) {
         message.success('Cập nhật trạng thái thành công');
-        getSubjectList();
+        getExamList();
       } else {
         message.error(
           res?.data?.error?.message || 'Cập nhật thông tin thất bại'
@@ -116,17 +137,34 @@ const SubjectSubject: React.FC = () => {
     }
   };
 
-  const handleDelete = async (subjectId: string) => {
+  const handleChangeReverse = async (examId: string, reverse: boolean) => {
     try {
-      const res = await subjectAPI.deleteSubject(subjectId);
+      const res = await examAPI.updateExamReverse(examId, reverse);
       if (res?.data?.success) {
-        message.success('Xoá bộ môn thành công');
-        getSubjectList();
+        message.success('Cập nhật thông tin thành công');
+        getExamList();
+      } else {
+        message.error(
+          res?.data?.error?.message || 'Cập nhật thông tin thất bại'
+        );
+      }
+    } catch (error) {
+      message.error('Cập nhật thông tin thất bại');
+      console.log('handleChangeReverse error >> ', error);
+    }
+  };
+
+  const handleDelete = async (examId: string) => {
+    try {
+      const res = await examAPI.deleteExam(examId);
+      if (res?.data?.success) {
+        message.success('Xoá đề kiểm tra thành công');
+        getExamList();
       } else {
         message.error(res?.data?.error?.message || 'Xoá thông tin thất bại');
       }
     } catch (error) {
-      message.error('Xoá bộ môn thất bại');
+      message.error('Xoá đề kiểm tra thất bại');
       console.log('handleDelete error >> ', error);
     }
   };
@@ -137,10 +175,10 @@ const SubjectSubject: React.FC = () => {
         <Breadcrumb
           items={[
             {
-              title: 'Subject',
+              title: 'Admin',
             },
             {
-              title: 'Bộ môn',
+              title: 'Đề kiểm tra',
             },
           ]}
         />
@@ -156,14 +194,14 @@ const SubjectSubject: React.FC = () => {
       </div>
       <Table
         columns={columns}
-        dataSource={subjectList}
+        dataSource={examList}
         rowKey='_id'
         key='_id'
         pagination={{ pageSize: TABLE_ITEM_PER_PAGE }}
       />
 
       {openControlModal ? (
-        <ControlSubjecModal
+        <ControlExamModal
           title={
             controlModalType.current === 'CREATE'
               ? 'Thêm mới'
@@ -177,7 +215,7 @@ const SubjectSubject: React.FC = () => {
           initData={modalInitData}
           reloadData={() => {
             setOpenControlModal(false);
-            getSubjectList();
+            getExamList();
           }}
         />
       ) : (
@@ -187,4 +225,4 @@ const SubjectSubject: React.FC = () => {
   );
 };
 
-export default SubjectSubject;
+export default AdminExam;

@@ -28,11 +28,10 @@ module.exports = {
 
   updateSubject: asyncHandler(async (req, res) => {
     const { subjectId } = req.params;
-    const { name, adminId } = req.body;
+    const { name } = req.body;
     const results = await subjectMiddleware.updateSubject(
       subjectId,
-      name,
-      adminId
+      name
     );
     res.json(results);
   }),

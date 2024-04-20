@@ -94,6 +94,7 @@ const Administration: React.FC = () => {
   };
 
   const handleOpenControlModal = (type: ModalControlType) => {
+    setModalInitData(undefined);
     controlModalType.current = type;
     setOpenControlModal(true);
   };

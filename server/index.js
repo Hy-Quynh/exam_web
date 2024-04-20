@@ -3,6 +3,9 @@ const session = require('express-session');
 const cors = require('cors')
 const connectToDB = require('./connector/mongoConnect');
 const adminRouter = require('./routers/admin');
+const subjectRouter = require('./routers/subject');
+const disciplineRouter = require('./routers/discipline');
+const examRouter = require('./routers/exam');
 
 require('dotenv').config();
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 1;
@@ -26,6 +29,9 @@ app.use(function (req, res, next) {
 app.use(cors())
 
 routerPublic.use('/api/admin', adminRouter);
+routerPublic.use('/api/subject', subjectRouter);
+routerPublic.use('/api/discipline', disciplineRouter);
+routerPublic.use('/api/exam', examRouter);
 
 app.use(routerPublic);
 
