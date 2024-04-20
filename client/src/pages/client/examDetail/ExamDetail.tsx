@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ExamType } from '../../admin/exam/Exam';
 import { examAPI } from '../../../services/exams';
-import { Button, Card, Checkbox, Form, Typography, message } from 'antd';
+import { Button, Card, Checkbox, Typography, message } from 'antd';
 import {
   CheckSquareOutlined,
   FieldTimeOutlined,
