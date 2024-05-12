@@ -11,6 +11,6 @@ export type ExamDataType = {
       }
     ];
   }[];
-  testTime: number;
   description: string
+  chapterId: string
 };

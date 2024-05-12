@@ -7,10 +7,11 @@ export enum ROUTER {
   ADMIN_DISCIPLINE = '/admin/discipline',
   ADMIN_ADMINISTRATION = '/admin/administration',
   ADMIN_EXAM = '/admin/exam',
+  ADMIN_EXAM_KIT = '/admin/exam-kit',
   ADMIN_DOCUMENT = '/admin/document',
   HOMEPAGE = '/',
   EXAM_PAGE = '/exam',
-  EXAM_DETAIL_PAGE = '/exam/:examId',
+  EXAM_DETAIL_PAGE = '/exam/:examKitId',
   NEW_PAGE = '/news',
   DOCUMENT_PAGE = '/document'
 }

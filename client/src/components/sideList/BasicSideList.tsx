@@ -17,7 +17,7 @@ const BasicSideList: React.FC<BasicSideListProps> = (props) => {
       <List
         header={
           <div
-            className={`${props?.headerColor} text-white text-3xl py-[20px] text-left px-[20px] rounded-t-lg`}
+            className={`${props?.headerColor} text-white text-xl py-[15px] text-left px-[20px] rounded-t-lg`}
           >
             {props?.headerText}
           </div>
@@ -35,7 +35,7 @@ const BasicSideList: React.FC<BasicSideListProps> = (props) => {
               if (item?._id) props?.handleChangeSelect?.(item?._id);
             }}
           >
-            <Paragraph className='!my-0 text-lg'>{item?.name}</Paragraph>
+            <Paragraph className='!my-0 text-md'>{item?.name}</Paragraph>
           </List.Item>
         )}
       />

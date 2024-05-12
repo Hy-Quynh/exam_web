@@ -45,10 +45,8 @@ export const examAPI = {
     return response;
   },
 
-  updateExamReverse: async (examId: string, isReverse: boolean) => {
-    const response = await axiosConfig.patch(`${URL}/${examId}/reverse`, {
-      isReverse,
-    });
+  checkExistDisciplineExamChapter: async(disciplineId: string, chapterId: string) => {
+    const response = await axiosConfig.get(`${URL}/check-exist/discipline-chapter/${disciplineId}/${chapterId}`);
     return response;
-  },
+  }
 };

@@ -3,12 +3,12 @@ import SideList from '../../../components/sideList/BasicSideList';
 import SideListInfo from '../../../components/sideList/SideListInfo';
 import React, { useEffect, useState } from 'react';
 import { ArrowDownOutlined, EyeOutlined } from '@ant-design/icons';
-import { ExamType } from '../../admin/exam/Exam';
 import { disciplineAPI } from '../../../services/disciplines';
-import { examAPI } from '../../../services/exams';
 import { DisciplineType } from '../../admin/discipline/Discipline';
 import { displayDate } from '../../../utils/datetime';
 import { useNavigate } from 'react-router-dom';
+import { ExamKitType } from '../../admin/exam-kit/ExamKit';
+import { examKitAPI } from '../../../services/exam-kit';
 
 const data = [
   { name: 'Lập trình web (9)', _id: 1 },
@@ -42,7 +42,7 @@ const lessonDocument = Array.from({ length: 23 }).map((_, i) => ({
 const HomePage: React.FC = () => {
   const [disciplineList, setDisciplineList] = useState<DisciplineType[]>([]);
   const [currentDiscipline, setCurrentDiscipline] = useState<string>('');
-  const [examList, setExamList] = useState<ExamType[]>([]);
+  const [examKitList, setExamKitList] = useState<ExamKitType[]>([]);
   const navigate = useNavigate();
 
   const getDisciplineList = async () => {
@@ -61,11 +61,11 @@ const HomePage: React.FC = () => {
     }
   };
 
-  const getExamData = async (discipline: string) => {
+  const getExamKitData = async (discipline: string) => {
     try {
-      const res = await examAPI.getAllExam(12, 0, '', discipline);
+      const res = await examKitAPI.getAllExamKit(12, 0, '', discipline);
       if (res?.data?.success) {
-        setExamList(res?.data?.payload?.exam);
+        setExamKitList(res?.data?.payload?.examKit);
       }
     } catch (error) {
       console.log('get exam error >> ', error);
@@ -77,14 +77,14 @@ const HomePage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    getExamData(currentDiscipline);
+    getExamKitData(currentDiscipline);
   }, [currentDiscipline]);
 
   return (
     <div>
       <div className='mb-[50px]'>
         <Divider orientation='left'>
-          <p className='text-primary text-4xl'>TÀI LIỆU MÔN HỌC</p>
+          <p className='text-primary text-2xl'>TÀI LIỆU MÔN HỌC</p>
         </Divider>
       </div>
       <Row wrap={true}>
@@ -105,7 +105,7 @@ const HomePage: React.FC = () => {
 
       <div className='mb-[50px] mt-[100px]'>
         <Divider orientation='center'>
-          <p className='text-primary text-4xl'>ĐỀ THI</p>
+          <p className='text-primary text-2xl'>ĐỀ THI</p>
         </Divider>
       </div>
       <Row wrap={true}>
@@ -122,17 +122,17 @@ const HomePage: React.FC = () => {
         <Col md={16} span={24} className='mt-[30px] md:mt-0'>
           <div className='rounded-lg border-[2px] border-[#D9D9D9] border-solid p-[10px]'>
             <SideListInfo
-              dataList={examList?.map((item) => {
+              dataList={examKitList?.map((item) => {
                 return {
                   ...item,
                   extraTitleDesc: (
                     <div>
                       <div>
-                        <p className='text-lg'>
-                          Thời lượng làm bài: {item.testTime}p
+                        <p className='text-base'>
+                          Thời lượng làm bài: {item?.testTime}p
                         </p>
-                        <p className='text-lg'>
-                          Số câu hỏi: {item?.questionData?.length}
+                        <p className='text-base'>
+                          Số câu hỏi: {item?.totalQuestion}
                         </p>
                       </div>
                     </div>
@@ -152,7 +152,7 @@ const HomePage: React.FC = () => {
       </Row>
       <div className='mt-[24px]'>
         <Button
-          className='bg-purple text-white text-xl pb-[40px] pt-[10px] px-[60px] hover:!bg-purple hover:!text-white'
+          className='bg-purple text-white text-xl pb-[35px] pt-[5px] px-[40px] hover:!bg-purple hover:!text-white'
           onClick={() => navigate('/exam')}
         >
           Xem thêm

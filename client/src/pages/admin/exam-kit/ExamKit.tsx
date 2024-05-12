@@ -5,31 +5,36 @@ import TableAction from '../../../components/table/TableAction';
 import { displayDate } from '../../../utils/datetime';
 import { ModalControlType } from '../../../types/modal';
 import { TABLE_ITEM_PER_PAGE } from '../../../constants/table';
-import ControlExamModal from './components/ControlExamModal';
-import { examAPI } from '../../../services/exams';
+import { examKitAPI } from '../../../services/exam-kit';
+import { ExamKitQuestionStructure } from '../../../types/examKit';
+import ControlExamKitModal from './components/ControlExamKitModal';
 
-export interface ExamType {
+export interface ExamKitType {
   _id: string;
   index: number;
   name: string;
-  disciplineName: string;
   disciplineId: string;
-  questionData: any;
-  description: string;
-  adminId: string;
   status: boolean;
+  isDelete: boolean;
+  testTime: number;
+  totalQuestion: number;
+  examStructure: ExamKitQuestionStructure[];
+  isReverse: boolean;
   createdAt: string;
-  chapterId: string;
-  disciplineChapters: {_id: string, name: string}[]
+  updatedAt: string;
+  disciplineName: string;
+  description: string;
+  disciplineChapters: { _id: string; name: string }[];
+  questionData?: any
 }
 
-const AdminExam: React.FC = () => {
-  const [examList, setExamList] = useState<ExamType[]>([]);
+const AdminExamKit: React.FC = () => {
+  const [examKitList, setExamKitList] = useState<ExamKitType[]>([]);
   const [openControlModal, setOpenControlModal] = useState<boolean>(false);
-  const [modalInitData, setModalInitData] = useState<ExamType>();
+  const [modalInitData, setModalInitData] = useState<ExamKitType>();
   const controlModalType = useRef<ModalControlType>('');
 
-  const columns: TableProps<ExamType>['columns'] = [
+  const columns: TableProps<ExamKitType>['columns'] = [
     {
       title: 'STT',
       dataIndex: 'index',
@@ -42,21 +47,19 @@ const AdminExam: React.FC = () => {
       key: 'name',
     },
     {
-      title: 'Tên môn học',
+      title: 'Môn học',
       dataIndex: 'disciplineName',
       key: 'disciplineName',
     },
     {
-      title: 'Chương',
-      dataIndex: 'disciplineChapters',
-      key: 'disciplineChapters',
-      render: (_, record: any) => <div>{renderChapter(record)}</div>,
+      title: 'Tổng câu hỏi',
+      dataIndex: 'totalQuestion',
+      key: 'totalQuestion',
     },
     {
-      title: 'Số câu hỏi',
-      dataIndex: 'questionNumber',
-      key: 'questionNumber',
-      render: (_, record: any) => <div>{record?.questionData?.length}</div>,
+      title: 'Thời gian làm bài',
+      dataIndex: 'testTime',
+      key: 'testTime',
     },
     {
       title: 'Ngày tạo',
@@ -72,6 +75,17 @@ const AdminExam: React.FC = () => {
         <Switch
           checked={record?.status}
           onChange={(checked) => handleChangeStatus(record?._id, checked)}
+        />
+      ),
+    },
+    {
+      title: 'Đảo đề',
+      dataIndex: 'isReverse',
+      key: 'isReverse',
+      render: (_, record) => (
+        <Switch
+          checked={record?.isReverse}
+          onChange={(checked) => handleChangeReverse(record?._id, checked)}
         />
       ),
     },
@@ -92,30 +106,23 @@ const AdminExam: React.FC = () => {
     },
   ];
 
-  const renderChapter = (record: any) => {
-    const chapterIndex = record?.disciplineChapters?.findIndex((it: any) => it?._id === record?.chapterId)
-
-    return `Chương ${chapterIndex + 1}: ${record?.disciplineChapters?.[chapterIndex]?.name}`
-    
-  }
-
-  const getExamList = async () => {
+  const getExamKitList = async () => {
     try {
-      const res = await examAPI.getAllExam();
+      const res = await examKitAPI.getAllExamKit();
 
       if (res?.data?.success) {
-        setExamList(res?.data?.payload?.exam);
+        setExamKitList(res?.data?.payload?.examKit);
       } else {
-        message.error('Lấy thông tin đề kiểm tra thất bại');
+        message.error('Lấy thông tin bộ đề kiểm tra thất bại');
       }
     } catch (error) {
-      message.error('Lấy thông tin đề kiểm tra thất bại');
-      console.log('get exam list error >>> ', error);
+      message.error('Lấy thông tin bộ đề kiểm tra thất bại');
+      console.log('get exam kit list error >>> ', error);
     }
   };
 
   useEffect(() => {
-    getExamList();
+    getExamKitList();
   }, []);
 
   const handleCancelControlModal = () => {
@@ -128,12 +135,12 @@ const AdminExam: React.FC = () => {
     setOpenControlModal(true);
   };
 
-  const handleChangeStatus = async (examId: string, checked: boolean) => {
+  const handleChangeStatus = async (examKitId: string, checked: boolean) => {
     try {
-      const res = await examAPI.updateExamStatus(examId, checked);
+      const res = await examKitAPI.updateExamKitStatus(examKitId, checked);
       if (res?.data?.success) {
         message.success('Cập nhật trạng thái thành công');
-        getExamList();
+        getExamKitList();
       } else {
         message.error(
           res?.data?.error?.message || 'Cập nhật thông tin thất bại'
@@ -145,13 +152,29 @@ const AdminExam: React.FC = () => {
     }
   };
 
-
-  const handleDelete = async (examId: string) => {
+  const handleChangeReverse = async (examKitId: string, checked: boolean) => {
     try {
-      const res = await examAPI.deleteExam(examId);
+      const res = await examKitAPI.updateExamKitReverse(examKitId, checked);
+      if (res?.data?.success) {
+        message.success('Cập nhật đảo đề thành công');
+        getExamKitList();
+      } else {
+        message.error(
+          res?.data?.error?.message || 'Cập nhật thông tin thất bại'
+        );
+      }
+    } catch (error) {
+      message.error('Cập nhật đảo đề thất bại');
+      console.log('handleChangeReverse error >> ', error);
+    }
+  };
+
+  const handleDelete = async (examKitId: string) => {
+    try {
+      const res = await examKitAPI.deleteExamKit(examKitId);
       if (res?.data?.success) {
         message.success('Xoá đề kiểm tra thành công');
-        getExamList();
+        getExamKitList();
       } else {
         message.error(res?.data?.error?.message || 'Xoá thông tin thất bại');
       }
@@ -186,14 +209,14 @@ const AdminExam: React.FC = () => {
       </div>
       <Table
         columns={columns}
-        dataSource={examList}
+        dataSource={examKitList}
         rowKey='_id'
         key='_id'
         pagination={{ pageSize: TABLE_ITEM_PER_PAGE }}
       />
 
       {openControlModal ? (
-        <ControlExamModal
+        <ControlExamKitModal
           title={
             controlModalType.current === 'CREATE'
               ? 'Thêm mới'
@@ -207,7 +230,7 @@ const AdminExam: React.FC = () => {
           initData={modalInitData}
           reloadData={() => {
             setOpenControlModal(false);
-            getExamList();
+            getExamKitList();
           }}
         />
       ) : (
@@ -217,4 +240,4 @@ const AdminExam: React.FC = () => {
   );
 };
 
-export default AdminExam;
+export default AdminExamKit;

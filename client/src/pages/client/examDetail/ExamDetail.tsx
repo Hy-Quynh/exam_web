@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ExamType } from '../../admin/exam/Exam';
-import { examAPI } from '../../../services/exams';
 import { Button, Card, Checkbox, Typography, message } from 'antd';
 import {
   CheckSquareOutlined,
@@ -9,20 +7,22 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { shuffleArray } from '../../../utils/array';
+import { examKitAPI } from '../../../services/exam-kit';
+import { ExamKitType } from '../../admin/exam-kit/ExamKit';
 
 function ExamDetail() {
-  const [examDetail, setExamDetail] = useState<ExamType>();
+  const [examKitDetail, setExamKitDetail] = useState<ExamKitType>();
   const params = useParams();
 
-  const getExamDetail = async (examId: string) => {
+  const getExamKitDetail = async (examKitId: string) => {
     try {
-      const res = await examAPI.getExamById(examId);
+      const res = await examKitAPI.getExamKitQuestion(examKitId);
       if (res?.data?.success) {
         const payload: any = { ...res?.data?.payload };
         if (payload?.isReverse && payload.questionData?.length) {
           payload.questionData = shuffleArray([...payload?.questionData]);
         }
-        setExamDetail(payload);
+        setExamKitDetail(payload);
       }
     } catch (error) {
       console.log('get exam detail error >> ', error);
@@ -30,38 +30,38 @@ function ExamDetail() {
   };
 
   useEffect(() => {
-    if (params.examId) {
-      getExamDetail(params.examId);
+    if (params.examKitId) {
+      getExamKitDetail(params.examKitId);
     }
-  }, [params.examId]);
+  }, [params.examKitId]);
 
   return (
     <Card style={{ justifyContent: 'flex-start' }}>
-      <Typography.Paragraph className='text-3xl font-bold'>
-        {examDetail?.name}
+      <Typography.Paragraph className='text-2xl font-bold'>
+        {examKitDetail?.name}
       </Typography.Paragraph>
-      <Typography.Paragraph className='text-xl font-bold'>
-        Môn học: {examDetail?.disciplineName}
+      <Typography.Paragraph className='text-lg font-bold'>
+        Môn học: {examKitDetail?.disciplineName}
       </Typography.Paragraph>
-      <div className='flex justify-around p-[20px] bg-[#d4d9d5] rounded-lg'>
-        <div className='text-lg'>
+      <div className='flex justify-around p-[20px] bg-[#d4d9d5] rounded-lg sticky top-0 z-50'>
+        <div className='text-base'>
           <CheckSquareOutlined />
-          {examDetail?.questionData?.length} câu
+          {examKitDetail?.totalQuestion} câu
         </div>
-        <div className='text-lg'>
+        <div className='text-base'>
           <FieldTimeOutlined />
-          {examDetail?.testTime} phút
+          {examKitDetail?.testTime} phút
         </div>
-        <div className='text-lg'>
+        <div className='text-base'>
           <UserOutlined />
           ... lượt kiểm tra
         </div>
       </div>
       <div className='mt-[24px] flex flex-col justify-start items-start'>
-        {examDetail?.questionData?.map((item: any, index: number) => {
+        {examKitDetail?.questionData?.map((item: any, index: number) => {
           return (
             <div key={`question-${index}-${item?._id}`} className='mt-[20px]'>
-              <div className='text-xl'>
+              <div className='text-lg'>
                 <span className='font-bold'>Câu hỏi {index + 1}:</span>{' '}
                 {item?.question}
               </div>
@@ -69,7 +69,7 @@ function ExamDetail() {
                 {item?.answerList?.map((answerItem: any, answerIndex: any) => {
                   return (
                     <Checkbox key={`answer-${answerIndex}-${answerItem?._id}`}>
-                      <p className='text-lg'>{answerItem?.answer}</p>
+                      <p className='text-base'>{answerItem?.answer}</p>
                     </Checkbox>
                   );
                 })}

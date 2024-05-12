@@ -39,10 +39,10 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
           <Col lg={2} md={0}></Col>
           <Col lg={12} md={24} className='flex flex-col justify-center w-full'>
             <div>
-              <Paragraph className='md:text-3xl text-2xl text-left font-bold !mb-[10px]'>
+              <Paragraph className='md:text-2xl text-2xl text-left font-bold !mb-[10px]'>
                 {props?.titleText || 'ĐĂNG NHẬP'}
               </Paragraph>
-              <Paragraph className='md:text-xl text-lg text-left font-normal'>
+              <Paragraph className='md:text-lg text-lg text-left font-normal'>
                 {props?.descText ||
                   'Vui lòng nhập thông tin MSSV và Mật Khẩu của bạn!'}
               </Paragraph>
@@ -50,12 +50,12 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
                 <Form.Item<LoginFieldType>
                   name='studentCode'
                   rules={[{ required: true, message: 'Vui lòng nhập MSSV' }]}
-                  className='mt-[40px]'
+                  className='mt-[20px]'
                 >
                   <Input
                     prefix={<UserOutlined />}
                     placeholder='Vui lòng nhập MSSV'
-                    className='h-[60px] text-xl'
+                    className='h-[45px] text-lg'
                   />
                 </Form.Item>
 
@@ -64,12 +64,12 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
                   rules={[
                     { required: true, message: 'Vui lòng nhập mật khẩu' },
                   ]}
-                  className='mt-[40px]'
+                  className='mt-[20px]'
                 >
                   <Input.Password
                     prefix={<LockOutlined />}
                     placeholder='Vui lòng nhập mật khẩu'
-                    className='h-[60px] text-xl'
+                    className='h-[45px] text-lg'
                   />
                 </Form.Item>
                 <Form.Item className='flex justify-center'>
@@ -82,7 +82,7 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
                       props?.loginButtonColor || 'bg-purple'
                     } hover:!${
                       props?.loginButtonText || 'text-white'
-                    } md:text-2xl text-xl pb-[50px] pt-[10px] mt-[40px] font-bold`}
+                    } md:text-xl text-xl pb-[40px] pt-[10px] mt-[20px] font-bold`}
                   >
                     Đăng nhập
                   </Button>

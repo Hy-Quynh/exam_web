@@ -36,7 +36,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
     {
       key: '1',
       label: (
-        <a href='/admin/info' className='text-lg'>
+        <a href='/admin/info' className='text-base'>
           Thông tin
         </a>
       ),
@@ -44,7 +44,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
     {
       key: '2',
       label: (
-        <a href='/logout' className='text-lg'>
+        <a href='/logout' className='text-base'>
           Đăng xuất
         </a>
       ),
@@ -57,7 +57,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
         <div className='flex mb-[50px] mt-[40px] items-center pl-[20px]'>
           <img src={AdminIcon} alt='admin-icon' className='w-12 h-12' />
           {!collapsed ? (
-            <Paragraph className='text-white text-2xl !mb-0 tracking-widest font-bold'>
+            <Paragraph className='text-white text-xl !mb-0 tracking-widest font-bold'>
               VNUA
             </Paragraph>
           ) : (

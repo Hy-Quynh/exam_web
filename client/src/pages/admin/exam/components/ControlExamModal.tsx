@@ -32,12 +32,21 @@ const { TextArea } = Input;
 
 const ControlExamModal: React.FC<ControlExamProps> = (props) => {
   const [disciplineList, setDisciplineList] = useState<DisciplineType[]>([]);
+  const [disciplineChapter, setDisciplineChapter] = useState<any>([]);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (props?.initData?.disciplineId && disciplineList?.length) {
+      const findDiscipline = disciplineList?.find(
+        (it) => it?._id === props?.initData?.disciplineId
+      );
+      setDisciplineChapter(findDiscipline?.chapters);
+    }
+  }, [props?.initData?.disciplineId, disciplineList])
 
   const getDisciplineList = async () => {
     try {
       const res = await disciplineAPI.getAllDiscipline();
-
       if (res?.data?.success) {
         setDisciplineList(res?.data?.payload?.discipline);
       } else {
@@ -76,8 +85,8 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
         name: formData?.name,
         disciplineId: formData?.disciplineId,
         questionData: formData?.questionData,
-        testTime: formData?.testTime,
-        description: formData?.description
+        description: formData?.description,
+        chapterId: formData?.chapterId
       };
 
       const res = await examAPI.addNewExam(examData);
@@ -102,8 +111,8 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
           name: formData?.name,
           disciplineId: formData?.disciplineId,
           questionData: formData?.questionData,
-          testTime: formData?.testTime,
-          description: formData?.description
+          description: formData?.description,
+          chapterId: formData?.chapterId
         };
 
         const res = await examAPI.updateExam(props?.initData?._id, examData);
@@ -121,6 +130,23 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
     }
   };
 
+  const handlChangeChapter = async(value: string) => {
+    try {
+      const disciplineId = form.getFieldValue('disciplineId');
+      const res = await examAPI.checkExistDisciplineExamChapter(disciplineId, value)
+      if (res?.data.payload) {
+        form.setFieldValue('chapterId', props?.initData?.chapterId || '')
+        message.warning('Chương này của môn học đã có đề thi')
+      }else {
+        form.setFieldValue('chapterId', value)
+      }
+
+    } catch (error) {
+      console.log('change chapter error >> ', error);
+      
+    }
+  }
+
   return (
     <CustomModal
       isOpen={props?.isOpen}
@@ -136,8 +162,8 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
           name: props?.initData?.name,
           disciplineId: props?.initData?.disciplineId,
           questionData: props?.initData?.questionData,
-          testTime: props?.initData?.testTime,
-          description: props?.initData?.description
+          description: props?.initData?.description,
+          chapterId: props?.initData?.chapterId
         }}
       >
         <Form.Item
@@ -147,13 +173,22 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
         >
           <Input placeholder='Nhập vào tên đề kiểm tra' />
         </Form.Item>
+
         <Form.Item
           label='Môn học'
           name='disciplineId'
-          rules={[{ required: true, message: 'Vui lòng nhập môn học' }]}
+          rules={[{ required: true, message: 'Vui lòng chọn môn học' }]}
         >
-          <Select>
-            {disciplineList?.map((item) => {
+          <Select
+            onChange={(value) => {
+              form.setFieldValue('disciplineId', value);
+              const findDiscipline = disciplineList?.find(
+                (it) => it?._id === value
+              );
+              setDisciplineChapter(findDiscipline?.chapters);
+            }}
+          >
+            {disciplineList?.map((item: any) => {
               return (
                 <Select.Option value={item?._id} key={item?._id}>
                   {item?.name}
@@ -162,28 +197,22 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
             })}
           </Select>
         </Form.Item>
-        <Form.Item
-          label='Thời gian làm bài'
-          rules={[
-            { required: true, message: 'Vui lòng nhập thời lượng' },
-            {
-              validator: async (_, times) => {
-                if (times <= 0) {
-                  return Promise.reject('Thời gian làm bài cần lớn hơn 0');
-                }
-                return Promise.resolve();
-              },
-            },
-          ]}
-          name='testTime'
-        >
-          <Input
-            type='number'
-            placeholder='Nhập vào thời gian làm bài'
-            min={1}
-          />
-        </Form.Item>
 
+        <Form.Item
+          label='Chương'
+          name='chapterId'
+          rules={[{ required: true, message: 'Vui lòng chọn chương' }]}
+        >
+          <Select onChange={(value) => handlChangeChapter(value)}>
+            {disciplineChapter?.map((item: any, index: number) => {
+              return (
+                <Select.Option value={item?._id} key={item?._id}>
+                  {`Chương ${index + 1}: ${item?.name}`}
+                </Select.Option>
+              );
+            })}
+          </Select>
+        </Form.Item>
         <Form.Item
           label='Mô tả'
           rules={[{ required: true, message: 'Vui lòng nhập mô tả' }]}
@@ -192,7 +221,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
           <TextArea rows={4} />
         </Form.Item>
 
-        <Typography.Paragraph>Bộ câu hỏi</Typography.Paragraph>
+        <Typography.Paragraph>Danh sách câu hỏi</Typography.Paragraph>
 
         <Form.List
           name='questionData'
@@ -278,7 +307,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
                                         if (!value?.length) {
                                           return Promise.reject(
                                             'Vui lòng nhập đáp án ' +
-                                              (field.name + 1)
+                                              (subField.name + 1)
                                           );
                                         }
                                         return Promise.resolve();

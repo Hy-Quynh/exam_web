@@ -1,4 +1,4 @@
-import { Form, Input, Select, message } from 'antd';
+import { Button, Form, Input, Select, message } from 'antd';
 import CustomModal from '../../../../components/customModal/CustomModal';
 import { ModalControlType } from '../../../../types/modal';
 import { disciplineAPI } from '../../../../services/disciplines';
@@ -7,6 +7,7 @@ import { DisciplineDataType } from '../../../../types/discipline';
 import { useEffect, useState } from 'react';
 import { SubjectType } from '../../subject/Subject';
 import { subjectAPI } from '../../../../services/subjects';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 type ControlDisciplineProps = {
   isOpen: boolean;
@@ -15,6 +16,13 @@ type ControlDisciplineProps = {
   title: string;
   type: ModalControlType;
   initData?: DisciplineType;
+};
+
+const formItemLayoutWithOutLabel = {
+  wrapperCol: {
+    xs: { span: 24, offset: 0 },
+    sm: { span: 20, offset: 4 },
+  },
 };
 
 const ControlDisciplineModal: React.FC<ControlDisciplineProps> = (props) => {
@@ -61,6 +69,7 @@ const ControlDisciplineModal: React.FC<ControlDisciplineProps> = (props) => {
       const disciplineData: DisciplineDataType = {
         name: formData?.name,
         subjectId: formData?.subjectId,
+        chapters: formData?.chapters,
       };
 
       const res = await disciplineAPI.addNewDiscipline(disciplineData);
@@ -84,6 +93,7 @@ const ControlDisciplineModal: React.FC<ControlDisciplineProps> = (props) => {
         const disciplineData: DisciplineDataType = {
           name: formData?.name,
           subjectId: formData?.subjectId,
+          chapters: formData?.chapters,
         };
 
         const res = await disciplineAPI.updateDiscipline(
@@ -117,7 +127,8 @@ const ControlDisciplineModal: React.FC<ControlDisciplineProps> = (props) => {
         form={form}
         initialValues={{
           name: props?.initData?.name,
-          subjectId: props?.initData?.subjectId
+          subjectId: props?.initData?.subjectId,
+          chapters: props?.initData?.chapters
         }}
       >
         <Form.Item
@@ -127,7 +138,11 @@ const ControlDisciplineModal: React.FC<ControlDisciplineProps> = (props) => {
         >
           <Input placeholder='Nhập vào tên môn học' />
         </Form.Item>
-        <Form.Item label='Bộ môn' name='subjectId'>
+        <Form.Item
+          label='Bộ môn'
+          name='subjectId'
+          rules={[{ required: true, message: 'Vui lòng lựa chọn bộ môn' }]}
+        >
           <Select>
             {subjectList?.map((item) => {
               return (
@@ -138,6 +153,69 @@ const ControlDisciplineModal: React.FC<ControlDisciplineProps> = (props) => {
             })}
           </Select>
         </Form.Item>
+        <div style={{ marginBottom: '10px' }}>Chương</div>
+
+        <Form.List
+          name='chapters'
+          rules={[
+            {
+              validator: async (_, chapters) => {
+                if (!chapters || chapters.length < 1) {
+                  return Promise.reject(new Error('Cần thêm ít nhất 1 chương'));
+                }
+              },
+            },
+          ]}
+        >
+          {(fields, { add, remove }, { errors }) => (
+            <>
+              {fields.map((field, index) => (
+                <Form.Item
+                  label={`CHƯƠNG ${index + 1}: `}
+                  required={false}
+                  key={field.key}
+                  {...formItemLayoutWithOutLabel}
+                >
+                  <Form.Item
+                    {...field}
+                    validateTrigger={['onChange', 'onBlur']}
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: 'Vui lòng nhập vào tên chương',
+                      },
+                    ]}
+                    noStyle
+                    name={[field.name, 'name']}
+                  >
+                    <Input
+                      placeholder='Tên chương'
+                      style={{ width: '90%', marginRight: '5px' }}
+                    />
+                  </Form.Item>
+                  {fields.length > 1 ? (
+                    <MinusCircleOutlined
+                      className='dynamic-delete-button'
+                      onClick={() => remove(field.name)}
+                    />
+                  ) : null}
+                </Form.Item>
+              ))}
+              <Form.Item>
+                <Button
+                  type='dashed'
+                  onClick={() => add()}
+                  style={{ width: '60%' }}
+                  icon={<PlusOutlined />}
+                >
+                  Thêm chương mới
+                </Button>
+                <Form.ErrorList errors={errors} />
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
       </Form>
     </CustomModal>
   );

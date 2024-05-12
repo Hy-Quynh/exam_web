@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const schemaCleaner = require('../utils/schemaCleaner');
 
-const examSchema = new mongoose.Schema(
+const examKitSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -18,40 +18,42 @@ const examSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: false,
     },
-    questionData: [
-      {
-        question: {
-          type: String,
-          required: true,
-        },
-        answerList: [
-          {
-            answer: {
-              type: String,
-              required: true,
-            },
-            isTrue: {
-              type: Boolean,
-              required: false,
-              default: false,
-            },
-          },
-        ],
-      },
-    ],
-    chapterId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      trim: true,
-    },
     description: {
       type: String,
       required: false,
     },
+    testTime: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    totalQuestion: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    examStructure: [
+      {
+        chapterId: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+        },
+        numberQuestion: {
+          type: Number,
+          required: true,
+          default: 0,
+        },
+      },
+    ],
     status: {
       type: Boolean,
       required: false,
       default: true,
+    },
+    isReverse: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     isDelete: {
       type: Boolean,
@@ -64,7 +66,7 @@ const examSchema = new mongoose.Schema(
   }
 );
 
-examSchema.plugin(uniqueValidator);
-schemaCleaner(examSchema);
+examKitSchema.plugin(uniqueValidator);
+schemaCleaner(examKitSchema);
 
-module.exports = mongoose.model('exams', examSchema);
+module.exports = mongoose.model('exam-kit', examKitSchema);

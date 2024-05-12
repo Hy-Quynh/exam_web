@@ -1,0 +1,25 @@
+.question-structure-modal {
+  .list-title {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+    .title {
+      width: 60%;
+    }
+  }
+
+  .structure-item-wrap {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 18px;
+
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+    .structure-chapter {
+      width: 60%;
+    }
+  }
+}

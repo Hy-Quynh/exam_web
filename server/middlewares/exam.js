@@ -71,15 +71,14 @@ module.exports = {
           name: 1,
           disciplineId: 1,
           questionData: 1,
-          adminId: 1,
           status: 1,
           isDelete: 1,
           createdAt: 1,
           updatedAt: 1,
           disciplineName: '$discipline.name',
-          testTime: 1,
           description: 1,
-          isReverse: 1
+          chapterId: 1,
+          disciplineChapters: '$discipline.chapters'
         },
       });
 
@@ -110,12 +109,12 @@ module.exports = {
     disciplineId,
     questionData,
     adminId,
-    testTime,
     description,
+    chapterId
   }) => {
     try {
       const addRes = await Exam.insertMany([
-        { name, disciplineId, questionData, adminId, testTime, description },
+        { name, disciplineId, questionData, adminId, description, chapterId },
       ]);
 
       if (addRes) {
@@ -167,13 +166,13 @@ module.exports = {
     name,
     disciplineId,
     questionData,
-    testTime,
-    description
+    description,
+    chapterId
   ) => {
     try {
       const updateRes = await Exam.findOneAndUpdate(
         { _id: examId },
-        { name, disciplineId, questionData, testTime, description }
+        { name, disciplineId, questionData, description, chapterId }
       );
 
       if (updateRes) {
@@ -220,15 +219,14 @@ module.exports = {
             name: 1,
             disciplineId: 1,
             questionData: 1,
-            adminId: 1,
             status: 1,
             isDelete: 1,
             createdAt: 1,
             updatedAt: 1,
             disciplineName: '$discipline.name',
-            testTime: 1,
             description: 1,
-            isReverse: 1
+            chapterId: 1,
+            disciplineChapters: '$discipline.chapters'
           },
         }
       ];
@@ -277,19 +275,16 @@ module.exports = {
     }
   },
 
-  updateExamReverse: async (examId, isReverse) => {
+  checkExistDisciplineExamChapter: async(disciplineId, chapterId) => {
     try {
-      const updateRes = await Exam.findOneAndUpdate(
-        { _id: examId },
-        { isReverse }
-      );
-
-      if (updateRes) {
+      const checkResult = await Exam.findOne({disciplineId, chapterId, isDelete: false})
+      if (checkResult) {
         return {
-          success: true,
-        };
-      } else {
-        throw new Error('Cập nhật đề kiểm tra thất bại');
+          payload: true
+        }
+      }
+      return {
+        payload: false
       }
     } catch (error) {
       return {
@@ -299,5 +294,5 @@ module.exports = {
         },
       };
     }
-  },
+  }
 };

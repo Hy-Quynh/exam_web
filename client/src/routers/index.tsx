@@ -17,6 +17,7 @@ import NotFoundPage from '../pages/notFoundPage/NotFoundPage';
 import ExamDetail from '../pages/client/examDetail/ExamDetail';
 import NewPage from '../pages/client/news/NewPage';
 import Documentpage from '../pages/client/document/DocumentPage';
+import AdminExamKit from '../pages/admin/exam-kit/ExamKit';
 
 const arrRoutes = [
   { path: ROUTER.LOGIN, element: <ClientLogin /> },
@@ -47,6 +48,10 @@ const arrRoutes = [
       {
         path: ROUTER.ADMIN_EXAM,
         element: <AdminExam />,
+      },
+      {
+        path: ROUTER.ADMIN_EXAM_KIT,
+        element: <AdminExamKit />,
       },
       {
         path: ROUTER.ADMIN_ADMINISTRATION,

@@ -56,6 +56,7 @@ module.exports = {
           _id: 1,
           name: 1,
           subjectId: 1,
+          chapters: 1,
           adminId: 1,
           status: 1,
           isDelete: 1,
@@ -92,10 +93,10 @@ module.exports = {
     }
   },
 
-  addNewDiscipline: async ({ name, subjectId, adminId }) => {
+  addNewDiscipline: async ({ name, subjectId, adminId, chapters }) => {
     try {
       const addRes = await Discipline.insertMany([
-        { name, subjectId, adminId },
+        { name, subjectId, adminId, chapters },
       ]);
 
       if (addRes) {
@@ -144,11 +145,11 @@ module.exports = {
     }
   },
 
-  updateDiscipline: async (disciplineId, name, subjectId) => {
+  updateDiscipline: async (disciplineId, name, subjectId, chapters) => {
     try {
       const updateRes = await Discipline.findOneAndUpdate(
         { _id: disciplineId },
-        { name, subjectId }
+        { name, subjectId, chapters }
       );
 
       if (updateRes) {

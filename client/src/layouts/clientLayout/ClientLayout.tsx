@@ -33,7 +33,7 @@ const renderNavItem = (textColor?: string) => {
     {
       key: 'exam',
       label: (
-        <a href={ROUTER.EXAM_PAGE} className={`${linkColor} text-lg`}>
+        <a href={ROUTER.EXAM_PAGE} className={`${linkColor} text-base`}>
           Đề thi
         </a>
       ),
@@ -41,7 +41,7 @@ const renderNavItem = (textColor?: string) => {
     {
       key: 'news',
       label: (
-        <a href={ROUTER.NEW_PAGE} className={`${linkColor} text-lg`}>
+        <a href={ROUTER.NEW_PAGE} className={`${linkColor} text-base`}>
           Tin tức
         </a>
       ),
@@ -49,7 +49,7 @@ const renderNavItem = (textColor?: string) => {
     {
       key: 'document',
       label: (
-        <a href={ROUTER.DOCUMENT_PAGE} className={`${linkColor} text-lg`}>
+        <a href={ROUTER.DOCUMENT_PAGE} className={`${linkColor} text-base`}>
           Tài liệu
         </a>
       ),
@@ -65,7 +65,7 @@ const App: React.FC = () => {
 
   return (
     <Layout>
-      <Header className='!py-0 px-[20px] h-[100px] flex-col flex justify-center'>
+      <Header className='!py-0 px-[20px] h-[80px] flex-col flex justify-center'>
         <Row>
           <Col lg={6} md={6} span={5} className='flex-col flex justify-center'>
             <div
@@ -77,13 +77,13 @@ const App: React.FC = () => {
               <img
                 src={WebLogo}
                 alt='logo'
-                className='md:w-[80px] md:h-[80px] w-[50px] h-[50px]'
+                className='md:w-[60px] md:h-[60px] w-[40px] h-[40px]'
               />
               {screens?.md ? (
                 <Paragraph
                   className={`text-white ${
-                    !screens?.lg ? 'text-2xl' : 'text-4xl'
-                  } !mb-0 tracking-widest font-bold`}
+                    !screens?.lg ? 'text-2xl' : 'text-2xl'
+                  } !mb-0 tracking-widest font-bold mt-[10px]`}
                 >
                   VNUA
                 </Paragraph>
@@ -101,7 +101,7 @@ const App: React.FC = () => {
                 items={renderNavItem()}
                 className={`${
                   !screens?.lg ? 'text-xl' : 'text-2xl'
-                } mt-[10px] text-white`}
+                } text-white`}
               />
             ) : (
               <div className='justify-start flex w-full'>
@@ -143,31 +143,31 @@ const App: React.FC = () => {
       <Footer className='bg-[#001528] text-white text-left md:p-[40px] p-[20px]'>
         <Row>
           <Col span={12} className='lg:pl-[100px] pl-0'>
-            <p className='md:text-5xl text-3xl font-semibold leading-7'>VNUA</p>
-            <p className='md:text-xl text-base font-medium mt-[20px]'>
+            <p className='md:text-3xl text-2xl font-semibold leading-7'>VNUA</p>
+            <p className='md:text-lg text-sm font-medium mt-[20px]'>
               HỌC VIỆN NÔNG NGHIỆP VIỆT NAM
             </p>
-            <p className='mt-[30px] md:text-3xl text-xl font-semibold'>
+            <p className='mt-[30px] md:text-xl text-lg font-semibold'>
               Follow Us
             </p>
             <div className='mt-[20px] flex items-center gap-[10px]'>
-              <FacebookOutlined className='md:text-[30px] text-[20px]' />
-              <TikTokOutlined className='md:text-[30px] text-[20px' />
-              <LinkedinOutlined className='md:text-[30px] text-[20px' />
-              <InstagramOutlined className='md:text-[30px] text-[20px' />
+              <FacebookOutlined className='md:text-[25px] text-[20px]' />
+              <TikTokOutlined className='md:text-[25px] text-[20px' />
+              <LinkedinOutlined className='md:text-[25px] text-[20px' />
+              <InstagramOutlined className='md:text-[25px] text-[20px' />
             </div>
           </Col>
           <Col span={12}>
-            <p className='md:text-3xl text-xl font-semibold'>
+            <p className='md:text-xl text-base font-semibold'>
               THÔNG TIN LIÊN HỆ
             </p>
-            <p className='md:text-xl text-base font-medium mt-[20px]'>
+            <p className='md:text-lg text-sm font-medium md:mt-[20px] mt-[10px]'>
               Hà Nội, Việt Nam
             </p>
-            <p className='mdtext-xl text-base font-medium mt-[20px]'>
+            <p className='mdtext-lg text-sm font-medium md:mt-[20px] mt-[10px]'>
               Email: vnua@vnua.com.vn
             </p>
-            <p className='md:text-xl text-base font-medium mt-[20px]'>
+            <p className='md:text-lg text-sm font-medium md:mt-[20px] mt-[10px]'>
               Số ĐT: 08877272811
             </p>
           </Col>

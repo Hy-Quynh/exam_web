@@ -15,8 +15,8 @@ module.exports = {
   }),
 
   addNewDiscipline: asyncHandler(async (req, res) => {
-    const { name, subjectId, adminId } = req.body;
-    const results = await disciplineMiddleware.addNewDiscipline({ name, subjectId, adminId });
+    const { name, subjectId, adminId, chapters } = req.body;
+    const results = await disciplineMiddleware.addNewDiscipline({ name, subjectId, adminId, chapters });
     res.json(results);
   }),
 
@@ -28,11 +28,12 @@ module.exports = {
 
   updateDiscipline: asyncHandler(async (req, res) => {
     const { disciplineId } = req.params;
-    const { name, subjectId } = req.body;
+    const { name, subjectId, chapters } = req.body;
     const results = await disciplineMiddleware.updateDiscipline(
       disciplineId,
       name,
-      subjectId
+      subjectId,
+      chapters
     );
     res.json(results);
   }),

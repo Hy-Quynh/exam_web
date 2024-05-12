@@ -6,6 +6,7 @@ const adminRouter = require('./routers/admin');
 const subjectRouter = require('./routers/subject');
 const disciplineRouter = require('./routers/discipline');
 const examRouter = require('./routers/exam');
+const examKitRouter = require('./routers/exam-kit');
 
 require('dotenv').config();
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 1;
@@ -32,6 +33,7 @@ routerPublic.use('/api/admin', adminRouter);
 routerPublic.use('/api/subject', subjectRouter);
 routerPublic.use('/api/discipline', disciplineRouter);
 routerPublic.use('/api/exam', examRouter);
+routerPublic.use('/api/exam-kit', examKitRouter);
 
 app.use(routerPublic);
 

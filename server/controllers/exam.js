@@ -20,15 +20,15 @@ module.exports = {
   }),
 
   addNewExam: asyncHandler(async (req, res) => {
-    const { name, disciplineId, questionData, adminId, testTime, description } =
+    const { name, disciplineId, questionData, adminId, description, chapterId } =
       req.body;
     const results = await examMiddleware.addNewExam({
       name,
       disciplineId,
       questionData,
       adminId,
-      testTime,
       description,
+      chapterId
     });
     res.json(results);
   }),
@@ -41,15 +41,15 @@ module.exports = {
 
   updateExam: asyncHandler(async (req, res) => {
     const { examId } = req.params;
-    const { name, disciplineId, questionData, testTime, description } =
+    const { name, disciplineId, questionData, description, chapterId } =
       req.body;
     const results = await examMiddleware.updateExam(
       examId,
       name,
       disciplineId,
       questionData,
-      testTime,
-      description
+      description,
+      chapterId
     );
     res.json(results);
   }),
@@ -61,10 +61,9 @@ module.exports = {
     res.json(results);
   }),
 
-  updateExamReverse: asyncHandler(async (req, res) => {
-    const { examId } = req.params;
-    const { isReverse } = req.body;
-    const results = await examMiddleware.updateExamReverse(examId, isReverse);
+  checkExistDisciplineExamChapter: asyncHandler(async (req, res) => {
+    const { disciplineId, chapterId } = req.params;
+    const results = await examMiddleware.checkExistDisciplineExamChapter(disciplineId, chapterId);
     res.json(results);
-  }),
+  })
 };

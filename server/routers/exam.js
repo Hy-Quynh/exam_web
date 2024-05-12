@@ -8,6 +8,6 @@ router.post('/', examController.addNewExam);
 router.delete('/:examId', examController.deleteExam);
 router.put('/:examId', examController.updateExam)
 router.patch('/:examId/status', examController.updateExamStatus)
-router.patch('/:examId/reverse', examController.updateExamReverse)
+router.get('/check-exist/discipline-chapter/:disciplineId/:chapterId', examController.checkExistDisciplineExamChapter);
 
 module.exports = router;

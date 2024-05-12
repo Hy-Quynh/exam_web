@@ -49,7 +49,7 @@ const SideListInfo: React.FC<SideListInfoProps> = (props) => {
                 <div className='flex items-center'>
                   <a
                     href={item.href}
-                    className='text-left !text-primary text-2xl font-semibold'
+                    className='text-left !text-primary text-xl font-semibold'
                   >
                     {item.title}
                   </a>
@@ -58,20 +58,20 @@ const SideListInfo: React.FC<SideListInfoProps> = (props) => {
               }
               description={
                 <div>
-                  <p className='text-xl'>{item.description}</p>
+                  <p className='text-base'>{item.description}</p>
                   {item?.extraTitleDesc}
                 </div>
               }
               className='text-left'
             />
-            <p className='text-lg text-left'>{item.content}</p>
-            <p className='text-lg text-[#9c9c9a] text-left'>
+            <p className='text-base text-left'>{item.content}</p>
+            <p className='text-base text-[#9c9c9a] text-left'>
               Ngày đăng tải: {item?.createdAt}
             </p>
             {props?.dislayActionBtn ? (
               <div className='mt-[24px]'>
                 <Button
-                  className='bg-primary text-white text-lg pb-[35px] pt-[5px] px-[60px] hover:!bg-primary hover:!text-white'
+                  className='bg-primary text-white text-lg pb-[35px] px-[40px] hover:!bg-primary hover:!text-white'
                   onClick={() => navigate(item?.href || '/')}
                 >
                   Làm bài

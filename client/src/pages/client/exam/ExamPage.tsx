@@ -9,16 +9,16 @@ import {
 import SideList from '../../../components/sideList/BasicSideList';
 import SideListInfo from '../../../components/sideList/SideListInfo';
 import React, { useEffect, useState } from 'react';
-import { ExamType } from '../../admin/exam/Exam';
 import { disciplineAPI } from '../../../services/disciplines';
-import { examAPI } from '../../../services/exams';
 import { DisciplineType } from '../../admin/discipline/Discipline';
 import { displayDate } from '../../../utils/datetime';
+import { examKitAPI } from '../../../services/exam-kit';
+import { ExamKitType } from '../../admin/exam-kit/ExamKit';
 
 const ExamPage: React.FC = () => {
   const [disciplineList, setDisciplineList] = useState<DisciplineType[]>([]);
   const [currentDiscipline, setCurrentDiscipline] = useState<string>('');
-  const [examList, setExamList] = useState<ExamType[]>([]);
+  const [examList, setExamList] = useState<ExamKitType[]>([]);
 
   const getDisciplineList = async () => {
     try {
@@ -36,11 +36,11 @@ const ExamPage: React.FC = () => {
     }
   };
 
-  const getExamData = async (discipline: string) => {
+  const getExamKitData = async (discipline: string) => {
     try {
-      const res = await examAPI.getAllExam(undefined, undefined, '', discipline);
+      const res = await examKitAPI.getAllExamKit(undefined, undefined, '', discipline);
       if (res?.data?.success) {
-        setExamList(res?.data?.payload?.exam);
+        setExamList(res?.data?.payload?.examKit);
       }
     } catch (error) {
       console.log('get exam error >> ', error);
@@ -52,7 +52,7 @@ const ExamPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    getExamData(currentDiscipline);
+    getExamKitData(currentDiscipline);
   }, [currentDiscipline]);
 
   return (
@@ -98,10 +98,10 @@ const ExamPage: React.FC = () => {
                     <div>
                       <div>
                         <p className='text-lg'>
-                          Thời lượng làm bài: {item.testTime}p
+                          Thời lượng làm bài: {item?.testTime}p
                         </p>
                         <p className='text-lg'>
-                          Số câu hỏi: {item?.questionData?.length}
+                          Số câu hỏi: {item?.totalQuestion}
                         </p>
                       </div>
                     </div>

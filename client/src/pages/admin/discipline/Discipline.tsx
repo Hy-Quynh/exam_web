@@ -14,6 +14,7 @@ export interface DisciplineType {
   name: string;
   subjectName: string;
   subjectId: string;
+  chapters: {name: string}[];
   adminId: string;
   status: boolean;
   createdAt: string;

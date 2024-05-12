@@ -14,6 +14,14 @@ const disciplineSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    chapters: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
     adminId: {
       type: mongoose.Schema.Types.ObjectId,
       required: false,
