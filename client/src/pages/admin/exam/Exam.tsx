@@ -106,10 +106,10 @@ const AdminExam: React.FC = () => {
       if (res?.data?.success) {
         setExamList(res?.data?.payload?.exam);
       } else {
-        message.error('Lấy thông tin đề kiểm tra thất bại');
+        message.error('Lấy thông tin tài liệu thất bại');
       }
     } catch (error) {
-      message.error('Lấy thông tin đề kiểm tra thất bại');
+      message.error('Lấy thông tin tài liệu thất bại');
       console.log('get exam list error >>> ', error);
     }
   };
@@ -150,13 +150,13 @@ const AdminExam: React.FC = () => {
     try {
       const res = await examAPI.deleteExam(examId);
       if (res?.data?.success) {
-        message.success('Xoá đề kiểm tra thành công');
+        message.success('Xoá tài liệu thành công');
         getExamList();
       } else {
         message.error(res?.data?.error?.message || 'Xoá thông tin thất bại');
       }
     } catch (error) {
-      message.error('Xoá đề kiểm tra thất bại');
+      message.error('Xoá tài liệu thất bại');
       console.log('handleDelete error >> ', error);
     }
   };
@@ -170,7 +170,7 @@ const AdminExam: React.FC = () => {
               title: 'Admin',
             },
             {
-              title: 'Đề kiểm tra',
+              title: 'Tài liệu',
             },
           ]}
         />

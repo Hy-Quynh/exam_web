@@ -13,5 +13,6 @@ export enum ROUTER {
   EXAM_PAGE = '/exam',
   EXAM_DETAIL_PAGE = '/exam/:examKitId',
   NEW_PAGE = '/news',
-  DOCUMENT_PAGE = '/document'
+  DOCUMENT_PAGE = '/document',
+  DOCUMENT_DETAIl_PAGE = '/document/:examId'
 }

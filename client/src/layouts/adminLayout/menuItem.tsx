@@ -5,7 +5,6 @@ import {
   BarChartOutlined,
   SettingOutlined,
   FileTextOutlined,
-  CloudDownloadOutlined,
   ContainerOutlined
 } from '@ant-design/icons';
 import { ROUTER } from '../../enums/router/router';
@@ -43,7 +42,7 @@ export const MenuItem = [
     icon: <FileTextOutlined />,
     label: (
       <a href={ROUTER.ADMIN_EXAM} className='text-base'>
-        Đề kiểm tra
+        Tài liệu
       </a>
     ),
   },
@@ -53,16 +52,6 @@ export const MenuItem = [
     label: (
       <a href={ROUTER.ADMIN_EXAM_KIT} className='text-base'>
         Bộ đề
-      </a>
-    ),
-  },
- 
-  {
-    key: 'admin-document',
-    icon: <CloudDownloadOutlined />,
-    label: (
-      <a href={ROUTER.ADMIN_DOCUMENT} className='text-base'>
-        Tài liệu
       </a>
     ),
   },

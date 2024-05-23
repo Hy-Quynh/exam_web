@@ -1,7 +1,7 @@
 const Exam = require('../models/exam');
 
 module.exports = {
-  getAllExam: async (limit, offset, search, discipline) => {
+  getAllExam: async (limit, offset, search, discipline, subject, chapter) => {
     try {
       const newSearch = search && search !== 'undefined' ? search : '';
 
@@ -24,6 +24,16 @@ module.exports = {
         });
       }
 
+      if (chapter && chapter !== 'undefined') {
+        query.push({
+          $match: {
+            $expr: {
+              $eq: [{ $toString: '$chapterId' }, chapter],
+            },
+          },
+        });
+      }
+
       query.push(
         ...[
           {
@@ -39,6 +49,32 @@ module.exports = {
           },
         ]
       );
+
+      if (subject && subject !== 'undefined') {
+        query.push(
+          ...[
+            {
+              $lookup: {
+                from: 'subjects',
+                localField: 'discipline.subjectId',
+                foreignField: '_id',
+                as: 'subject',
+              },
+            },
+            {
+              $unwind: '$subject',
+            },
+            {
+              $match: {
+                $expr: {
+                  $eq: [{ $toString: '$subject._id' }, subject],
+                },
+              }
+            },
+          ]
+        );
+      }
+
 
       if (offset === 'undefined' && limit && limit !== 'undefined') {
         query.push(
@@ -92,7 +128,7 @@ module.exports = {
           },
         };
       } else {
-        throw new Error('Lấy thông tin đề kiểm tra thất bại');
+        throw new Error('Lấy thông tin tài liệu thất bại');
       }
     } catch (error) {
       return {
@@ -125,7 +161,7 @@ module.exports = {
           payload: getExam,
         };
       } else {
-        throw new Error('Thêm đề kiểm tra thất bại');
+        throw new Error('Thêm tài liệu thất bại');
       }
     } catch (error) {
       return {
@@ -149,7 +185,7 @@ module.exports = {
           success: true,
         };
       } else {
-        throw new Error('Xoá đề kiểm tra thất bại');
+        throw new Error('Xoá tài liệu thất bại');
       }
     } catch (error) {
       return {
@@ -180,7 +216,7 @@ module.exports = {
           success: true,
         };
       } else {
-        throw new Error('Cập nhật đề kiểm tra thất bại');
+        throw new Error('Cập nhật tài liệu thất bại');
       }
     } catch (error) {
       return {
@@ -239,7 +275,7 @@ module.exports = {
           payload: getExam[0],
         };
       } else {
-        throw new Error('Lấy thông tin đề kiểm tra thất bại');
+        throw new Error('Lấy thông tin tài liệu thất bại');
       }
     } catch (error) {
       return {
@@ -263,7 +299,7 @@ module.exports = {
           success: true,
         };
       } else {
-        throw new Error('Cập nhật đề kiểm tra thất bại');
+        throw new Error('Cập nhật tài liệu thất bại');
       }
     } catch (error) {
       return {

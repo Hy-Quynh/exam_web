@@ -45,5 +45,10 @@ module.exports = {
     );
     res.json(results);
   }),
+
+  getSubjectDiscipline: asyncHandler(async (req, res) => {
+    const results = await subjectMiddleware.getSubjectDiscipline();
+    res.json(results);
+  }),
 };
 

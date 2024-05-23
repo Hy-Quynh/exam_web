@@ -8,37 +8,31 @@ import {
   CloseOutlined,
   CheckOutlined,
 } from '@ant-design/icons';
-import { shuffleArray } from '../../../utils/array';
-import { examKitAPI } from '../../../services/exam-kit';
-import { ExamKitType } from '../../admin/exam-kit/ExamKit';
 import { Markup } from 'interweave';
 import './style.scss';
 import { formatCountDownTime } from '../../../utils/datetime';
+import { examAPI } from '../../../services/exams';
 
-function ExamDetail() {
+function DocumentDetail() {
   const [examStatus, setExamStatus] = useState<
     'NOT_START' | 'START' | 'SUBMIT' | 'RESULT'
   >('NOT_START');
   const [answerList, setAnswerList] = useState<any>({});
   const [countDownTime, setCountDownTime] = useState<number>(0);
-  const [examKitDetail, setExamKitDetail] = useState<ExamKitType>();
+  const [examDetail, setDocumentDetail] = useState<any>();
   const [score, setScore] = useState<number>(0);
   const params = useParams();
   const timer = useRef<any>(null);
 
-  const getExamKitDetail = async (examKitId?: string) => {
+  const getDocumentDetail = async (examId?: string) => {
     try {
-      if (!examKitId) {
-        return message.error('Mã đề không chính xác');
+      if (!examId) {
+        return message.error('Mã tài liệu không chính xác');
       }
-      const res = await examKitAPI.getExamKitQuestion(examKitId);
+      const res = await examAPI.getExamById(examId);
       if (res?.data?.success) {
         const payload: any = { ...res?.data?.payload };
-        setCountDownTime(payload?.testTime);
-        if (payload?.isReverse && payload.questionData?.length) {
-          payload.questionData = shuffleArray([...payload?.questionData]);
-        }
-        setExamKitDetail(payload);
+        setDocumentDetail(payload);
       }
     } catch (error) {
       console.log('get exam detail error >> ', error);
@@ -46,20 +40,16 @@ function ExamDetail() {
   };
 
   useEffect(() => {
-    if (params.examKitId) {
-      getExamKitDetail(params.examKitId);
+    if (params.examId) {
+      getDocumentDetail(params.examId);
     }
-  }, [params.examKitId]);
+  }, [params.examId]);
 
   useEffect(() => {
     if (examStatus === 'START') {
       timer.current = setInterval(() => {
         setCountDownTime((preValue) => {
-          if (preValue === 1) {
-            clearInterval(timer.current);
-            return 0;
-          }
-          return preValue - 1;
+          return preValue + 1;
         });
       }, 1000 * 60);
     }
@@ -69,34 +59,35 @@ function ExamDetail() {
   return (
     <Card style={{ justifyContent: 'flex-start', minHeight: '500px' }}>
       <Typography.Paragraph className='text-2xl font-bold'>
-        {examKitDetail?.name}
+        {examDetail?.name}
       </Typography.Paragraph>
       <Typography.Paragraph className='text-lg font-bold'>
-        Môn học: {examKitDetail?.disciplineName}
+        Môn học: {examDetail?.disciplineName}
+      </Typography.Paragraph>
+      <Typography.Paragraph className='text-lg font-bold'>
+        Chương: {examDetail?.disciplineChapters?.find((item: any) => item?._id === examDetail?.chapterId)?.name}
       </Typography.Paragraph>
       <div className='flex justify-around p-[20px] bg-[#d4d9d5] rounded-lg sticky top-0 z-50'>
         <div className='text-base'>
           <CheckSquareOutlined className='mr-[5px]' />
           {examStatus === 'NOT_START'
-            ? `${examKitDetail?.totalQuestion} câu`
+            ? `${examDetail?.questionData?.length} câu`
             : `${Object.keys(answerList).length}/${
-                examKitDetail?.totalQuestion
+              examDetail?.questionData?.length
               } câu`}
         </div>
         <div className='text-lg font-bold'>
           <FieldTimeOutlined className='mr-[5px]' />
-          {examStatus === 'NOT_START'
-            ? `${countDownTime} phút`
-            : formatCountDownTime(countDownTime)}
+          {formatCountDownTime(countDownTime)}
         </div>
         <div className='text-base'>
           <UserOutlined className='mr-[5px]' />
-          ... lượt kiểm tra
+          ... lượt làm đề
         </div>
       </div>
       {examStatus === 'START' || examStatus === 'RESULT' ? (
         <div className='mt-[24px] flex flex-col justify-start items-start'>
-          {examKitDetail?.questionData?.map((item: any, index: number) => {
+          {examDetail?.questionData?.map((item: any, index: number) => {
             return (
               <div key={`question-${index}-${item?._id}`} className='mt-[20px]'>
                 <p className='font-bold text-lg text-left'>
@@ -196,13 +187,13 @@ function ExamDetail() {
               case 'START': {
                 if (
                   Object.keys(answerList).length !==
-                  examKitDetail?.totalQuestion
+                  examDetail?.questionData?.length
                 ) {
                   return message.error(
                     'Cần trả lời đầy đủ câu hỏi trước khi nộp bài'
                   );
                 }
-                const questionData = [...examKitDetail?.questionData];
+                const questionData = [...examDetail?.questionData];
                 const sentenceScore = 10 / questionData?.length;
                 let totalScore = 0;
 
@@ -226,7 +217,9 @@ function ExamDetail() {
                 break;
               }
               case 'RESULT': {
-                setExamStatus('SUBMIT');
+                setAnswerList({})
+                setCountDownTime(0)
+                setExamStatus('NOT_START');
                 break;
               }
               default:
@@ -240,11 +233,11 @@ function ExamDetail() {
             ? 'Nộp bài'
             : examStatus === 'SUBMIT'
             ? 'Xem đáp án'
-            : 'Xem điểm số'}
+            : 'Làm lại'}
         </Button>
       </div>
     </Card>
   );
 }
 
-export default ExamDetail;
+export default DocumentDetail;

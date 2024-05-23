@@ -8,10 +8,12 @@ export const examAPI = {
     limit?: number,
     offset?: number,
     search?: string,
-    discipline?: string
+    discipline?: string,
+    subject?: string,
+    chapter?: string
   ) => {
     const response = await axiosConfig.get(
-      `${URL}?limit=${limit}&offset=${offset}&search=${search}&discipline=${discipline}`
+      `${URL}?limit=${limit}&offset=${offset}&search=${search}&discipline=${discipline}&subject=${subject}&chapter=${chapter}`
     );
     return response;
   },
@@ -45,8 +47,13 @@ export const examAPI = {
     return response;
   },
 
-  checkExistDisciplineExamChapter: async(disciplineId: string, chapterId: string) => {
-    const response = await axiosConfig.get(`${URL}/check-exist/discipline-chapter/${disciplineId}/${chapterId}`);
+  checkExistDisciplineExamChapter: async (
+    disciplineId: string,
+    chapterId: string
+  ) => {
+    const response = await axiosConfig.get(
+      `${URL}/check-exist/discipline-chapter/${disciplineId}/${chapterId}`
+    );
     return response;
-  }
+  },
 };

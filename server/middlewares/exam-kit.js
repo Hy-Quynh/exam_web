@@ -1,5 +1,6 @@
 const ExamKit = require('../models/exam-kit');
 const Exam = require('../models/exam');
+const { getRandomValues } = require('../utils/handleArray');
 
 module.exports = {
   getAllExamKit: async (limit, offset, search, discipline) => {
@@ -363,12 +364,10 @@ module.exports = {
       ];
 
       const getExamKit = await ExamKit.aggregate(query);
-
       if (getExamKit?.length) {
         const examStructure = getExamKit?.[0]?.examStructure;
 
         const questionData = [];
-
         for (let i = 0; i < examStructure?.length; i++) {
           const question = await Exam.aggregate([
             {
@@ -377,11 +376,15 @@ module.exports = {
                 disciplineId: getExamKit?.[0]?.disciplineId,
               },
             },
-            { $sample: { size: examStructure?.[i]?.numberQuestion } },
           ]);
 
-          if (question?.length) {
-            questionData?.push(...question?.[0]?.questionData);
+          if (question?.length && question?.[0]?.questionData?.length) {
+            const choiceQuestion = getRandomValues(
+              question?.[0]?.questionData,
+              examStructure?.[i]?.numberQuestion || 0
+            );
+
+            questionData?.push(...choiceQuestion);
           }
         }
 

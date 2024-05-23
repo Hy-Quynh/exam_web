@@ -72,7 +72,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
           className='text-lg'
         />
       </Sider>
-      <Layout>
+      <Layout className='min-h-[100vh] max-h-[100vh]'>
         <Header
           style={{ background: colorBgContainer }}
           className='flex justify-between items-center pr-[40px] pl-0'
@@ -100,7 +100,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
           }}
-          className='mx-[16px] my-[24px] p-[24px]'
+          className='mx-[16px] my-[24px] p-[24px] overflow-y-auto'
         >
           <Outlet />
         </Content>

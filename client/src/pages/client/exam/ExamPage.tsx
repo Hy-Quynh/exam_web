@@ -1,11 +1,4 @@
-import {
-  Col,
-  Row,
-  Select,
-  Tag,
-  Typography,
-  message,
-} from 'antd';
+import { Breadcrumb, Col, Row, Select, Tag, Typography, message } from 'antd';
 import SideList from '../../../components/sideList/BasicSideList';
 import SideListInfo from '../../../components/sideList/SideListInfo';
 import React, { useEffect, useState } from 'react';
@@ -38,7 +31,12 @@ const ExamPage: React.FC = () => {
 
   const getExamKitData = async (discipline: string) => {
     try {
-      const res = await examKitAPI.getAllExamKit(undefined, undefined, '', discipline);
+      const res = await examKitAPI.getAllExamKit(
+        undefined,
+        undefined,
+        '',
+        discipline
+      );
       if (res?.data?.success) {
         setExamList(res?.data?.payload?.examKit);
       }
@@ -57,6 +55,18 @@ const ExamPage: React.FC = () => {
 
   return (
     <div>
+      <div className='bg-[#DFE2EC] p-[20px] rounded-lg mb-[40px]'>
+        <Breadcrumb
+          items={[
+            {
+              title: <a href='/'>Trang chủ</a>,
+            },
+            {
+              title: 'Đề thi',
+            },
+          ]}
+        />
+      </div>
       <Row wrap={true} justify={'start'} className='mb-[50px]'>
         <Typography.Paragraph className='text-xl font-medium w-[40%] text-left'>
           Sắp xếp

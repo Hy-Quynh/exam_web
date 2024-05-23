@@ -10,7 +10,7 @@ import {
 } from 'antd';
 import CustomModal from '../../../../components/customModal/CustomModal';
 import { ModalControlType } from '../../../../types/modal';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { examAPI } from '../../../../services/exams';
 import { CloseOutlined } from '@ant-design/icons';
 import './../style.scss';
@@ -18,6 +18,8 @@ import { ExamDataType } from '../../../../types/exam';
 import { DisciplineType } from '../../discipline/Discipline';
 import { ExamType } from '../Exam';
 import { disciplineAPI } from '../../../../services/disciplines';
+import 'react-quill/dist/quill.snow.css';
+import CustomQuillEditor from '../../../../components/customQuillEditor';
 
 type ControlExamProps = {
   isOpen: boolean;
@@ -42,7 +44,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
       );
       setDisciplineChapter(findDiscipline?.chapters);
     }
-  }, [props?.initData?.disciplineId, disciplineList])
+  }, [props?.initData?.disciplineId, disciplineList]);
 
   const getDisciplineList = async () => {
     try {
@@ -86,7 +88,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
         disciplineId: formData?.disciplineId,
         questionData: formData?.questionData,
         description: formData?.description,
-        chapterId: formData?.chapterId
+        chapterId: formData?.chapterId,
       };
 
       const res = await examAPI.addNewExam(examData);
@@ -112,7 +114,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
           disciplineId: formData?.disciplineId,
           questionData: formData?.questionData,
           description: formData?.description,
-          chapterId: formData?.chapterId
+          chapterId: formData?.chapterId,
         };
 
         const res = await examAPI.updateExam(props?.initData?._id, examData);
@@ -130,22 +132,23 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
     }
   };
 
-  const handlChangeChapter = async(value: string) => {
+  const handlChangeChapter = async (value: string) => {
     try {
       const disciplineId = form.getFieldValue('disciplineId');
-      const res = await examAPI.checkExistDisciplineExamChapter(disciplineId, value)
+      const res = await examAPI.checkExistDisciplineExamChapter(
+        disciplineId,
+        value
+      );
       if (res?.data.payload) {
-        form.setFieldValue('chapterId', props?.initData?.chapterId || '')
-        message.warning('Chương này của môn học đã có đề thi')
-      }else {
-        form.setFieldValue('chapterId', value)
+        form.setFieldValue('chapterId', props?.initData?.chapterId || '');
+        message.warning('Chương này của môn học đã có đề thi');
+      } else {
+        form.setFieldValue('chapterId', value);
       }
-
     } catch (error) {
       console.log('change chapter error >> ', error);
-      
     }
-  }
+  };
 
   return (
     <CustomModal
@@ -163,7 +166,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
           disciplineId: props?.initData?.disciplineId,
           questionData: props?.initData?.questionData,
           description: props?.initData?.description,
-          chapterId: props?.initData?.chapterId
+          chapterId: props?.initData?.chapterId,
         }}
       >
         <Form.Item
@@ -259,11 +262,21 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
                     name={[field.name, 'question']}
                     className='question-form-item'
                   >
-                    <Input placeholder='Nhập vào câu hỏi' />
+                    <CustomQuillEditor
+                      initValue={
+                        props?.initData?.questionData?.[field.name]?.question
+                      }
+                      handleChange={(value) => {
+                        form.setFieldValue(
+                          ['questionData', field.name, 'question'],
+                          value
+                        );
+                      }}
+                    />
                   </Form.Item>
 
                   {/* Nest Form.List */}
-                  <Form.Item label='Câu trả lời' className='answer-form-item'>
+                  <Form.Item className='answer-form-item mt-[20px]'>
                     <div className='answer-list-title'>
                       <div className='answer-title'>Câu trả lời</div>
 

@@ -3,12 +3,14 @@ const examMiddleware = require('../middlewares/exam');
 
 module.exports = {
   getAllExam: asyncHandler(async (req, res) => {
-    const { limit, offset, search, discipline } = req.query;
+    const { limit, offset, search, discipline, subject, chapter } = req.query;
     const results = await examMiddleware.getAllExam(
       limit,
       offset,
       search,
-      discipline
+      discipline,
+      subject,
+      chapter
     );
     res.json(results);
   }),

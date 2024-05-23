@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Col,
@@ -19,8 +19,10 @@ import {
   TikTokOutlined,
   LinkedinOutlined,
   InstagramOutlined,
+  DownOutlined,
 } from '@ant-design/icons';
 import { ROUTER } from '../../enums/router/router';
+import { subjectAPI } from '../../services/subjects';
 
 const { Header, Content, Footer } = Layout;
 const { useBreakpoint } = Grid;
@@ -39,20 +41,16 @@ const renderNavItem = (textColor?: string) => {
       ),
     },
     {
-      key: 'news',
-      label: (
-        <a href={ROUTER.NEW_PAGE} className={`${linkColor} text-base`}>
-          Tin tức
-        </a>
-      ),
-    },
-    {
       key: 'document',
       label: (
         <a href={ROUTER.DOCUMENT_PAGE} className={`${linkColor} text-base`}>
           Tài liệu
+          <span className='ml-[5px]'>
+            <DownOutlined />
+          </span>
         </a>
       ),
+      children: [] as any,
     },
   ];
   return navItems;
@@ -61,7 +59,58 @@ const renderNavItem = (textColor?: string) => {
 const App: React.FC = () => {
   const screens = useBreakpoint();
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
+  const [navItem, setNavItem] = useState(renderNavItem());
   const navigate = useNavigate();
+
+  const getNavDocumentItem = async () => {
+    try {
+      const res = await subjectAPI.getSubjectDiscipline();
+      if (res?.data?.payload?.length) {
+        const nav = [...renderNavItem()];
+        nav[1].children = [...res?.data?.payload]?.map((item) => {
+          return {
+            key: item?._id,
+            label: (
+              <a href={`${ROUTER.DOCUMENT_PAGE}?subject=${item?._id}`}>
+                {item?.name}
+              </a>
+            ),
+            children: item?.listDiscipline?.map((it: any) => {
+              return {
+                key: it?._id,
+                label: (
+                  <a
+                    href={`${ROUTER.DOCUMENT_PAGE}?subject=${item?._id}&discipline=${it?._id}`}
+                  >
+                    {it?.name}
+                  </a>
+                ),
+                children: it?.chapters?.map((chapter: any) => {
+                  return {
+                    key: chapter?._id,
+                    label: (
+                      <a
+                        href={`${ROUTER.DOCUMENT_PAGE}?subject=${item?._id}&discipline=${it?._id}&chapter=${chapter?._id}`}
+                      >
+                        {chapter?.name}
+                      </a>
+                    ),
+                  };
+                }),
+              };
+            }),
+          };
+        });
+        setNavItem(nav);
+      }
+    } catch (error) {
+      console.log('getNavDocumentItem error >> ', error);
+    }
+  };
+
+  useEffect(() => {
+    getNavDocumentItem();
+  }, []);
 
   return (
     <Layout>
@@ -98,7 +147,7 @@ const App: React.FC = () => {
                 theme='dark'
                 mode='horizontal'
                 defaultSelectedKeys={['2']}
-                items={renderNavItem()}
+                items={navItem}
                 className={`${
                   !screens?.lg ? 'text-xl' : 'text-2xl'
                 } text-white`}

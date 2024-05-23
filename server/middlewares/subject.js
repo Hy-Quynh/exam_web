@@ -1,4 +1,5 @@
 const Subject = require('../models/subject');
+const Discipline = require('../models/discipline');
 
 module.exports = {
   getAllSubject: async (limit, offset, search) => {
@@ -168,6 +169,36 @@ module.exports = {
       } else {
         throw new Error('Cập nhật bộ môn thất bại');
       }
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          message: error.message,
+        },
+      };
+    }
+  },
+
+  getSubjectDiscipline: async () => {
+    try {
+      const listSubject = await Subject.find({ status: true, isDelete: false }).lean().exec();
+
+      for (let i = 0; i < listSubject.length; i++) {
+        const discipline = await Discipline.find({
+          subjectId: listSubject[i]._id,
+          status: true,
+          isDelete: false,
+        }).lean().exec();
+
+
+        listSubject[i].listDiscipline = [...discipline];
+      }
+
+      return {
+        success: true,
+        payload: listSubject,
+      };
+
     } catch (error) {
       return {
         success: false,

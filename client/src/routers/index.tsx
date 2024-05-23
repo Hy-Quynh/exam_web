@@ -18,6 +18,7 @@ import ExamDetail from '../pages/client/examDetail/ExamDetail';
 import NewPage from '../pages/client/news/NewPage';
 import Documentpage from '../pages/client/document/DocumentPage';
 import AdminExamKit from '../pages/admin/exam-kit/ExamKit';
+import DocumentDetail from '../pages/client/documentDetail/DocumentDetail';
 
 const arrRoutes = [
   { path: ROUTER.LOGIN, element: <ClientLogin /> },
@@ -86,6 +87,10 @@ const arrRoutes = [
       {
         path: ROUTER.DOCUMENT_PAGE,
         element: <Documentpage />,
+      },
+      {
+        path: ROUTER.DOCUMENT_DETAIl_PAGE,
+        element: <DocumentDetail />,
       },
     ],
   },

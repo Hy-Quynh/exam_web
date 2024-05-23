@@ -32,5 +32,10 @@ export const subjectAPI = {
   updateSubjectStatus: async(subjectId: string, status: boolean) => {
     const response = await axiosConfig.patch(`${URL}/${subjectId}/status`, {status});
     return response;
-  }
+  },
+
+  getSubjectDiscipline: async() => {
+    const response = await axiosConfig.get(`${URL}/discipline/list`);
+    return response;
+  },
 };

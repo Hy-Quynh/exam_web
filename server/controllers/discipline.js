@@ -3,8 +3,8 @@ const disciplineMiddleware = require('../middlewares/discipline');
 
 module.exports = {
   getAllDiscipline: asyncHandler(async (req, res) => {
-    const { limit, offset, search } = req.query;
-    const results = await disciplineMiddleware.getAllDiscipline(limit, offset, search);
+    const { limit, offset, search, subject } = req.query;
+    const results = await disciplineMiddleware.getAllDiscipline(limit, offset, search, subject);
     res.json(results);
   }),
 
