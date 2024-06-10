@@ -4,10 +4,12 @@ import type { TableProps } from 'antd';
 import TableAction from '../../../components/table/TableAction';
 import { displayDate } from '../../../utils/datetime';
 import { ModalControlType } from '../../../types/modal';
-import { TABLE_ITEM_PER_PAGE } from '../../../constants/table';
+import { LOGIN_KEY, TABLE_ITEM_PER_PAGE } from '../../../constants/table';
 import { examKitAPI } from '../../../services/exam-kit';
 import { ExamKitQuestionStructure } from '../../../types/examKit';
 import ControlExamKitModal from './components/ControlExamKitModal';
+import { parseJSON } from '../../../utils/handleData';
+import { LOGIN_TYPE } from '../../../enums';
 
 export interface ExamKitType {
   _id: string;
@@ -38,6 +40,7 @@ const AdminExamKit: React.FC = () => {
   const [openControlModal, setOpenControlModal] = useState<boolean>(false);
   const [modalInitData, setModalInitData] = useState<ExamKitType>();
   const controlModalType = useRef<ModalControlType>('');
+  const customerData = parseJSON(localStorage.getItem(LOGIN_KEY), {});
 
   const columns: TableProps<ExamKitType>['columns'] = [
     {
@@ -117,6 +120,7 @@ const AdminExamKit: React.FC = () => {
             setOpenControlModal(true);
           }}
           handleDelete={() => handleDelete(record?._id)}
+          disableUpdate={customerData.type === LOGIN_TYPE.ADMIN}
         />
       ),
     },
@@ -236,6 +240,7 @@ const AdminExamKit: React.FC = () => {
           type='primary'
           className='bg-primary'
           onClick={() => handleOpenControlModal('CREATE')}
+          disabled={customerData.type === LOGIN_TYPE.ADMIN}
         >
           Thêm mới
         </Button>

@@ -1,13 +1,11 @@
 import { Route, Routes } from 'react-router-dom';
 import { ROUTER } from '../enums/router/router';
-import AdminLayout from '../layouts/adminLayout/AdminLayout';
 import { AdminDashboard } from '../pages/admin/dashboard/Dashboard';
 import AdminSubject from '../pages/admin/subject/Subject';
 import AdminDiscipline from '../pages/admin/discipline/Discipline';
 import AdminTeacher from '../pages/admin/teacher/Teacher';
 import ClientLogin from '../pages/auth/clientLogin/ClientLogin';
 import AdminLogin from '../pages/auth/adminLogin/AdminLogin';
-import ClientLayout from '../layouts/clientLayout/ClientLayout';
 import HomePage from '../pages/client/homepage/HomePage';
 import Administration from '../pages/admin/administration/Administration';
 import AdminExam from '../pages/admin/exam/Exam';
@@ -20,6 +18,11 @@ import Documentpage from '../pages/client/document/DocumentPage';
 import AdminExamKit from '../pages/admin/exam-kit/ExamKit';
 import DocumentDetail from '../pages/client/documentDetail/DocumentDetail';
 import HistoryInfo from '../pages/client/historyInfo';
+import DocumentHistory from '../pages/admin/document-history/DocumentHistory';
+import ExamHistory from '../pages/admin/exam-history/ExamHistory';
+import AdminPrivate from '../layouts/adminLayout/PrivateLayout';
+import ClientLayout from '../layouts/clientLayout/ClientLayout';
+import PrivateClientLayout from '../layouts/clientLayout/MainClientLayout';
 
 const arrRoutes = [
   { path: ROUTER.LOGIN, element: <ClientLogin /> },
@@ -29,7 +32,7 @@ const arrRoutes = [
   },
   {
     path: ROUTER.ADMIN,
-    element: <AdminLayout />,
+    element: <AdminPrivate />,
     children: [
       {
         index: true,
@@ -63,6 +66,14 @@ const arrRoutes = [
         path: ROUTER.ADMIN_DOCUMENT,
         element: <AdminDocument />,
       },
+      {
+        path: ROUTER.ADMIN_DOCUMENT_HISTORY,
+        element: <DocumentHistory />,
+      },
+      {
+        path: ROUTER.ADMIN_EXAM_HISTORY,
+        element: <ExamHistory />,
+      },
     ],
   },
   {
@@ -75,11 +86,19 @@ const arrRoutes = [
       },
       {
         path: ROUTER.EXAM_PAGE,
-        element: <ExamPage />,
+        element: (
+          <PrivateClientLayout>
+            <ExamPage />
+          </PrivateClientLayout>
+        ),
       },
       {
         path: ROUTER.EXAM_DETAIL_PAGE,
-        element: <ExamDetail />,
+        element: (
+          <PrivateClientLayout>
+            <ExamDetail />
+          </PrivateClientLayout>
+        ),
       },
       {
         path: ROUTER.NEW_PAGE,
@@ -87,15 +106,27 @@ const arrRoutes = [
       },
       {
         path: ROUTER.DOCUMENT_PAGE,
-        element: <Documentpage />,
+        element: (
+          <PrivateClientLayout>
+            <Documentpage />
+          </PrivateClientLayout>
+        ),
       },
       {
         path: ROUTER.DOCUMENT_DETAIl_PAGE,
-        element: <DocumentDetail />,
+        element: (
+          <PrivateClientLayout>
+            <DocumentDetail />
+          </PrivateClientLayout>
+        ),
       },
       {
         path: ROUTER.STUDENT_INFO,
-        element: <HistoryInfo />,
+        element: (
+          <PrivateClientLayout>
+            <HistoryInfo />
+          </PrivateClientLayout>
+        ),
       },
     ],
   },

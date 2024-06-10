@@ -4,6 +4,7 @@ import { authAPI } from '../../../services/auth';
 import { LOGIN_KEY } from '../../../constants/table';
 import { LOGIN_TYPE } from '../../../enums';
 import { useNavigate } from 'react-router-dom';
+import { ROUTER } from '../../../enums/router/router';
 
 const ClientLogin = () => {
   const navigate = useNavigate();
@@ -16,8 +17,8 @@ const ClientLogin = () => {
         localStorage.setItem(LOGIN_KEY, JSON.stringify(res?.data));
         message.info('Bạn đã đăng nhập thành công');
 
-        if (res?.data?.type === LOGIN_TYPE.ADMIN) {
-          navigate('/admin');
+        if (res?.data?.type === LOGIN_TYPE.TEACHER) {
+          navigate(ROUTER.ADMIN_EXAM);
         }else {
           navigate('/')
         }

@@ -13,8 +13,8 @@ module.exports = {
   }),
 
   adminLogin: asyncHandler(async (req, res) => {
-    const { userName, password } = req?.body;
-    const response = await adminMiddleware.adminLogin(userName, password);
+    const { username, password } = req?.body;
+    const response = await adminMiddleware.adminLogin(username, password);
     res.json(response);
   }),
 

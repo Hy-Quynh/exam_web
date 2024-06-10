@@ -1,24 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { parseJSON } from '../../../../utils/handleData';
-import { LOGIN_KEY, TABLE_ITEM_PER_PAGE } from '../../../../constants/table';
-import { Button, Table, TableProps, message } from 'antd';
-import { documentResultAPI } from '../../../../services/document-result';
-import { displayDate } from '../../../../utils/datetime';
+import { Breadcrumb, Button, Table, TableProps, message } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
 import DocumentHistoryDrawer from './components/DocumentHistoryDrawer';
+import { parseJSON } from '../../../utils/handleData';
+import { LOGIN_KEY, TABLE_ITEM_PER_PAGE } from '../../../constants/table';
+import { documentResultAPI } from '../../../services/document-result';
+import { displayDate } from '../../../utils/datetime';
+import { LOGIN_TYPE } from '../../../enums';
 
 function DocumentHistory() {
   const [listDocument, setListDocument] = useState([]);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [drawerDocumentId, setDrawerDocumentId] = useState('');
+  const [studentCode, setStudentCode] = useState('');
 
   const useInfo = parseJSON(localStorage.getItem(LOGIN_KEY), {});
 
   const getListDocument = async () => {
     try {
       const res = await documentResultAPI.getDocumentResultByStudent(
-        useInfo.username
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        useInfo.type === LOGIN_TYPE.TEACHER && useInfo.username
+          ? useInfo.username
+          : undefined
       );
+
       if (res?.data?.success) {
         setListDocument(res?.data?.payload?.documentResult);
       }
@@ -43,6 +52,16 @@ function DocumentHistory() {
       title: 'Môn học',
       dataIndex: 'disciplineName',
       key: 'disciplineName',
+    },
+    {
+      title: 'Tên học sinh',
+      dataIndex: 'studentName',
+      key: 'studentName',
+    },
+    {
+      title: 'Mã học sinh',
+      dataIndex: 'studentCode',
+      key: 'studentCode',
     },
     {
       title: 'Tiến độ',
@@ -92,6 +111,7 @@ function DocumentHistory() {
           onClick={() => {
             setVisibleDrawer(true);
             setDrawerDocumentId(record?.documentId);
+            setStudentCode(record?.studentCode);
           }}
         />
       ),
@@ -104,6 +124,29 @@ function DocumentHistory() {
 
   return (
     <div>
+      <div className='mb-[10px]'>
+        <Breadcrumb
+          items={[
+            {
+              title: 'Admin',
+            },
+            {
+              title: 'Danh sách ôn tập',
+            },
+          ]}
+        />
+      </div>
+
+      <div className='flex justify-end mb-[20px]'>
+        <Button
+          type='primary'
+          className='bg-primary'
+          onClick={() => message.error('Chức năng chưa hoàn thiện')}
+        >
+          Xuất CSV
+        </Button>
+      </div>
+
       <Table
         columns={columns}
         dataSource={listDocument}
@@ -116,10 +159,11 @@ function DocumentHistory() {
         <DocumentHistoryDrawer
           open={visibleDrawer}
           handleClose={() => {
-            setVisibleDrawer(false)
-            setDrawerDocumentId('')
+            setVisibleDrawer(false);
+            setDrawerDocumentId('');
           }}
           documentId={drawerDocumentId}
+          studentCode={studentCode}
         />
       ) : (
         <></>

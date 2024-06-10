@@ -30,6 +30,7 @@ module.exports = {
       year,
       semester,
       startTime,
+      teacherCode
     } = req.body;
 
     const results = await examKitMiddleware.addNewExamKit({
@@ -42,6 +43,7 @@ module.exports = {
       year,
       semester,
       startTime,
+      teacherCode
     });
     res.json(results);
   }),
@@ -64,6 +66,7 @@ module.exports = {
       year,
       semester,
       startTime,
+      teacherCode
     } = req.body;
 
     const results = await examKitMiddleware.updateExamKit(
@@ -77,6 +80,7 @@ module.exports = {
       year,
       semester,
       startTime,
+      teacherCode
     );
     
     res.json(results);

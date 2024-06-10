@@ -148,11 +148,12 @@ module.exports = {
     questionData,
     adminId,
     description,
-    chapterId
+    chapterId,
+    teacherCode
   }) => {
     try {
       const addRes = await Exam.insertMany([
-        { name, disciplineId, questionData, adminId, description, chapterId },
+        { name, disciplineId, questionData, adminId, description, chapterId, teacherCode },
       ]);
 
       if (addRes) {
@@ -205,12 +206,13 @@ module.exports = {
     disciplineId,
     questionData,
     description,
-    chapterId
+    chapterId,
+    teacherCode
   ) => {
     try {
       const updateRes = await Exam.findOneAndUpdate(
         { _id: examId },
-        { name, disciplineId, questionData, description, chapterId }
+        { name, disciplineId, questionData, description, chapterId, teacherCode }
       );
 
       if (updateRes) {

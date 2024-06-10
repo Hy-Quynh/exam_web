@@ -50,11 +50,17 @@ module.exports = {
         .exec();
 
       if (checkExist?._id) {
+        if (!checkExist?.status) {
+          throw new Error('Tài khoản bị vô hiệu hoá');
+        }
+
         if (bcrypt.compareSync(password, checkExist?.password)) {
           return {
             success: true,
             payload: {
-              user_role: checkExist?.mainAdmin ? 'main_admin' : 'admin',
+              type: 'ADMIN',
+              mainAdmin: checkExist?.mainAdmin,
+              _id: checkExist?._id,
             },
           };
         } else {
@@ -120,7 +126,10 @@ module.exports = {
         .lean()
         .exec();
 
-      if (checkExist?._id && adminId?.toString() !== checkExist?._id?.toString()){
+      if (
+        checkExist?._id &&
+        adminId?.toString() !== checkExist?._id?.toString()
+      ) {
         throw new Error('Tên đăng nhập đã tồn tại');
       }
 
@@ -147,7 +156,7 @@ module.exports = {
       };
     }
   },
-  
+
   deleteAdminId: async (adminId) => {
     try {
       const deleteProductReview = await Admin.findOneAndUpdate(

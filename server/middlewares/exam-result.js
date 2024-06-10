@@ -10,35 +10,42 @@ module.exports = {
     isGetAll
   ) => {
     try {
-      const query = [
-        {
+      const query = [];
+
+      if (studentCode && studentCode !== 'undefined') {
+        query.push({
           $match: {
             studentCode: { $regex: new RegExp(studentCode.toLowerCase(), 'i') },
           },
-        },
-        {
-          $lookup: {
-            from: 'disciplines',
-            localField: 'disciplineId',
-            foreignField: '_id',
-            as: 'discipline',
+        });
+      }
+
+      query.push(
+        ...[
+          {
+            $lookup: {
+              from: 'disciplines',
+              localField: 'disciplineId',
+              foreignField: '_id',
+              as: 'discipline',
+            },
           },
-        },
-        {
-          $unwind: '$discipline',
-        },
-        {
-          $lookup: {
-            from: 'exam-kits',
-            localField: 'examId',
-            foreignField: '_id',
-            as: 'examKit',
+          {
+            $unwind: '$discipline',
           },
-        },
-        {
-          $unwind: '$examKit',
-        },
-      ];
+          {
+            $lookup: {
+              from: 'exam-kits',
+              localField: 'examId',
+              foreignField: '_id',
+              as: 'examKit',
+            },
+          },
+          {
+            $unwind: '$examKit',
+          },
+        ]
+      );
 
       if (disciplineId && disciplineId !== 'undefined') {
         query.push({
@@ -54,7 +61,7 @@ module.exports = {
         query.push({
           $match: {
             $expr: {
-              $eq: [{ $toString: '$exam.teacherCode' }, teacherCode],
+              $eq: [{ $toString: '$examKit.teacherCode' }, teacherCode],
             },
           },
         });
@@ -110,7 +117,7 @@ module.exports = {
           updatedAt: 1,
           isSubmit: 1,
           disciplineName: '$discipline.name',
-          examKitName: '$examKit.name'
+          examKitName: '$examKit.name',
         },
       });
 

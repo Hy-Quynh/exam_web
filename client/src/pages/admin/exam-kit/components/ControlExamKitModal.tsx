@@ -19,6 +19,8 @@ import { examKitAPI } from '../../../../services/exam-kit';
 import { ExamKitDataType } from '../../../../types/examKit';
 import moment from 'moment';
 import dayjs from 'dayjs';
+import { parseJSON } from '../../../../utils/handleData';
+import { LOGIN_KEY } from '../../../../constants/table';
 
 type ControlExamKitProps = {
   isOpen: boolean;
@@ -35,6 +37,7 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
   const [disciplineList, setDisciplineList] = useState<DisciplineType[]>([]);
   const [disciplineChapter, setDisciplineChapter] = useState<any>([]);
   const [form] = Form.useForm();
+  const customerData = parseJSON(localStorage.getItem(LOGIN_KEY), {});
 
   useEffect(() => {
     if (props?.initData?.disciplineId && disciplineList?.length) {
@@ -92,6 +95,7 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
         year: formData?.year?.year(),
         semester: formData?.semester,
         startTime: formData?.startTime,
+        teacherCode: customerData?.username
       };
 
       const res = await examKitAPI.addNewExamKit(examKitData);
@@ -123,6 +127,7 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
           year: formData?.year?.year(),
           semester: formData?.semester,
           startTime: formData?.startTime,
+          teacherCode: customerData?.username
         };
 
         const res = await examKitAPI.updateExamKit(
@@ -344,7 +349,7 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
         {props?.type === 'UPDATE' ? (
           <div className='mb-[20px]'>
             <Button
-              className={`${props?.initData?.openExamStatus ? 'bg-[#e5c100]' : 'bg-primary'} text-white border-none`}
+              className={`${props?.initData?.openExamStatus ? 'bg-[red] hover:!bg-[red]' : 'bg-primary hover:!bg-primary '} hover:!text-white text-white border-none`}
               onClick={() => handleChangeOpenStatus()}
             >
               {props?.initData?.openExamStatus ? 'Kết thúc thi' : 'Bắt đầu thi'}

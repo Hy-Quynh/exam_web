@@ -1,21 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { parseJSON } from '../../../../utils/handleData';
-import { LOGIN_KEY, TABLE_ITEM_PER_PAGE } from '../../../../constants/table';
-import { Button, Table, TableProps, message } from 'antd';
-import { examResultAPI } from '../../../../services/exam-result';
-import { displayDate } from '../../../../utils/datetime';
+import { Breadcrumb, Button, Table, TableProps, message } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
 import ExamHistoryDrawer from './components/ExamHistoryDrawer';
+import { parseJSON } from '../../../utils/handleData';
+import { LOGIN_KEY, TABLE_ITEM_PER_PAGE } from '../../../constants/table';
+import { examResultAPI } from '../../../services/exam-result';
+import { displayDate } from '../../../utils/datetime';
+import { LOGIN_TYPE } from '../../../enums';
 
 function ExamHistory() {
   const [listExam, setListExam] = useState([]);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [drawerExamId, setDrawerExamId] = useState('');
+  const [studentCode, setStudentCode] = useState('');
+
   const useInfo = parseJSON(localStorage.getItem(LOGIN_KEY), {});
 
   const getListExam = async () => {
     try {
-      const res = await examResultAPI.getExamResultByStudent(useInfo.username);
+      const res = await examResultAPI.getExamResultByStudent(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        useInfo.type === LOGIN_TYPE.TEACHER && useInfo.username
+          ? useInfo.username
+          : undefined
+      );
+
       if (res?.data?.success) {
         setListExam(res?.data?.payload?.examResult);
       }
@@ -32,7 +44,7 @@ function ExamHistory() {
       render: (_, record, index) => <div>{index + 1}</div>,
     },
     {
-      title: 'Tên đề kiểm tra',
+      title: 'Tên bài thi',
       dataIndex: 'examKitName',
       key: 'examKitName',
     },
@@ -42,16 +54,22 @@ function ExamHistory() {
       key: 'disciplineName',
     },
     {
-      title: 'Tiến độ',
-      dataIndex: 'progress',
-      key: 'proesss',
-      render: (_, record, index) => (
-        <div>
-          {(Object.keys(record?.answer).length / record?.questionData?.length) *
-            100}
-          %
-        </div>
-      ),
+      title: 'Tên học sinh',
+      dataIndex: 'studentName',
+      key: 'studentName',
+    },
+    {
+      title: 'Mã học sinh',
+      dataIndex: 'studentCode',
+      key: 'studentCode',
+    },
+    {
+      title: 'Thời gian thực hiện',
+      dataIndex: 'totalTime',
+      key: 'totalTime',
+      render: (_, record: any) => {
+        return <div>{record?.totalTime + 's'} </div>;
+      },
     },
     {
       title: 'Điểm số',
@@ -81,6 +99,7 @@ function ExamHistory() {
           onClick={() => {
             setVisibleDrawer(true);
             setDrawerExamId(record?.examId);
+            setStudentCode(record?.studentCode);
           }}
         />
       ),
@@ -93,6 +112,29 @@ function ExamHistory() {
 
   return (
     <div>
+      <div className='mb-[10px]'>
+        <Breadcrumb
+          items={[
+            {
+              title: 'Admin',
+            },
+            {
+              title: 'Danh sách nộp bài thi',
+            },
+          ]}
+        />
+      </div>
+
+      <div className='flex justify-end mb-[20px]'>
+        <Button
+          type='primary'
+          className='bg-primary'
+          onClick={() => message.error('Chức năng chưa hoàn thiện')}
+        >
+          Xuất CSV
+        </Button>
+      </div>
+
       <Table
         columns={columns}
         dataSource={listExam}
@@ -109,6 +151,7 @@ function ExamHistory() {
             setDrawerExamId('');
           }}
           examId={drawerExamId}
+          studentCode={studentCode}
         />
       ) : (
         <></>

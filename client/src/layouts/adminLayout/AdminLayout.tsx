@@ -14,10 +14,13 @@ import {
   Avatar,
   Typography,
 } from 'antd';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { MenuItem } from './menuItem';
 import AdminIcon from '../../assets/imgs/admin_icon.png';
 import './style.scss';
+import { parseJSON } from '../../utils/handleData';
+import { LOGIN_KEY } from '../../constants/table';
+import { LOGIN_TYPE } from '../../enums';
 
 const { Header, Sider, Content } = Layout;
 const { Paragraph } = Typography;
@@ -31,6 +34,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const navigate = useNavigate();
 
   const items: MenuProps['items'] = [
     {
@@ -44,16 +48,33 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
     {
       key: '2',
       label: (
-        <a href='/logout' className='text-base'>
+        <div
+          className='text-base'
+          onClick={() => {
+            let customerData = parseJSON(localStorage.getItem(LOGIN_KEY), {});
+            localStorage.clear();
+
+            if (customerData.type === LOGIN_TYPE.ADMIN) {
+              navigate('/admin/login');
+            } else {
+              navigate('/login');
+            }
+          }}
+        >
           Đăng xuất
-        </a>
+        </div>
       ),
     },
   ];
 
   return (
     <Layout>
-      <Sider trigger={null} collapsible collapsed={collapsed} className='min-h-[100vh] max-h-[100vh]'>
+      <Sider
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
+        className='min-h-[100vh] max-h-[100vh]'
+      >
         <div className='flex mb-[50px] mt-[40px] items-center pl-[20px]'>
           <img src={AdminIcon} alt='admin-icon' className='w-12 h-12' />
           {!collapsed ? (
@@ -68,7 +89,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
           theme='dark'
           mode='inline'
           defaultSelectedKeys={['1']}
-          items={MenuItem}
+          items={MenuItem()}
           className='text-lg'
         />
       </Sider>

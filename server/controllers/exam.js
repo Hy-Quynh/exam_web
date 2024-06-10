@@ -22,7 +22,7 @@ module.exports = {
   }),
 
   addNewExam: asyncHandler(async (req, res) => {
-    const { name, disciplineId, questionData, adminId, description, chapterId } =
+    const { name, disciplineId, questionData, adminId, description, chapterId, teacherCode } =
       req.body;
     const results = await examMiddleware.addNewExam({
       name,
@@ -30,7 +30,8 @@ module.exports = {
       questionData,
       adminId,
       description,
-      chapterId
+      chapterId,
+      teacherCode
     });
     res.json(results);
   }),
@@ -43,7 +44,7 @@ module.exports = {
 
   updateExam: asyncHandler(async (req, res) => {
     const { examId } = req.params;
-    const { name, disciplineId, questionData, description, chapterId } =
+    const { name, disciplineId, questionData, description, chapterId, teacherCode } =
       req.body;
     const results = await examMiddleware.updateExam(
       examId,
@@ -51,7 +52,8 @@ module.exports = {
       disciplineId,
       questionData,
       description,
-      chapterId
+      chapterId,
+      teacherCode
     );
     res.json(results);
   }),

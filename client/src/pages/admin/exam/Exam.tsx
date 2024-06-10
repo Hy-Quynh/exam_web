@@ -4,9 +4,11 @@ import type { TableProps } from 'antd';
 import TableAction from '../../../components/table/TableAction';
 import { displayDate } from '../../../utils/datetime';
 import { ModalControlType } from '../../../types/modal';
-import { TABLE_ITEM_PER_PAGE } from '../../../constants/table';
+import { LOGIN_KEY, TABLE_ITEM_PER_PAGE } from '../../../constants/table';
 import ControlExamModal from './components/ControlExamModal';
 import { examAPI } from '../../../services/exams';
+import { parseJSON } from '../../../utils/handleData';
+import { LOGIN_TYPE } from '../../../enums';
 
 export interface ExamType {
   _id: string;
@@ -30,6 +32,7 @@ const AdminExam: React.FC = () => {
   const [openControlModal, setOpenControlModal] = useState<boolean>(false);
   const [modalInitData, setModalInitData] = useState<ExamType>();
   const controlModalType = useRef<ModalControlType>('');
+  const customerData = parseJSON(localStorage.getItem(LOGIN_KEY), {});
 
   const columns: TableProps<ExamType>['columns'] = [
     {
@@ -111,6 +114,7 @@ const AdminExam: React.FC = () => {
             setOpenControlModal(true);
           }}
           handleDelete={() => handleDelete(record?._id)}
+          disableUpdate={customerData.type === LOGIN_TYPE.ADMIN}
         />
       ),
     },
@@ -238,6 +242,7 @@ const AdminExam: React.FC = () => {
           type='primary'
           className='bg-primary'
           onClick={() => handleOpenControlModal('CREATE')}
+          disabled={customerData.type === LOGIN_TYPE.ADMIN}
         >
           Thêm mới
         </Button>

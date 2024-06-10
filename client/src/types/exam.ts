@@ -13,4 +13,5 @@ export type ExamDataType = {
   }[];
   description: string
   chapterId: string
+  teacherCode: string
 };

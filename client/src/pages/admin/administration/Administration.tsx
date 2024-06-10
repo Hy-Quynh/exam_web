@@ -15,6 +15,7 @@ export interface AdminData {
   userName: string;
   status: boolean;
   createdAt: string;
+  mainAdmin: boolean;
 }
 
 const Administration: React.FC = () => {
@@ -49,6 +50,7 @@ const Administration: React.FC = () => {
         <Switch
           checked={record?.status}
           onChange={(checked) => handleChangeStatus(record?._id, checked)}
+          disabled={record?.mainAdmin}
         />
       ),
     },
@@ -64,7 +66,8 @@ const Administration: React.FC = () => {
             setOpenControlModal(true);
           }}
           handleDelete={() => handleDelete(record?._id)}
-          
+          disableDelete={record?.mainAdmin}
+          disableUpdate={record?.mainAdmin}
         />
       ),
     },

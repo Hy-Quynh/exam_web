@@ -5,6 +5,6 @@ export type AdminDataType = {
 }
 
 export type AdminLoginBodyType = {
-  userName: string
+  username: string
   password: string
 }

@@ -21,6 +21,8 @@ import { ExamType } from '../Exam';
 import { disciplineAPI } from '../../../../services/disciplines';
 import CustomQuillEditor from '../../../../components/customQuillEditor';
 import { AnswerTypeEnum } from '../../../../enums/exams';
+import { parseJSON } from '../../../../utils/handleData';
+import { LOGIN_KEY } from '../../../../constants/table';
 
 type ControlExamProps = {
   isOpen: boolean;
@@ -37,6 +39,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
   const [disciplineList, setDisciplineList] = useState<DisciplineType[]>([]);
   const [disciplineChapter, setDisciplineChapter] = useState<any>([]);
   const [form] = Form.useForm();
+  const customerData = parseJSON(localStorage.getItem(LOGIN_KEY), {});
 
   useEffect(() => {
     if (props?.initData?.disciplineId && disciplineList?.length) {
@@ -90,6 +93,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
         questionData: formData?.questionData,
         description: formData?.description,
         chapterId: formData?.chapterId,
+        teacherCode: customerData?.username
       };
 
       const res = await examAPI.addNewExam(examData);
@@ -116,6 +120,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
           questionData: formData?.questionData,
           description: formData?.description,
           chapterId: formData?.chapterId,
+          teacherCode: customerData?.username
         };
 
         const res = await examAPI.updateExam(props?.initData?._id, examData);

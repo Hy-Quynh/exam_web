@@ -122,7 +122,8 @@ module.exports = {
     examStructure,
     year,
     semester,
-    startTime
+    startTime,
+    teacherCode
   }) => {
     try {
       const addRes = await ExamKit.insertMany([
@@ -135,7 +136,8 @@ module.exports = {
           examStructure,
           year: Number(year),
           semester: Number(semester),
-          startTime
+          startTime,
+          teacherCode
         },
       ]);
       
@@ -196,7 +198,8 @@ module.exports = {
     examStructure,
     year,
     semester,
-    startTime
+    startTime,
+    teacherCode
   ) => {
     try {
       const updateRes = await ExamKit.findOneAndUpdate(
@@ -210,7 +213,8 @@ module.exports = {
           examStructure,
           year: Number(year),
           semester: Number(semester),
-          startTime
+          startTime,
+          teacherCode
         }
       );
 

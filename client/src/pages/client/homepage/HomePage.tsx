@@ -169,6 +169,7 @@ const HomePage: React.FC = () => {
                       title: item?.name,
                       createdAt: displayDate(item?.createdAt),
                       href: `/exam/${item?._id}`,
+                      disabledBtn: !item?.openExamStatus
                     };
                   })}
                   dislayActionBtn={true}

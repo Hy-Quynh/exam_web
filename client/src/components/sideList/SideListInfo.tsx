@@ -14,6 +14,7 @@ type SideListInfoProps = {
     bagde?: React.ReactNode;
     titleTag?: React.ReactNode;
     action?: React.ReactNode[];
+    disabledBtn?: boolean;
   }[];
   dislayActionBtn?: boolean;
 };
@@ -47,12 +48,9 @@ const SideListInfo: React.FC<SideListInfoProps> = (props) => {
               }
               title={
                 <div className='flex items-center'>
-                  <a
-                    href={item.href}
-                    className='text-left !text-primary text-xl font-semibold'
-                  >
+                  <div className='text-left !text-primary text-xl font-semibold'>
                     {item.title}
-                  </a>
+                  </div>
                   <div className='ml-[20px]'>{item?.titleTag || <></>}</div>
                 </div>
               }
@@ -71,8 +69,11 @@ const SideListInfo: React.FC<SideListInfoProps> = (props) => {
             {props?.dislayActionBtn ? (
               <div className='mt-[24px]'>
                 <Button
-                  className='bg-primary text-white text-lg pb-[35px] px-[40px] hover:!bg-primary hover:!text-white'
+                  className={`bg-primary text-white text-lg pb-[35px] px-[40px]  ${
+                    !item?.disabledBtn ? 'hover:!bg-primary' : ''
+                  } hover:!text-white`}
                   onClick={() => navigate(item?.href || '/')}
+                  disabled={item?.disabledBtn}
                 >
                   Làm bài
                 </Button>

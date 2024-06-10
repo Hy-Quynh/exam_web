@@ -28,6 +28,7 @@ import { ROUTER } from '../../enums/router/router';
 import { subjectAPI } from '../../services/subjects';
 import { parseJSON } from '../../utils/handleData';
 import { LOGIN_KEY } from '../../constants/table';
+import { LOGIN_TYPE } from '../../enums';
 
 const { Header, Content, Footer } = Layout;
 const { useBreakpoint } = Grid;
@@ -84,12 +85,18 @@ const renderNavItem = (textColor?: string) => {
   return useInfo?.username ? navLogined : navNotLogin;
 };
 
-const App: React.FC = () => {
+const ClientLayout: React.FC = () => {
   const screens = useBreakpoint();
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [navItem, setNavItem] = useState(renderNavItem());
   const navigate = useNavigate();
   const useInfo = parseJSON(localStorage.getItem(LOGIN_KEY), {});
+
+  useEffect(() => {
+    if (useInfo?.type !== LOGIN_TYPE.STUDENT) {
+      localStorage.clear();
+    }
+  }, []);
 
   const userDropDown: MenuProps['items'] = [
     {
@@ -117,7 +124,7 @@ const App: React.FC = () => {
   const getNavDocumentItem = async () => {
     try {
       const res = await subjectAPI.getSubjectDiscipline();
-      if (res?.data?.payload?.length) {
+      if (res?.data?.payload?.length && useInfo.type === LOGIN_TYPE.STUDENT) {
         const nav = [...renderNavItem()];
         nav[1].children = [...res?.data?.payload]?.map((item) => {
           return {
@@ -328,4 +335,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default ClientLayout;

@@ -7,7 +7,8 @@ export type ExamKitDataType = {
   examStructure: ExamKitQuestionStructure[],
   year: number,
   semester: number,
-  startTime: string
+  startTime: string,
+  teacherCode: string
 };
 
 export type ExamKitQuestionStructure = {

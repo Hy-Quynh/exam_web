@@ -15,7 +15,7 @@ type submitData = {
 
 export const examResultAPI = {
   getExamResultByStudent: async (
-    studentCode: string,
+    studentCode?: string,
     limit?: number,
     offset?: number,
     disciplineId?: string,

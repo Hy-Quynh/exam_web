@@ -16,7 +16,7 @@ type submitData = {
 
 export const documentResultAPI = {
   getDocumentResultByStudent: async (
-    studentCode: string,
+    studentCode?: string,
     limit?: number,
     offset?: number,
     disciplineId?: string,

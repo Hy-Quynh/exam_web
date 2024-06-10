@@ -10,35 +10,15 @@ module.exports = {
     isGetAll
   ) => {
     try {
-      const query = [
-        {
+      const query = [];
+
+      if (studentCode && studentCode !== 'undefined') {
+        query.push({
           $match: {
             studentCode: { $regex: new RegExp(studentCode.toLowerCase(), 'i') },
           },
-        },
-        {
-          $lookup: {
-            from: 'disciplines',
-            localField: 'disciplineId',
-            foreignField: '_id',
-            as: 'discipline',
-          },
-        },
-        {
-          $unwind: '$discipline',
-        },
-        {
-          $lookup: {
-            from: 'exams',
-            localField: 'documentId',
-            foreignField: '_id',
-            as: 'exam',
-          },
-        },
-        {
-          $unwind: '$exam',
-        },
-      ];
+        });
+      }
 
       if (disciplineId && disciplineId !== 'undefined') {
         query.push({
@@ -49,6 +29,33 @@ module.exports = {
           },
         });
       }
+
+      query.push(
+        ...[
+          {
+            $lookup: {
+              from: 'disciplines',
+              localField: 'disciplineId',
+              foreignField: '_id',
+              as: 'discipline',
+            },
+          },
+          {
+            $unwind: '$discipline',
+          },
+          {
+            $lookup: {
+              from: 'exams',
+              localField: 'documentId',
+              foreignField: '_id',
+              as: 'exam',
+            },
+          },
+          {
+            $unwind: '$exam',
+          },
+        ]
+      );
 
       if (teacherCode && teacherCode !== 'undefined') {
         query.push({
@@ -110,7 +117,7 @@ module.exports = {
           updatedAt: 1,
           isSubmit: 1,
           disciplineName: '$discipline.name',
-          examName: '$exam.name'
+          examName: '$exam.name',
         },
       });
 
@@ -149,7 +156,7 @@ module.exports = {
         totalTime,
         studentCode,
         studentName,
-        isSubmit
+        isSubmit,
       } = submitData;
 
       await DocumentResult.deleteOne({ documentId, studentCode });
@@ -164,7 +171,7 @@ module.exports = {
           totalTime,
           studentCode,
           studentName,
-          isSubmit
+          isSubmit,
         },
       ]);
 
