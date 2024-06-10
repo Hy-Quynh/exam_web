@@ -114,6 +114,8 @@ module.exports = {
           disciplineName: '$discipline.name',
           description: 1,
           chapterId: 1,
+          isReverse: 1,
+          reverseAnswer: 1,
           disciplineChapters: '$discipline.chapters'
         },
       });
@@ -262,6 +264,8 @@ module.exports = {
             disciplineName: '$discipline.name',
             description: 1,
             chapterId: 1,
+            isReverse: 1,
+            reverseAnswer: 1,
             disciplineChapters: '$discipline.chapters'
           },
         }
@@ -330,5 +334,53 @@ module.exports = {
         },
       };
     }
-  }
+  },
+
+  updateExamReverse: async (examId, isReverse) => {
+    try {
+      const updateRes = await Exam.findOneAndUpdate(
+        { _id: examId },
+        { isReverse }
+      );
+
+      if (updateRes) {
+        return {
+          success: true,
+        };
+      } else {
+        throw new Error('Cập nhật đề thất bại');
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          message: error.message,
+        },
+      };
+    }
+  },
+
+  updateExamReverseAnswer: async (examId, isReverse) => {
+    try {
+      const updateRes = await Exam.findOneAndUpdate(
+        { _id: examId },
+        { reverseAnswer: isReverse }
+      );
+
+      if (updateRes) {
+        return {
+          success: true,
+        };
+      } else {
+        throw new Error('Cập nhật đề thất bại');
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          message: error.message,
+        },
+      };
+    }
+  },
 };

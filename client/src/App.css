@@ -41,3 +41,9 @@
     transform: rotate(360deg);
   }
 }
+
+.exam-kit-datetime {
+  .ant-btn {
+    background: #1677ff !important;
+  }
+}

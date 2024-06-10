@@ -1,13 +1,13 @@
-import { Button, Card, Col, Form, Input, Row, Typography } from 'antd';
+import { Button, Card, Col, Form, Input, Row, Spin, Typography } from 'antd';
 import AuthIcon from '../../assets/imgs/auth_page_icon.png';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, UserOutlined, LoadingOutlined } from '@ant-design/icons';
 import './style.scss';
-import React from 'react';
+import React, { useState } from 'react';
 
 const { Paragraph } = Typography;
 
 type LoginFieldType = {
-  studentCode?: string;
+  username?: string;
   password?: string;
 };
 
@@ -18,9 +18,12 @@ type LoginPageProps = {
   descText?: string;
   loginButtonColor?: string;
   loginButtonText?: string;
+  handleLogin?: (values: any) => Promise<void>;
 };
 
 const LoginPage: React.FC<LoginPageProps> = (props) => {
+  const [isLogin, setIsLogin] = useState<boolean>(false);
+
   return (
     <div
       className={`flex justify-center items-center h-[100vh] ${
@@ -33,7 +36,7 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
             <img
               src={props?.icon || AuthIcon}
               alt='auth-icon'
-              className='w-full hidden lg:block h-[calc(1*100%)]'
+              className='w-full hidden lg:block h-[calc(0.8*100%)]'
             />
           </Col>
           <Col lg={2} md={0}></Col>
@@ -44,17 +47,28 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
               </Paragraph>
               <Paragraph className='md:text-lg text-lg text-left font-normal'>
                 {props?.descText ||
-                  'Vui lòng nhập thông tin MSSV và Mật Khẩu của bạn!'}
+                  'Vui lòng nhập Tên đăng nhập và Mật Khẩu của bạn!'}
               </Paragraph>
-              <Form name='login-form' autoComplete='off' layout='vertical'>
+              <Form
+                name='login-form'
+                autoComplete='off'
+                layout='vertical'
+                onFinish={async (values) => {
+                  setIsLogin(true);
+                  await props?.handleLogin?.(values);
+                  setIsLogin(false);
+                }}
+              >
                 <Form.Item<LoginFieldType>
-                  name='studentCode'
-                  rules={[{ required: true, message: 'Vui lòng nhập MSSV' }]}
+                  name='username'
+                  rules={[
+                    { required: true, message: 'Vui lòng nhập tên đăng nhập' },
+                  ]}
                   className='mt-[20px]'
                 >
                   <Input
                     prefix={<UserOutlined />}
-                    placeholder='Vui lòng nhập MSSV'
+                    placeholder='Vui lòng nhập tên đăng nhập'
                     className='h-[45px] text-lg'
                   />
                 </Form.Item>
@@ -76,15 +90,17 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
                   <Button
                     type='primary'
                     htmlType='submit'
-                    className={`${props?.loginButtonColor || 'bg-purple'} ${
+                    className={`${props?.loginButtonColor || '!bg-purple'} ${
                       props?.loginButtonText || 'text-white'
                     } px-[60px] hover:!${
-                      props?.loginButtonColor || 'bg-purple'
+                      props?.loginButtonColor || '!bg-purple'
                     } hover:!${
                       props?.loginButtonText || 'text-white'
-                    } md:text-xl text-xl pb-[40px] pt-[10px] mt-[20px] font-bold`}
+                    } md:text-xl text-xl pb-[40px] pt-[10px] mt-[20px] font-bold
+                    `}
+                    disabled={isLogin}
                   >
-                    Đăng nhập
+                    {!isLogin ? 'Đăng nhập' : <Spin indicator={<LoadingOutlined style={{ fontSize: 24, color: 'white' }} spin />} />}
                   </Button>
                 </Form.Item>
               </Form>

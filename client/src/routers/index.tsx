@@ -19,6 +19,7 @@ import NewPage from '../pages/client/news/NewPage';
 import Documentpage from '../pages/client/document/DocumentPage';
 import AdminExamKit from '../pages/admin/exam-kit/ExamKit';
 import DocumentDetail from '../pages/client/documentDetail/DocumentDetail';
+import HistoryInfo from '../pages/client/historyInfo';
 
 const arrRoutes = [
   { path: ROUTER.LOGIN, element: <ClientLogin /> },
@@ -92,9 +93,13 @@ const arrRoutes = [
         path: ROUTER.DOCUMENT_DETAIl_PAGE,
         element: <DocumentDetail />,
       },
+      {
+        path: ROUTER.STUDENT_INFO,
+        element: <HistoryInfo />,
+      },
     ],
   },
-  { path: "*", element: <NotFoundPage /> },
+  { path: '*', element: <NotFoundPage /> },
 ];
 
 export const MainRouter = () => {

@@ -5,6 +5,9 @@ export type ExamKitDataType = {
   testTime: number,
   totalQuestion: number,
   examStructure: ExamKitQuestionStructure[],
+  year: number,
+  semester: number,
+  startTime: string
 };
 
 export type ExamKitQuestionStructure = {

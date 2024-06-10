@@ -8,11 +8,15 @@ export enum ROUTER {
   ADMIN_ADMINISTRATION = '/admin/administration',
   ADMIN_EXAM = '/admin/exam',
   ADMIN_EXAM_KIT = '/admin/exam-kit',
+  ADMIN_EXAM_SUBMISSION = '/admin/exam-submission',
   ADMIN_DOCUMENT = '/admin/document',
   HOMEPAGE = '/',
   EXAM_PAGE = '/exam',
+  ABOUT = '/about',
+  CONTACT = '/contact',
   EXAM_DETAIL_PAGE = '/exam/:examKitId',
   NEW_PAGE = '/news',
   DOCUMENT_PAGE = '/document',
-  DOCUMENT_DETAIl_PAGE = '/document/:examId'
+  DOCUMENT_DETAIl_PAGE = '/document/:examId',
+  STUDENT_INFO = '/student-info'
 }

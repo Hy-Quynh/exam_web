@@ -56,4 +56,18 @@ export const examAPI = {
     );
     return response;
   },
+
+  updateExamReverse: async (examId: string, isReverse: boolean) => {
+    const response = await axiosConfig.patch(`${URL}/${examId}/reverse`, {
+      isReverse,
+    });
+    return response;
+  },
+
+  updateExamReverseAnswer: async (examId: string, isReverse: boolean) => {
+    const response = await axiosConfig.patch(`${URL}/${examId}/reverse/answer`, {
+      isReverse,
+    });
+    return response;
+  },
 };

@@ -56,4 +56,17 @@ export const examKitAPI = {
     const response = await axiosConfig.get(`${URL}/${examKitId}/question`);
     return response;
   },
+
+  updateExamKitReverseAnswer: async (examKitId: string, isReverse: boolean) => {
+    const response = await axiosConfig.patch(`${URL}/${examKitId}/reverse/answer`, {
+      isReverse,
+    });
+    return response;
+  },
+  updateExamKitOpen: async (examKitId: string, isOpen: boolean) => {
+    const response = await axiosConfig.patch(`${URL}/${examKitId}/open`, {
+      isOpen,
+    });
+    return response;
+  },
 };

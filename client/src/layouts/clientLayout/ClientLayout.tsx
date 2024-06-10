@@ -4,10 +4,13 @@ import {
   Col,
   Divider,
   Drawer,
+  Dropdown,
   Grid,
   Layout,
   Menu,
+  MenuProps,
   Row,
+  Space,
   Typography,
 } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -23,15 +26,19 @@ import {
 } from '@ant-design/icons';
 import { ROUTER } from '../../enums/router/router';
 import { subjectAPI } from '../../services/subjects';
+import { parseJSON } from '../../utils/handleData';
+import { LOGIN_KEY } from '../../constants/table';
 
 const { Header, Content, Footer } = Layout;
 const { useBreakpoint } = Grid;
 const { Paragraph } = Typography;
 
 const renderNavItem = (textColor?: string) => {
+  const useInfo = parseJSON(localStorage.getItem(LOGIN_KEY), {});
+
   const linkColor = textColor || '!text-white';
 
-  const navItems = [
+  const navLogined = [
     {
       key: 'exam',
       label: (
@@ -53,7 +60,28 @@ const renderNavItem = (textColor?: string) => {
       children: [] as any,
     },
   ];
-  return navItems;
+
+  const navNotLogin = [
+    {
+      key: 'about',
+      label: (
+        <a href={ROUTER.ABOUT} className={`${linkColor} text-base`}>
+          Giới thiệu chung
+        </a>
+      ),
+    },
+    {
+      key: 'contact',
+      label: (
+        <a href={ROUTER.CONTACT} className={`${linkColor} text-base`}>
+          Liên hệ
+        </a>
+      ),
+      children: [] as any,
+    },
+  ];
+
+  return useInfo?.username ? navLogined : navNotLogin;
 };
 
 const App: React.FC = () => {
@@ -61,6 +89,30 @@ const App: React.FC = () => {
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [navItem, setNavItem] = useState(renderNavItem());
   const navigate = useNavigate();
+  const useInfo = parseJSON(localStorage.getItem(LOGIN_KEY), {});
+
+  const userDropDown: MenuProps['items'] = [
+    {
+      label: <a href='/student-info'>Thông tin cá nhân</a>,
+      key: '0',
+    },
+    {
+      type: 'divider',
+    },
+    {
+      label: (
+        <div
+          onClick={() => {
+            localStorage.clear();
+            navigate('/login');
+          }}
+        >
+          Đăng xuất
+        </div>
+      ),
+      key: '1',
+    },
+  ];
 
   const getNavDocumentItem = async () => {
     try {
@@ -175,13 +227,29 @@ const App: React.FC = () => {
           </Col>
           <Col lg={6} md={4} span={6} className='flex-col flex justify-center'>
             <div className='flex justify-end items-center'>
-              <Button
-                type='primary'
-                className='bg-purple'
-                onClick={() => navigate('/login')}
-              >
-                Đăng nhập
-              </Button>
+              {useInfo?.username ? (
+                <Dropdown menu={{ items: userDropDown }} trigger={['click']}>
+                  <a
+                    onClick={(e) => e.preventDefault()}
+                    className='text-white text-base'
+                  >
+                    <Space>
+                      <p className='text-[#6aa84f] font-bold'>
+                        {useInfo?.name}
+                      </p>
+                      <DownOutlined />
+                    </Space>
+                  </a>
+                </Dropdown>
+              ) : (
+                <Button
+                  type='primary'
+                  className='!bg-[#448A1E]'
+                  onClick={() => navigate('/login')}
+                >
+                  Đăng nhập
+                </Button>
+              )}
             </div>
           </Col>
         </Row>

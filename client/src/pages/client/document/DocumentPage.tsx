@@ -208,7 +208,6 @@ function Documentpage() {
                       </div>
                     </div>
                   ),
-                  titleTag: <Tag color='warning'>Tiến độ: Đang cập nhật</Tag>,
                   content: item?.description,
                   description: 'Giáo viên đăng tải: ......',
                   title: item?.name,

@@ -82,6 +82,11 @@ module.exports = {
           updatedAt: 1,
           disciplineName: '$discipline.name',
           description: 1,
+          reverseAnswer: 1,
+          year: 1,
+          semester: 1,
+          startTime: 1,
+          openExamStatus: 1,
           disciplineChapters: '$discipline.chapters',
         },
       });
@@ -115,6 +120,9 @@ module.exports = {
     testTime,
     totalQuestion,
     examStructure,
+    year,
+    semester,
+    startTime
   }) => {
     try {
       const addRes = await ExamKit.insertMany([
@@ -125,8 +133,12 @@ module.exports = {
           testTime,
           totalQuestion,
           examStructure,
+          year: Number(year),
+          semester: Number(semester),
+          startTime
         },
       ]);
+      
 
       if (addRes) {
         const getExamKit = await ExamKit.find({ isDelete: false })
@@ -181,7 +193,10 @@ module.exports = {
     description,
     testTime,
     totalQuestion,
-    examStructure
+    examStructure,
+    year,
+    semester,
+    startTime
   ) => {
     try {
       const updateRes = await ExamKit.findOneAndUpdate(
@@ -193,6 +208,9 @@ module.exports = {
           testTime,
           totalQuestion,
           examStructure,
+          year: Number(year),
+          semester: Number(semester),
+          startTime
         }
       );
 
@@ -249,6 +267,11 @@ module.exports = {
             updatedAt: 1,
             disciplineName: '$discipline.name',
             description: 1,
+            reverseAnswer: 1,
+            year: 1,
+            semester: 1,
+            startTime: 1,
+            openExamStatus: 1,
             disciplineChapters: '$discipline.chapters',
           },
         },
@@ -354,10 +377,15 @@ module.exports = {
             totalQuestion: 1,
             examStructure: 1,
             isReverse: 1,
+            reverseAnswer: 1,
             createdAt: 1,
             updatedAt: 1,
             disciplineName: '$discipline.name',
             description: 1,
+            year: 1,
+            semester: 1,
+            startTime: 1,
+            openExamStatus: 1,
             disciplineChapters: '$discipline.chapters',
           },
         },
@@ -405,6 +433,54 @@ module.exports = {
           message: 'Lấy thông tin bộ đề thất bại',
         },
       };
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          message: error.message,
+        },
+      };
+    }
+  },
+
+  updateExamKitReverseAnswer: async (examKitId, isReverse) => {
+    try {
+      const updateRes = await ExamKit.findOneAndUpdate(
+        { _id: examKitId },
+        { reverseAnswer: isReverse }
+      );
+
+      if (updateRes) {
+        return {
+          success: true,
+        };
+      } else {
+        throw new Error('Cập nhật bộ đề thất bại');
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          message: error.message,
+        },
+      };
+    }
+  },
+
+  updateExamKitOpen: async (examKitId, isOpen) => {
+    try {
+      const updateRes = await ExamKit.findOneAndUpdate(
+        { _id: examKitId },
+        { openExamStatus: isOpen }
+      );
+
+      if (updateRes) {
+        return {
+          success: true,
+        };
+      } else {
+        throw new Error('Cập nhật bộ đề thất bại');
+      }
     } catch (error) {
       return {
         success: false,

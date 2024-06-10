@@ -67,5 +67,25 @@ module.exports = {
     const { disciplineId, chapterId } = req.params;
     const results = await examMiddleware.checkExistDisciplineExamChapter(disciplineId, chapterId);
     res.json(results);
-  })
+  }),
+
+  updateExamReverse: asyncHandler(async (req, res) => {
+    const { examId } = req.params;
+    const { isReverse } = req.body;
+    const results = await examMiddleware.updateExamReverse(
+      examId,
+      isReverse
+    );
+    res.json(results);
+  }),
+
+  updateExamReverseAnswer: asyncHandler(async (req, res) => {
+    const { examId } = req.params;
+    const { isReverse } = req.body;
+    const results = await examMiddleware.updateExamReverseAnswer(
+      examId,
+      isReverse
+    );
+    res.json(results);
+  }),
 };

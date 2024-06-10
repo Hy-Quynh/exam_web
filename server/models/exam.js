@@ -14,13 +14,17 @@ const examSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    teacherId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: false,
+    teacherCode: {
+      type: String,
+      required: true,
     },
     questionData: [
       {
         question: {
+          type: String,
+          required: true,
+        },
+        answerType: {
           type: String,
           required: true,
         },
@@ -54,6 +58,16 @@ const examSchema = new mongoose.Schema(
       default: true,
     },
     isDelete: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    isReverse: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    reverseAnswer: {
       type: Boolean,
       required: false,
       default: false,

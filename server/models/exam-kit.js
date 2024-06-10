@@ -14,9 +14,9 @@ const examKitSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    teacherId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: false,
+    teacherCode: {
+      type: String,
+      required: true,
     },
     description: {
       type: String,
@@ -31,6 +31,24 @@ const examKitSchema = new mongoose.Schema(
       type: Number,
       required: true,
       default: 0,
+    },
+    year: {
+      type: Number,
+      required: true,
+      default: new Date().getFullYear(),
+    },
+    semester: {
+      type: Number,
+      required: true,
+    },
+    startTime: {
+      type: String,
+      required: true,
+    },
+    openExamStatus: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     examStructure: [
       {
@@ -51,6 +69,11 @@ const examKitSchema = new mongoose.Schema(
       default: true,
     },
     isReverse: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    reverseAnswer: {
       type: Boolean,
       required: false,
       default: false,

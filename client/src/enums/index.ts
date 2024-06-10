@@ -1,0 +1,5 @@
+export enum LOGIN_TYPE {
+  STUDENT =  'STUDENT',
+  TEACHER = 'TEACHER',
+  ADMIN = 'ADMIN'
+}

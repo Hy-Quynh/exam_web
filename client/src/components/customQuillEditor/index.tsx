@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
 import { customUpload, validateFn } from '../../utils/upload-file';
 import { message } from 'antd';
+import 'react-quill/dist/quill.snow.css';
 
 type QuillEditorProps = {
   initValue: string;

@@ -24,8 +24,13 @@ export interface ExamKitType {
   updatedAt: string;
   disciplineName: string;
   description: string;
+  reverseAnswer: boolean;
   disciplineChapters: { _id: string; name: string }[];
   questionData?: any
+  year: number,
+  semester: number
+  startTime: string,
+  openExamStatus: boolean
 }
 
 const AdminExamKit: React.FC = () => {
@@ -68,6 +73,17 @@ const AdminExamKit: React.FC = () => {
       render: (_, record: any) => <div>{displayDate(record)}</div>,
     },
     {
+      title: 'Đảo đáp án',
+      dataIndex: 'reverseAnswer',
+      key: 'reverseAnswer',
+      render: (_, record) => (
+        <Switch
+          checked={record?.reverseAnswer}
+          onChange={(checked) => handleChangeReverseAnswer(record?._id, checked)}
+        />
+      ),
+    },
+    {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
@@ -78,17 +94,17 @@ const AdminExamKit: React.FC = () => {
         />
       ),
     },
-    {
-      title: 'Đảo đề',
-      dataIndex: 'isReverse',
-      key: 'isReverse',
-      render: (_, record) => (
-        <Switch
-          checked={record?.isReverse}
-          onChange={(checked) => handleChangeReverse(record?._id, checked)}
-        />
-      ),
-    },
+    // {
+    //   title: 'Đảo đề',
+    //   dataIndex: 'isReverse',
+    //   key: 'isReverse',
+    //   render: (_, record) => (
+    //     <Switch
+    //       checked={record?.isReverse}
+    //       onChange={(checked) => handleChangeReverse(record?._id, checked)}
+    //     />
+    //   ),
+    // },
     {
       title: 'Action',
       key: 'action',
@@ -181,6 +197,23 @@ const AdminExamKit: React.FC = () => {
     } catch (error) {
       message.error('Xoá đề kiểm tra thất bại');
       console.log('handleDelete error >> ', error);
+    }
+  };
+
+  const handleChangeReverseAnswer = async (examKitId: string, checked: boolean) => {
+    try {
+      const res = await examKitAPI.updateExamKitReverseAnswer(examKitId, checked);
+      if (res?.data?.success) {
+        message.success('Cập nhật đảo đề thành công');
+        getExamKitList();
+      } else {
+        message.error(
+          res?.data?.error?.message || 'Cập nhật thông tin thất bại'
+        );
+      }
+    } catch (error) {
+      message.error('Cập nhật đảo đề thất bại');
+      console.log('handleChangeReverse error >> ', error);
     }
   };
 

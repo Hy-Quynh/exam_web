@@ -5,7 +5,7 @@ import {
   BarChartOutlined,
   SettingOutlined,
   FileTextOutlined,
-  ContainerOutlined
+  ContainerOutlined,
 } from '@ant-design/icons';
 import { ROUTER } from '../../enums/router/router';
 
@@ -18,6 +18,10 @@ export const MenuItem = [
         Thống kê
       </a>
     ),
+    style:
+      window.location.pathname === ROUTER?.ADMIN
+        ? { background: 'white', color: 'black' }
+        : {},
   },
   {
     key: 'admin-discipline',
@@ -27,6 +31,10 @@ export const MenuItem = [
         Bộ môn
       </a>
     ),
+    style:
+      window.location.pathname === ROUTER?.ADMIN_SUBJECT
+        ? { background: 'white', color: 'black' }
+        : {},
   },
   {
     key: 'admin-subject',
@@ -36,6 +44,10 @@ export const MenuItem = [
         Môn học
       </a>
     ),
+    style:
+      window.location.pathname === ROUTER?.ADMIN_DISCIPLINE
+        ? { background: 'white', color: 'black' }
+        : {},
   },
   {
     key: 'admin-exam',
@@ -45,25 +57,50 @@ export const MenuItem = [
         Tài liệu
       </a>
     ),
+    style:
+      window.location.pathname === ROUTER?.ADMIN_EXAM
+        ? { background: 'white', color: 'black' }
+        : {},
   },
   {
     key: 'admin-exam-kit',
-    icon:  <ContainerOutlined />,
+    icon: <ContainerOutlined />,
     label: (
       <a href={ROUTER.ADMIN_EXAM_KIT} className='text-base'>
-        Bộ đề
+        Đề kiểm tra
       </a>
     ),
+    style:
+      window.location.pathname === ROUTER?.ADMIN_EXAM_KIT
+        ? { background: 'white', color: 'black' }
+        : {},
   },
   {
-    key: 'admin-teacher',
-    icon: <TeamOutlined />,
+    key: 'admin-exam-submission',
+    icon: <ContainerOutlined />,
     label: (
-      <a href={ROUTER.ADMIN_TEACHER} className='text-base'>
-        Giáo viên
+      <a href={ROUTER.ADMIN_EXAM_SUBMISSION} className='text-base'>
+        DS nộp bài
       </a>
     ),
+    style:
+      window.location.pathname === ROUTER?.ADMIN_EXAM_SUBMISSION
+        ? { background: 'white', color: 'black' }
+        : {},
   },
+  // {
+  //   key: 'admin-teacher',
+  //   icon: <TeamOutlined />,
+  //   label: (
+  //     <a href={ROUTER.ADMIN_TEACHER} className='text-base'>
+  //       Giáo viên
+  //     </a>
+  //   ),
+  //   style:
+  //     window.location.pathname === ROUTER?.ADMIN_TEACHER
+  //       ? { background: 'white', color: 'black' }
+  //       : {},
+  // },
   {
     key: 'admin-administration',
     icon: <SettingOutlined />,
@@ -72,5 +109,9 @@ export const MenuItem = [
         Quản trị
       </a>
     ),
+    style:
+      window.location.pathname === ROUTER?.ADMIN_ADMINISTRATION
+        ? { background: 'white', color: 'black' }
+        : {},
   },
 ];

@@ -4,13 +4,14 @@ import {
   Checkbox,
   Form,
   Input,
+  Radio,
   Select,
   Typography,
   message,
 } from 'antd';
 import CustomModal from '../../../../components/customModal/CustomModal';
 import { ModalControlType } from '../../../../types/modal';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { examAPI } from '../../../../services/exams';
 import { CloseOutlined } from '@ant-design/icons';
 import './../style.scss';
@@ -18,8 +19,8 @@ import { ExamDataType } from '../../../../types/exam';
 import { DisciplineType } from '../../discipline/Discipline';
 import { ExamType } from '../Exam';
 import { disciplineAPI } from '../../../../services/disciplines';
-import 'react-quill/dist/quill.snow.css';
 import CustomQuillEditor from '../../../../components/customQuillEditor';
+import { AnswerTypeEnum } from '../../../../enums/exams';
 
 type ControlExamProps = {
   isOpen: boolean;
@@ -275,6 +276,40 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
                     />
                   </Form.Item>
 
+                  <Form.Item
+                    label='Dạng trả lời'
+                    name={[field.name, 'answerType']}
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Vui lòng chọn một tùy chọn!',
+                      },
+                    ]}
+                  >
+                    <Radio.Group
+                      onChange={(event) => {
+                        const anwserList = form.getFieldValue([
+                          'questionData',
+                          field.name,
+                          'answerList',
+                        ]);
+                        const updateAnwser = anwserList?.map((item: any) => {
+                          return {
+                            ...item,
+                            isTrue: false,
+                          };
+                        });
+                        form.setFieldValue(
+                          ['questionData', field.name, 'answerList'],
+                          updateAnwser
+                        );
+                      }}
+                    >
+                      <Radio value={AnswerTypeEnum.RADIO}> Một đáp án </Radio>
+                      <Radio value={AnswerTypeEnum.CHECKOX}>Nhiều đáp án</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+
                   {/* Nest Form.List */}
                   <Form.Item className='answer-form-item mt-[20px]'>
                     <div className='answer-list-title'>
@@ -292,6 +327,14 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
                                 'Vui lòng thêm câu trả lời'
                               );
                             }
+                            
+                            const filterTrue = answer?.filter((item: any) => item?.isTrue)
+                            if (!filterTrue?.length) {
+                              return Promise.reject(
+                                'Vui lòng chọn đáp án'
+                              );
+                            }
+                            
                             return Promise.resolve();
                           },
                         },
@@ -333,11 +376,71 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
                               </div>
                               <div className='answer-checkbox'>
                                 <Form.Item
+                                  dependencies={[
+                                    ['questionData', field.name, 'answerType'],
+                                  ]}
                                   noStyle
-                                  name={[subField.name, 'isTrue']}
-                                  valuePropName='checked'
                                 >
-                                  <Checkbox />
+                                  {({ getFieldValue }: any) => {
+                                    return getFieldValue([
+                                      'questionData',
+                                      field.name,
+                                      'answerType',
+                                    ]) === AnswerTypeEnum.CHECKOX ? (
+                                      <Form.Item
+                                        noStyle
+                                        name={[subField.name, 'isTrue']}
+                                        valuePropName='checked'
+                                      >
+                                        <Checkbox />
+                                      </Form.Item>
+                                    ) : (
+                                      <Form.Item
+                                        noStyle
+                                        name={[subField.name, 'isTrue']}
+                                        valuePropName='checked'
+                                      >
+                                        <Radio
+                                          onChange={(event) => {
+                                            const anwserList =
+                                              form.getFieldValue([
+                                                'questionData',
+                                                field.name,
+                                                'answerList',
+                                              ]);
+
+                                            const updateAnwser =
+                                              anwserList?.map((item: any) => {
+                                                return {
+                                                  ...item,
+                                                  isTrue: false,
+                                                };
+                                              });
+
+                                            form.setFieldValue(
+                                              [
+                                                'questionData',
+                                                field.name,
+                                                'answerList',
+                                              ],
+                                              updateAnwser
+                                            );
+
+                                            form.setFieldValue(
+                                              [
+                                                'questionData',
+                                                field.name,
+                                                'answerList',
+                                                subField.name,
+                                                'isTrue',
+                                              ],
+                                              true
+                                            );
+                                          }}
+                                        />
+                                      </Form.Item>
+                                    );
+                                  }}
                                 </Form.Item>
                               </div>
                               <CloseOutlined

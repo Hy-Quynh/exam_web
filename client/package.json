@@ -13,6 +13,7 @@
     "@types/react-dom": "^18.2.22",
     "antd": "^5.15.3",
     "axios": "^1.6.8",
+    "dayjs": "^1.11.11",
     "dotenv-webpack": "^8.1.0",
     "firebase": "^10.12.0",
     "interweave": "^13.1.0",

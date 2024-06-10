@@ -1,4 +1,12 @@
-import { Button, Form, Input, Select, Space, Typography, message } from 'antd';
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  Select,
+  Typography,
+  message,
+} from 'antd';
 import CustomModal from '../../../../components/customModal/CustomModal';
 import { ModalControlType } from '../../../../types/modal';
 import { useEffect, useState } from 'react';
@@ -9,6 +17,8 @@ import { disciplineAPI } from '../../../../services/disciplines';
 import { ExamKitType } from '../ExamKit';
 import { examKitAPI } from '../../../../services/exam-kit';
 import { ExamKitDataType } from '../../../../types/examKit';
+import moment from 'moment';
+import dayjs from 'dayjs';
 
 type ControlExamKitProps = {
   isOpen: boolean;
@@ -79,6 +89,9 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
         testTime: formData?.testTime,
         totalQuestion: formData?.totalQuestion,
         examStructure: formData?.examStructure,
+        year: formData?.year?.year(),
+        semester: formData?.semester,
+        startTime: formData?.startTime,
       };
 
       const res = await examKitAPI.addNewExamKit(examKitData);
@@ -107,6 +120,9 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
           testTime: formData?.testTime,
           totalQuestion: formData?.totalQuestion,
           examStructure: formData?.examStructure,
+          year: formData?.year?.year(),
+          semester: formData?.semester,
+          startTime: formData?.startTime,
         };
 
         const res = await examKitAPI.updateExamKit(
@@ -128,6 +144,30 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
     }
   };
 
+  const handleChangeOpenStatus = async () => {
+    try {
+      if (!props?.initData?._id) {
+        return message.error('Cập nhật thất bại');
+      }
+
+      const res = await examKitAPI.updateExamKitOpen(
+        props?.initData?._id,
+        !props?.initData?.openExamStatus ? true : false
+      );
+      if (res?.data?.success) {
+        message.success('Cập nhật trạng thái thành công');
+        props?.reloadData();
+      } else {
+        message.error(
+          res?.data?.error?.message || 'Cập nhật thông tin thất bại'
+        );
+      }
+    } catch (error) {
+      message.error('Cập nhật trạng thái thất bại');
+      console.log('handleChangeStatus error >> ', error);
+    }
+  };
+
   return (
     <CustomModal
       isOpen={props?.isOpen}
@@ -146,6 +186,13 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
           testTime: props?.initData?.testTime,
           totalQuestion: props?.initData?.totalQuestion,
           examStructure: props?.initData?.examStructure,
+          year: props?.initData?.year
+            ? dayjs(moment(props?.initData?.year, 'YYYY').format('YYYY-DD-MM'))
+            : '',
+          semester: props?.initData?.semester,
+          startTime: props?.initData?.startTime
+            ? dayjs(props?.initData?.startTime)
+            : '',
         }}
       >
         <Form.Item
@@ -223,12 +270,89 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
         </Form.Item>
 
         <Form.Item
+          label='Năm thi'
+          rules={[
+            { required: true, message: 'Vui lòng chọn năm thi' },
+            {
+              validator: async (_, year) => {
+                if (year.year() < new Date().getFullYear()) {
+                  return Promise.reject('Năm thi cần lớn hơn năm hiện tại');
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+          name='year'
+        >
+          <DatePicker picker='year' style={{ width: '100%' }}></DatePicker>
+        </Form.Item>
+
+        <Form.Item
+          label='Học kì'
+          rules={[
+            { required: true, message: 'Vui lòng chọn học kì' },
+            {
+              validator: async (_, semester) => {
+                if (semester <= 0) {
+                  return Promise.reject('Học kì cần lớn hơn 0');
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+          name='semester'
+        >
+          <Input type='number' placeholder='Nhập vào học kì' />
+        </Form.Item>
+
+        <Form.Item
+          label='Ngày thi'
+          rules={[
+            { required: true, message: 'Vui lòng chọn ngày thi' },
+            {
+              validator: async (_, date) => {
+                if (
+                  moment(
+                    date.format('DD-MM-YYYY HH:mm'),
+                    'DD-MM-YYYY HH:mm'
+                  ).isBefore(moment(moment(), 'DD-MM-YYYY HH:mm'))
+                ) {
+                  return Promise.reject('Ngày thi cần lớn hơn ngày hiện tại');
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+          name='startTime'
+        >
+          <DatePicker
+            picker='date'
+            style={{ width: '100%' }}
+            showTime
+            popupClassName='exam-kit-datetime'
+          ></DatePicker>
+        </Form.Item>
+
+        <Form.Item
           label='Mô tả'
           rules={[{ required: true, message: 'Vui lòng nhập mô tả' }]}
           name='description'
         >
           <TextArea rows={4} />
         </Form.Item>
+
+        {props?.type === 'UPDATE' ? (
+          <div className='mb-[20px]'>
+            <Button
+              className={`${props?.initData?.openExamStatus ? 'bg-[#e5c100]' : 'bg-primary'} text-white border-none`}
+              onClick={() => handleChangeOpenStatus()}
+            >
+              {props?.initData?.openExamStatus ? 'Kết thúc thi' : 'Bắt đầu thi'}
+            </Button>
+          </div>
+        ) : (
+          <></>
+        )}
 
         <Typography.Paragraph>Bộ câu hỏi</Typography.Paragraph>
 

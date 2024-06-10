@@ -10,5 +10,7 @@ router.put('/:examKitId', examKitController.updateExamKit)
 router.patch('/:examKitId/status', examKitController.updateExamKitStatus)
 router.patch('/:examKitId/reverse', examKitController.updateExamKitReverse)
 router.get('/:examKitId/question', examKitController.getExamKitQuestion);
+router.patch('/:examKitId/reverse/answer', examKitController.updateExamKitReverseAnswer)
+router.patch('/:examKitId/open', examKitController.updateExamKitOpen)
 
 module.exports = router;

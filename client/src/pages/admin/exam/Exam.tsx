@@ -20,6 +20,8 @@ export interface ExamType {
   status: boolean;
   createdAt: string;
   chapterId: string;
+  isReverse: boolean;
+  reverseAnswer: boolean;
   disciplineChapters: {_id: string, name: string}[]
 }
 
@@ -63,6 +65,28 @@ const AdminExam: React.FC = () => {
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (_, record: any) => <div>{displayDate(record)}</div>,
+    },
+    {
+      title: 'Đảo đề',
+      dataIndex: 'isReverse',
+      key: 'isReverse',
+      render: (_, record) => (
+        <Switch
+          checked={record?.isReverse}
+          onChange={(checked) => handleChangeReverse(record?._id, checked)}
+        />
+      ),
+    },
+    {
+      title: 'Đảo đáp án',
+      dataIndex: 'reverseAnswer',
+      key: 'reverseAnswer',
+      render: (_, record) => (
+        <Switch
+          checked={record?.reverseAnswer}
+          onChange={(checked) => handleChangeReverseAnswer(record?._id, checked)}
+        />
+      ),
     },
     {
       title: 'Trạng thái',
@@ -158,6 +182,40 @@ const AdminExam: React.FC = () => {
     } catch (error) {
       message.error('Xoá tài liệu thất bại');
       console.log('handleDelete error >> ', error);
+    }
+  };
+
+  const handleChangeReverse = async (examId: string, checked: boolean) => {
+    try {
+      const res = await examAPI.updateExamReverse(examId, checked);
+      if (res?.data?.success) {
+        message.success('Cập nhật đảo đề thành công');
+        getExamList();
+      } else {
+        message.error(
+          res?.data?.error?.message || 'Cập nhật thông tin thất bại'
+        );
+      }
+    } catch (error) {
+      message.error('Cập nhật đảo đề thất bại');
+      console.log('handleChangeReverse error >> ', error);
+    }
+  };
+
+  const handleChangeReverseAnswer = async (examId: string, checked: boolean) => {
+    try {
+      const res = await examAPI.updateExamReverseAnswer(examId, checked);
+      if (res?.data?.success) {
+        message.success('Cập nhật đảo đề thành công');
+        getExamList();
+      } else {
+        message.error(
+          res?.data?.error?.message || 'Cập nhật thông tin thất bại'
+        );
+      }
+    } catch (error) {
+      message.error('Cập nhật đảo đề thất bại');
+      console.log('handleChangeReverse error >> ', error);
     }
   };
 
