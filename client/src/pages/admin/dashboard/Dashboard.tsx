@@ -84,7 +84,7 @@ export const AdminDashboard = () => {
       <div className='flex items-center justify-center mt-[50px] gap-x-[100px] flex-wrap gap-y-[20px] mb-[50px]'>
         <div className='bg-[#6aa84f] py-[30px] px-[75px] rounded-[16px]'>
           <p className='text-xl font-bold text-center text-white'>
-            Tổng số
+            Tổng số sinh viên
           </p>
           <p className='text-[white] text-lg font-bold text-center'>
             {statisticData?.totalStudent || 0}
@@ -93,7 +93,7 @@ export const AdminDashboard = () => {
 
         <div className='bg-[#6aa84f] py-[30px] px-[50px] rounded-[16px]'>
           <p className='text-xl font-bold text-center text-white'>
-            Dưới trung bình
+            Bài thi dưới trung bình
           </p>
           <p className='text-[white] text-lg font-bold text-center'>
             {statisticData?.belowAverage || 0}
@@ -102,7 +102,7 @@ export const AdminDashboard = () => {
 
         <div className='bg-[#6aa84f] py-[30px] px-[50px] rounded-[16px]'>
           <p className='text-xl font-bold text-center  text-white'>
-            Trên trung bình
+            Bài thi trên trung bình
           </p>
           <p className='text-[white] text-lg font-bold text-center'>
             {statisticData?.aboveAverage || 0}
