@@ -4,8 +4,8 @@ import axiosConfig from '../axiosConfig';
 const URL = '/subject';
 
 export const subjectAPI = {
-  getAllSubject: async(limit?: number, offset?: number, search?: string) => {
-    const response = await axiosConfig.get(`${URL}?limit=${limit}&offset=${offset}&search=${search}`);
+  getAllSubject: async(limit?: number, offset?: number, search?: string, status?: boolean) => {
+    const response = await axiosConfig.get(`${URL}?limit=${limit}&offset=${offset}&search=${search}&status=${status}`);
     return response;
   },
 
@@ -34,8 +34,8 @@ export const subjectAPI = {
     return response;
   },
 
-  getSubjectDiscipline: async() => {
-    const response = await axiosConfig.get(`${URL}/discipline/list`);
+  getSubjectDiscipline: async(status: boolean) => {
+    const response = await axiosConfig.get(`${URL}/discipline/list?status=${status}`);
     return response;
   },
 };

@@ -31,7 +31,18 @@ module.exports = {
       studentCode,
       examId
     );
-    
+
+    res.json(results);
+  }),
+
+  statisticExamResult: asyncHandler(async (req, res) => {
+    const { startDate, endDate } = req?.query;
+
+    const results = await examResultMiddleware.statisticExamResult(
+      startDate,
+      endDate
+    );
+
     res.json(results);
   }),
 };

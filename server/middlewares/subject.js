@@ -2,32 +2,29 @@ const Subject = require('../models/subject');
 const Discipline = require('../models/discipline');
 
 module.exports = {
-  getAllSubject: async (limit, offset, search) => {
+  getAllSubject: async (limit, offset, search, status) => {
     try {
       let getSubject = null;
       const newSearch = search && search !== 'undefined' ? search : '';
+      const findQuery = {
+        name: { $regex: new RegExp(newSearch.toLowerCase(), 'i') },
+        isDelete: false,
+      };
+
+      if (status !== 'undefined') {
+        findQuery.status = !!status;
+      }
 
       if (limit === 'undefined' && offset === 'undefined') {
-        getSubject = await Subject.find({
-          name: { $regex: new RegExp(newSearch.toLowerCase(), 'i') },
-          isDelete: false,
-        })
-          .lean()
-          .exec();
+        getSubject = await Subject.find(findQuery).lean().exec();
       } else if (offset === 'undefined' && limit) {
-        getSubject = await Subject.find({
-          name: { $regex: new RegExp(newSearch.toLowerCase(), 'i') },
-          isDelete: false,
-        })
+        getSubject = await Subject.find(findQuery)
           .skip(0)
           .limit(limit)
           .lean()
           .exec();
       } else {
-        getSubject = await Subject.find({
-          name: { $regex: new RegExp(newSearch.toLowerCase(), 'i') },
-          isDelete: false,
-        })
+        getSubject = await Subject.find(findQuery)
           .skip(offset * limit)
           .limit(limit)
           .lean()
@@ -179,17 +176,24 @@ module.exports = {
     }
   },
 
-  getSubjectDiscipline: async () => {
+  getSubjectDiscipline: async (status) => {
     try {
-      const listSubject = await Subject.find({ status: true, isDelete: false }).lean().exec();
+      const query = { isDelete: false };
+
+      if (status !== 'undefined') {
+        query.status = !!status;
+      }
+
+      const listSubject = await Subject.find(query).lean().exec();
 
       for (let i = 0; i < listSubject.length; i++) {
         const discipline = await Discipline.find({
           subjectId: listSubject[i]._id,
           status: true,
           isDelete: false,
-        }).lean().exec();
-
+        })
+          .lean()
+          .exec();
 
         listSubject[i].listDiscipline = [...discipline];
       }
@@ -198,7 +202,6 @@ module.exports = {
         success: true,
         payload: listSubject,
       };
-
     } catch (error) {
       return {
         success: false,

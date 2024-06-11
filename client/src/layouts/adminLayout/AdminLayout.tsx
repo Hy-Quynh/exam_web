@@ -40,14 +40,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
     {
       key: '1',
       label: (
-        <a href='/admin/info' className='text-base'>
-          Thông tin
-        </a>
-      ),
-    },
-    {
-      key: '2',
-      label: (
         <div
           className='text-base'
           onClick={() => {

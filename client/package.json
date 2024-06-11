@@ -13,12 +13,15 @@
     "@types/react-dom": "^18.2.22",
     "antd": "^5.15.3",
     "axios": "^1.6.8",
+    "chart.js": "^4.4.3",
     "dayjs": "^1.11.11",
     "dotenv-webpack": "^8.1.0",
     "firebase": "^10.12.0",
     "interweave": "^13.1.0",
     "moment": "^2.30.1",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-csv": "^2.2.2",
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1",
     "react-quill": "^2.0.0",
@@ -52,5 +55,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-csv": "^1.1.10"
   }
 }

@@ -15,7 +15,7 @@ const ExamPage: React.FC = () => {
 
   const getDisciplineList = async () => {
     try {
-      const res = await disciplineAPI.getAllDiscipline();
+      const res = await disciplineAPI.getAllDiscipline(undefined, undefined, undefined, undefined, true);
 
       if (res?.data?.success) {
         const discipline = res?.data?.payload?.discipline;
@@ -35,7 +35,9 @@ const ExamPage: React.FC = () => {
         undefined,
         undefined,
         '',
-        discipline
+        discipline,
+        undefined, 
+        true
       );
       if (res?.data?.success) {
         setExamList(res?.data?.payload?.examKit);
@@ -67,7 +69,7 @@ const ExamPage: React.FC = () => {
           ]}
         />
       </div>
-      <Row wrap={true} justify={'start'} className='mb-[50px]'>
+      {/* <Row wrap={true} justify={'start'} className='mb-[50px]'>
         <Typography.Paragraph className='text-xl font-medium w-[40%] text-left'>
           Sắp xếp
         </Typography.Paragraph>
@@ -86,7 +88,7 @@ const ExamPage: React.FC = () => {
             }}
           />
         </div>
-      </Row>
+      </Row> */}
       <Row wrap={true}>
         <Col md={7} span={24}>
           <SideList
@@ -107,17 +109,16 @@ const ExamPage: React.FC = () => {
                   extraTitleDesc: (
                     <div>
                       <div>
-                        <p className='text-lg'>
+                        <p className='text-lg font-bold'>
                           Thời lượng làm bài: {item?.testTime}p
                         </p>
-                        <p className='text-lg'>
+                        <p className='text-lg font-bold'>
                           Số câu hỏi: {item?.totalQuestion}
                         </p>
                       </div>
                     </div>
                   ),
                   content: item?.description,
-                  description: 'Giáo viên đăng tải: ......',
                   title: item?.name,
                   createdAt: displayDate(item?.createdAt),
                   href: `/exam/${item?._id}`,

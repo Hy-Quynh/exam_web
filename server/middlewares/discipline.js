@@ -1,7 +1,7 @@
 const Discipline = require('../models/discipline');
 
 module.exports = {
-  getAllDiscipline: async (limit, offset, search, subject) => {
+  getAllDiscipline: async (limit, offset, search, subject, status) => {
     try {
       const newSearch = search && search !== 'undefined' ? search : '';
 
@@ -24,6 +24,14 @@ module.exports = {
           $unwind: '$subject',
         },
       ];
+
+      if (status !== 'undefined') {
+        query.push({
+          $match: {
+            status: !!status
+          },
+        })
+      }
 
       if (subject && subject !== 'undefined') {
         query.push({

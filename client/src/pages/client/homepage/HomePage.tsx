@@ -24,7 +24,13 @@ const HomePage: React.FC = () => {
 
   const getDisciplineList = async () => {
     try {
-      const res = await disciplineAPI.getAllDiscipline();
+      const res = await disciplineAPI.getAllDiscipline(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
 
       if (res?.data?.success) {
         const discipline = res?.data?.payload?.discipline;
@@ -41,7 +47,14 @@ const HomePage: React.FC = () => {
 
   const getExamKitData = async (discipline: string) => {
     try {
-      const res = await examKitAPI.getAllExamKit(12, 0, '', discipline);
+      const res = await examKitAPI.getAllExamKit(
+        12,
+        0,
+        '',
+        discipline,
+        undefined,
+        true
+      );
       if (res?.data?.success) {
         setExamKitList(res?.data?.payload?.examKit);
       }
@@ -52,7 +65,16 @@ const HomePage: React.FC = () => {
 
   const getExamData = async (discipline: string) => {
     try {
-      const res = await examAPI.getAllExam(12, 0, '', discipline);
+      const res = await examAPI.getAllExam(
+        12,
+        0,
+        '',
+        discipline,
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
       if (res?.data?.success) {
         setExamList(res?.data?.payload?.exam);
       }
@@ -102,15 +124,12 @@ const HomePage: React.FC = () => {
                       ...item,
                       extraTitleDesc: (
                         <div>
-                          <div>
-                            <p className='text-base'>
-                              Số câu hỏi: {item?.questionData?.length}
-                            </p>
-                          </div>
+                          <p className='text-base font-bold'>
+                            Số câu hỏi: {item?.questionData?.length}
+                          </p>
                         </div>
                       ),
                       content: item?.description,
-                      description: 'Giáo viên đăng tải: ......',
                       title: item?.name,
                       createdAt: displayDate(item?.createdAt),
                       href: `/document/${item?._id}`,
@@ -155,21 +174,20 @@ const HomePage: React.FC = () => {
                       extraTitleDesc: (
                         <div>
                           <div>
-                            <p className='text-base'>
+                            <p className='text-base font-bold'>
                               Thời lượng làm bài: {item?.testTime}p
                             </p>
-                            <p className='text-base'>
+                            <p className='text-base font-bold'>
                               Số câu hỏi: {item?.totalQuestion}
                             </p>
                           </div>
                         </div>
                       ),
                       content: item?.description,
-                      description: 'Giáo viên đăng tải: ......',
                       title: item?.name,
                       createdAt: displayDate(item?.createdAt),
                       href: `/exam/${item?._id}`,
-                      disabledBtn: !item?.openExamStatus
+                      disabledBtn: !item?.openExamStatus,
                     };
                   })}
                   dislayActionBtn={true}

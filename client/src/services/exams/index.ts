@@ -10,10 +10,12 @@ export const examAPI = {
     search?: string,
     discipline?: string,
     subject?: string,
-    chapter?: string
+    chapter?: string,
+    teacherCode?: string,
+    status?: boolean
   ) => {
     const response = await axiosConfig.get(
-      `${URL}?limit=${limit}&offset=${offset}&search=${search}&discipline=${discipline}&subject=${subject}&chapter=${chapter}`
+      `${URL}?limit=${limit}&offset=${offset}&search=${search}&discipline=${discipline}&subject=${subject}&chapter=${chapter}&teacherCode=${teacherCode}&status=${status}`
     );
     return response;
   },

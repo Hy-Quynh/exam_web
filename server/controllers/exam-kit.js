@@ -3,12 +3,14 @@ const examKitMiddleware = require('../middlewares/exam-kit');
 
 module.exports = {
   getAllExamKit: asyncHandler(async (req, res) => {
-    const { limit, offset, search, discipline } = req.query;
+    const { limit, offset, search, discipline, teacherCode, status } = req.query;
     const results = await examKitMiddleware.getAllExamKit(
       limit,
       offset,
       search,
-      discipline
+      discipline,
+      teacherCode,
+      status
     );
     res.json(results);
   }),

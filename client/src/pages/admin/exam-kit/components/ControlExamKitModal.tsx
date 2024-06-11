@@ -50,7 +50,7 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
 
   const getDisciplineList = async () => {
     try {
-      const res = await disciplineAPI.getAllDiscipline();
+      const res = await disciplineAPI.getAllDiscipline(undefined, undefined, undefined, undefined, true);
       if (res?.data?.success) {
         setDisciplineList(res?.data?.payload?.discipline);
       } else {
@@ -201,7 +201,7 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
         }}
       >
         <Form.Item
-          label='Tên bộ đề kiểm tra'
+          label='Tên đề kiểm tra'
           rules={[
             {
               required: true,

@@ -7,6 +7,7 @@ import { LOGIN_KEY, TABLE_ITEM_PER_PAGE } from '../../../constants/table';
 import { documentResultAPI } from '../../../services/document-result';
 import { displayDate } from '../../../utils/datetime';
 import { LOGIN_TYPE } from '../../../enums';
+import { CSVLink } from 'react-csv';
 
 function DocumentHistory() {
   const [listDocument, setListDocument] = useState([]);
@@ -138,13 +139,28 @@ function DocumentHistory() {
       </div>
 
       <div className='flex justify-end mb-[20px]'>
-        <Button
-          type='primary'
-          className='bg-primary'
-          onClick={() => message.error('Chức năng chưa hoàn thiện')}
+        <CSVLink
+          data={listDocument?.map((item: any) => {
+            return {
+              'Tên tài liệu': item?.examName,
+              'Môn học': item?.disciplineName,
+              'Tên học sinh': item?.studentName,
+              'Mã học sinh': item?.studentCode,
+              'Tiến độ':
+                (Object.keys(item?.answer).length /
+                  item?.questionData?.length) *
+                  100 +
+                '%',
+              'Thời gian thực hiện': Number(item?.totalTime) + 's',
+              'Ngày thực hiện': displayDate(item?.createdAt),
+              'Trạng thái': item?.isSubmit ? 'Đã nộp' : 'Chưa nộp',
+            };
+          })}
+          filename='Danh_sach_on_tap'
+          className='bg-primary text-white px-[15px] py-[5px] hover:text-white rounded-[6px]'
         >
           Xuất CSV
-        </Button>
+        </CSVLink>
       </div>
 
       <Table

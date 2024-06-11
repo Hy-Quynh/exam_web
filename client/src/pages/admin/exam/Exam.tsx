@@ -24,7 +24,7 @@ export interface ExamType {
   chapterId: string;
   isReverse: boolean;
   reverseAnswer: boolean;
-  disciplineChapters: {_id: string, name: string}[]
+  disciplineChapters: { _id: string; name: string }[];
 }
 
 const AdminExam: React.FC = () => {
@@ -87,7 +87,9 @@ const AdminExam: React.FC = () => {
       render: (_, record) => (
         <Switch
           checked={record?.reverseAnswer}
-          onChange={(checked) => handleChangeReverseAnswer(record?._id, checked)}
+          onChange={(checked) =>
+            handleChangeReverseAnswer(record?._id, checked)
+          }
         />
       ),
     },
@@ -121,15 +123,28 @@ const AdminExam: React.FC = () => {
   ];
 
   const renderChapter = (record: any) => {
-    const chapterIndex = record?.disciplineChapters?.findIndex((it: any) => it?._id === record?.chapterId)
+    const chapterIndex = record?.disciplineChapters?.findIndex(
+      (it: any) => it?._id === record?.chapterId
+    );
 
-    return `Chương ${chapterIndex + 1}: ${record?.disciplineChapters?.[chapterIndex]?.name}`
-    
-  }
+    return `Chương ${chapterIndex + 1}: ${
+      record?.disciplineChapters?.[chapterIndex]?.name
+    }`;
+  };
 
   const getExamList = async () => {
     try {
-      const res = await examAPI.getAllExam();
+      const res = await examAPI.getAllExam(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        customerData.type === LOGIN_TYPE.TEACHER
+          ? customerData.username
+          : undefined
+      );
 
       if (res?.data?.success) {
         setExamList(res?.data?.payload?.exam);
@@ -173,7 +188,6 @@ const AdminExam: React.FC = () => {
     }
   };
 
-
   const handleDelete = async (examId: string) => {
     try {
       const res = await examAPI.deleteExam(examId);
@@ -206,7 +220,10 @@ const AdminExam: React.FC = () => {
     }
   };
 
-  const handleChangeReverseAnswer = async (examId: string, checked: boolean) => {
+  const handleChangeReverseAnswer = async (
+    examId: string,
+    checked: boolean
+  ) => {
     try {
       const res = await examAPI.updateExamReverseAnswer(examId, checked);
       if (res?.data?.success) {

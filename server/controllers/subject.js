@@ -3,8 +3,8 @@ const subjectMiddleware = require('../middlewares/subject');
 
 module.exports = {
   getAllSubject: asyncHandler(async (req, res) => {
-    const { limit, offset, search } = req.query;
-    const results = await subjectMiddleware.getAllSubject(limit, offset, search);
+    const { limit, offset, search, status } = req.query;
+    const results = await subjectMiddleware.getAllSubject(limit, offset, search, status);
     res.json(results);
   }),
 
@@ -47,7 +47,8 @@ module.exports = {
   }),
 
   getSubjectDiscipline: asyncHandler(async (req, res) => {
-    const results = await subjectMiddleware.getSubjectDiscipline();
+    const {status} = req?.query
+    const results = await subjectMiddleware.getSubjectDiscipline(status);
     res.json(results);
   }),
 };

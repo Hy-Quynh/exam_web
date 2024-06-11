@@ -3,7 +3,7 @@ const Exam = require('../models/exam');
 const { getRandomValues } = require('../utils/handleArray');
 
 module.exports = {
-  getAllExamKit: async (limit, offset, search, discipline) => {
+  getAllExamKit: async (limit, offset, search, discipline, teacherCode, status) => {
     try {
       const newSearch = search && search !== 'undefined' ? search : '';
 
@@ -24,6 +24,24 @@ module.exports = {
             },
           },
         });
+      }
+
+      if (teacherCode && teacherCode !== 'undefined') {
+        query.push({
+          $match: {
+            $expr: {
+              $eq: [{ $toString: '$teacherCode' }, teacherCode],
+            },
+          },
+        });
+      }
+
+      if (status !== 'undefined') {
+        query.push({
+          $match: {
+            status: !!status
+          },
+        })
       }
 
       query.push(

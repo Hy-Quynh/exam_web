@@ -39,4 +39,11 @@ export const examResultAPI = {
     );
     return response;
   },
+
+  statisticExamResult: async (startDate: string, endDate: string) => {
+    const response = await axiosConfig.get(
+      `${URL}/statistic?startDate=${startDate}&endDate=${endDate}`
+    );
+    return response;
+  },
 };

@@ -56,14 +56,13 @@ const SideListInfo: React.FC<SideListInfoProps> = (props) => {
               }
               description={
                 <div>
-                  <p className='text-base'>{item.description}</p>
                   {item?.extraTitleDesc}
                 </div>
               }
               className='text-left'
             />
             <p className='text-base text-left'>{item.content}</p>
-            <p className='text-base text-[#9c9c9a] text-left'>
+            <p className='text-base text-[#9c9c9a] text-left mt-[10px] font-bold'>
               Ngày đăng tải: {item?.createdAt}
             </p>
             {props?.dislayActionBtn ? (

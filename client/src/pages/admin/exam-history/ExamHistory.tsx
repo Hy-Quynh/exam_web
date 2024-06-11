@@ -7,6 +7,7 @@ import { LOGIN_KEY, TABLE_ITEM_PER_PAGE } from '../../../constants/table';
 import { examResultAPI } from '../../../services/exam-result';
 import { displayDate } from '../../../utils/datetime';
 import { LOGIN_TYPE } from '../../../enums';
+import { CSVLink } from 'react-csv';
 
 function ExamHistory() {
   const [listExam, setListExam] = useState([]);
@@ -68,7 +69,9 @@ function ExamHistory() {
       dataIndex: 'totalTime',
       key: 'totalTime',
       render: (_, record: any) => {
-        return <div>{record?.totalTime + 's'} </div>;
+        return (
+          <div>{Number(record?.testTime * 60) - record?.totalTime + 's'} </div>
+        );
       },
     },
     {
@@ -126,13 +129,24 @@ function ExamHistory() {
       </div>
 
       <div className='flex justify-end mb-[20px]'>
-        <Button
-          type='primary'
-          className='bg-primary'
-          onClick={() => message.error('Chức năng chưa hoàn thiện')}
+        <CSVLink
+          data={listExam?.map((item: any) => {
+            return {
+              'Tên bài thi': item?.examKitName,
+              'Môn học': item?.disciplineName,
+              'Tên học sinh': item?.studentName,
+              'Mã học sinh': item?.studentCode,
+              'Thời gian thực hiện':
+                Number(item?.testTime * 60) - item?.totalTime + 's',
+              'Điểm số': item?.score,
+              'Ngày thực hiện': displayDate(item?.createdAt),
+            };
+          })}
+          filename='Danh_sach_lam_bai_thi'
+          className='bg-primary text-white px-[15px] py-[5px] hover:text-white rounded-[6px]'
         >
           Xuất CSV
-        </Button>
+        </CSVLink>
       </div>
 
       <Table

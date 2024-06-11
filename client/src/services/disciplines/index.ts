@@ -8,10 +8,11 @@ export const disciplineAPI = {
     limit?: number,
     offset?: number,
     search?: string,
-    subject?: string
+    subject?: string,
+    status?: boolean
   ) => {
     const response = await axiosConfig.get(
-      `${URL}?limit=${limit}&offset=${offset}&search=${search}&subject=${subject}`
+      `${URL}?limit=${limit}&offset=${offset}&search=${search}&subject=${subject}&status=${status}`
     );
     return response;
   },

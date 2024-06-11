@@ -31,7 +31,7 @@ const ControlDisciplineModal: React.FC<ControlDisciplineProps> = (props) => {
 
   const getSubjectList = async () => {
     try {
-      const res = await subjectAPI.getAllSubject();
+      const res = await subjectAPI.getAllSubject(undefined, undefined, undefined, true);
 
       if (res?.data?.success) {
         setSubjectList(res?.data?.payload?.subject);

@@ -118,6 +118,7 @@ module.exports = {
           isSubmit: 1,
           disciplineName: '$discipline.name',
           examKitName: '$examKit.name',
+          testTime: '$examKit.testTime',
         },
       });
 
@@ -201,6 +202,76 @@ module.exports = {
         };
       }
       throw new Error('Lấy thông tin tiến độ thất bại');
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          message: error.message,
+        },
+      };
+    }
+  },
+
+  statisticExamResult: async (startDate, endDate) => {
+    try {
+      const statisTotalStudent = await ExamResult.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalStudents: { $addToSet: '$studentCode' },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            totalStudents: { $size: '$totalStudents' },
+          },
+        },
+      ]);
+
+      const statisScore = await ExamResult.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: new Date(startDate), $lte:  new Date(endDate) }, // Giả sử có trường createdAt để lưu thời gian làm bài
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            belowAverage: {
+              $sum: {
+                $cond: [{ $lt: ['$score', 5] }, 1, 0],
+              },
+            },
+            aboveAverage: {
+              $sum: {
+                $cond: [{ $gte: ['$score', 5] }, 1, 0],
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            belowAverage: 1,
+            aboveAverage: 1,
+          },
+        },
+      ]);
+
+      return {
+        success: true,
+        payload: {
+          totalStudent: statisTotalStudent[0]?.totalStudents,
+          belowAverage: statisScore[0]?.belowAverage,
+          aboveAverage: statisScore[0]?.aboveAverage,
+        },
+      };
     } catch (error) {
       return {
         success: false,

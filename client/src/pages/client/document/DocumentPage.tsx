@@ -20,7 +20,12 @@ function Documentpage() {
 
   const getSubjectList = async () => {
     try {
-      const res = await subjectAPI.getAllSubject();
+      const res = await subjectAPI.getAllSubject(
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
 
       if (res?.data?.success) {
         setSubjectList(res?.data?.payload?.subject);
@@ -36,7 +41,8 @@ function Documentpage() {
         undefined,
         undefined,
         '',
-        subject
+        subject,
+        true
       );
 
       if (res?.data?.success) {
@@ -67,7 +73,9 @@ function Documentpage() {
         '',
         discipline,
         subject,
-        chapter
+        chapter,
+        undefined,
+        true
       );
       if (exam?.data?.success) {
         setExamList(exam?.data?.payload?.exam);
@@ -201,15 +209,12 @@ function Documentpage() {
                   ...item,
                   extraTitleDesc: (
                     <div>
-                      <div>
-                        <p className='text-base'>
-                          Số câu hỏi: {item?.questionData?.length}
-                        </p>
-                      </div>
+                      <p className='text-base font-bold'>
+                        Số câu hỏi: {item?.questionData?.length}
+                      </p>
                     </div>
                   ),
                   content: item?.description,
-                  description: 'Giáo viên đăng tải: ......',
                   title: item?.name,
                   createdAt: displayDate(item?.createdAt),
                   href: `/document/${item?._id}`,

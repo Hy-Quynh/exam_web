@@ -28,11 +28,11 @@ export interface ExamKitType {
   description: string;
   reverseAnswer: boolean;
   disciplineChapters: { _id: string; name: string }[];
-  questionData?: any
-  year: number,
-  semester: number
-  startTime: string,
-  openExamStatus: boolean
+  questionData?: any;
+  year: number;
+  semester: number;
+  startTime: string;
+  openExamStatus: boolean;
 }
 
 const AdminExamKit: React.FC = () => {
@@ -68,6 +68,7 @@ const AdminExamKit: React.FC = () => {
       title: 'Thời gian làm bài',
       dataIndex: 'testTime',
       key: 'testTime',
+      render: (_, record: any) => <div>{record?.testTime}p</div>,
     },
     {
       title: 'Ngày tạo',
@@ -82,7 +83,9 @@ const AdminExamKit: React.FC = () => {
       render: (_, record) => (
         <Switch
           checked={record?.reverseAnswer}
-          onChange={(checked) => handleChangeReverseAnswer(record?._id, checked)}
+          onChange={(checked) =>
+            handleChangeReverseAnswer(record?._id, checked)
+          }
         />
       ),
     },
@@ -128,7 +131,15 @@ const AdminExamKit: React.FC = () => {
 
   const getExamKitList = async () => {
     try {
-      const res = await examKitAPI.getAllExamKit();
+      const res = await examKitAPI.getAllExamKit(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        customerData.type === LOGIN_TYPE.TEACHER
+          ? customerData.username
+          : undefined
+      );
 
       if (res?.data?.success) {
         setExamKitList(res?.data?.payload?.examKit);
@@ -204,9 +215,15 @@ const AdminExamKit: React.FC = () => {
     }
   };
 
-  const handleChangeReverseAnswer = async (examKitId: string, checked: boolean) => {
+  const handleChangeReverseAnswer = async (
+    examKitId: string,
+    checked: boolean
+  ) => {
     try {
-      const res = await examKitAPI.updateExamKitReverseAnswer(examKitId, checked);
+      const res = await examKitAPI.updateExamKitReverseAnswer(
+        examKitId,
+        checked
+      );
       if (res?.data?.success) {
         message.success('Cập nhật đảo đề thành công');
         getExamKitList();

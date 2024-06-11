@@ -62,27 +62,27 @@ const renderNavItem = (textColor?: string) => {
     },
   ];
 
-  const navNotLogin = [
-    {
-      key: 'about',
-      label: (
-        <a href={ROUTER.ABOUT} className={`${linkColor} text-base`}>
-          Giới thiệu chung
-        </a>
-      ),
-    },
-    {
-      key: 'contact',
-      label: (
-        <a href={ROUTER.CONTACT} className={`${linkColor} text-base`}>
-          Liên hệ
-        </a>
-      ),
-      children: [] as any,
-    },
-  ];
+  // const navNotLogin = [
+  //   {
+  //     key: 'about',
+  //     label: (
+  //       <a href={ROUTER.ABOUT} className={`${linkColor} text-base`}>
+  //         Giới thiệu chung
+  //       </a>
+  //     ),
+  //   },
+  //   {
+  //     key: 'contact',
+  //     label: (
+  //       <a href={ROUTER.CONTACT} className={`${linkColor} text-base`}>
+  //         Liên hệ
+  //       </a>
+  //     ),
+  //     children: [] as any,
+  //   },
+  // ];
 
-  return useInfo?.username ? navLogined : navNotLogin;
+  return useInfo?.username ? navLogined : [];
 };
 
 const ClientLayout: React.FC = () => {
@@ -123,7 +123,8 @@ const ClientLayout: React.FC = () => {
 
   const getNavDocumentItem = async () => {
     try {
-      const res = await subjectAPI.getSubjectDiscipline();
+      const res = await subjectAPI.getSubjectDiscipline(true);
+
       if (res?.data?.payload?.length && useInfo.type === LOGIN_TYPE.STUDENT) {
         const nav = [...renderNavItem()];
         nav[1].children = [...res?.data?.payload]?.map((item) => {
