@@ -10,10 +10,11 @@ export const examKitAPI = {
     search?: string,
     discipline?: string,
     teacherCode?: string,
-    status?: boolean
+    status?: boolean,
+    subject?: string
   ) => {
     const response = await axiosConfig.get(
-      `${URL}?limit=${limit}&offset=${offset}&search=${search}&discipline=${discipline}&teacherCode=${teacherCode}&status=${status}`
+      `${URL}?limit=${limit}&offset=${offset}&search=${search}&discipline=${discipline}&teacherCode=${teacherCode}&status=${status}&subject=${subject}`
     );
     return response;
   },

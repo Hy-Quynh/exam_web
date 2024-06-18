@@ -112,6 +112,7 @@ function ExamDetail() {
         totalTime: countDownTime,
         studentCode: useInfo?.username,
         studentName: useInfo?.name,
+        year: examKitDetail?.year,
       };
 
       const submitRes = await examResultAPI.submitExam(submitData);
@@ -135,8 +136,11 @@ function ExamDetail() {
       <Typography.Paragraph className='text-lg font-bold'>
         Môn học: {examKitDetail?.disciplineName}
       </Typography.Paragraph>
+      <Typography.Paragraph className='text-lg font-bold'>
+        Năm học: {examKitDetail?.year}
+      </Typography.Paragraph>
       <div className='flex justify-around p-[20px] bg-[#d4d9d5] rounded-lg sticky top-0 z-50'>
-        <div className='text-base'>
+        <div className='text-base  w-[30%]'>
           <CheckSquareOutlined className='mr-[5px]' />
           {examStatus === 'NOT_START'
             ? `${examKitDetail?.totalQuestion} câu`
@@ -144,15 +148,45 @@ function ExamDetail() {
                 examKitDetail?.totalQuestion
               } câu`}
         </div>
-        <div className='text-lg font-bold'>
+        <div className='text-lg font-bold  w-[30%]'>
           <FieldTimeOutlined className='mr-[5px]' />
           {examStatus === 'NOT_START'
             ? `${countDownTime / 60} phút`
             : formatCountDownTime(countDownTime)}
         </div>
-        <div className='text-base'>
-          <UserOutlined className='mr-[5px]' />
-          ... lượt kiểm tra
+
+        <div className='flex gap-[5px] w-[30%] flex-wrap'>
+          {(questionData?.length
+            ? questionData
+            : examKitDetail?.questionData
+          )?.map((item: any, index: number) => {
+            return (
+              <div
+                className='border-[1px] border-solid border-[gray] cursor-pointer w-[28px] rounded-[15px]'
+                style={{
+                  background: answerList[item?._id]?.length ? '#6BA74F' : '',
+                  color: answerList[item?._id]?.length ? 'white' : '',
+                }}
+                onClick={() => {
+                  if (examStatus === 'START' || examStatus === 'RESULT') {
+                    const targetDiv: any = document.getElementById(
+                      `question-${item?._id}`
+                    );
+                    if (!targetDiv) {
+                      return;
+                    }
+
+                    window.scrollTo({
+                      behavior: 'smooth',
+                      top: targetDiv.offsetTop - 200,
+                    });
+                  }
+                }}
+              >
+                {index + 1}
+              </div>
+            );
+          })}
         </div>
       </div>
       {examStatus === 'START' || examStatus === 'RESULT' ? (

@@ -57,7 +57,7 @@ export function MenuItem() {
       icon: <FileTextOutlined />,
       label: (
         <a href={ROUTER.ADMIN_EXAM} className='text-base'>
-          Tài liệu
+          Bộ đề
         </a>
       ),
       style:
@@ -71,7 +71,7 @@ export function MenuItem() {
       icon: <ContainerOutlined />,
       label: (
         <a href={ROUTER.ADMIN_EXAM_KIT} className='text-base'>
-          Đề kiểm tra
+          Đề thi
         </a>
       ),
       style:

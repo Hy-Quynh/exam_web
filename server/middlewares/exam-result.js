@@ -7,7 +7,8 @@ module.exports = {
     offset,
     disciplineId,
     teacherCode,
-    isGetAll
+    isGetAll,
+    year
   ) => {
     try {
       const query = [];
@@ -16,6 +17,16 @@ module.exports = {
         query.push({
           $match: {
             studentCode: { $regex: new RegExp(studentCode.toLowerCase(), 'i') },
+          },
+        });
+      }
+
+      if (year && year !== 'undefined') {
+        query.push({
+          $match: {
+            $expr: {
+              $eq: [{ $toString: '$year' }, year],
+            },
           },
         });
       }
@@ -158,6 +169,7 @@ module.exports = {
         studentCode,
         studentName,
         isSubmit,
+        year,
       } = submitData;
 
       await ExamResult.deleteOne({ examId, studentCode });
@@ -173,6 +185,7 @@ module.exports = {
           studentCode,
           studentName,
           isSubmit,
+          year,
         },
       ]);
 
@@ -237,7 +250,7 @@ module.exports = {
       const statisScore = await ExamResult.aggregate([
         {
           $match: {
-            createdAt: { $gte: new Date(startDate), $lte:  new Date(endDate) }, // Giả sử có trường createdAt để lưu thời gian làm bài
+            createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) }, // Giả sử có trường createdAt để lưu thời gian làm bài
           },
         },
         {

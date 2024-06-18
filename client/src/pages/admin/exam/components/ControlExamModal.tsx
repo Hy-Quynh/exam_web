@@ -176,7 +176,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
         }}
       >
         <Form.Item
-          label='Tên tài liệu'
+          label='Tên bộ đề'
           rules={[{ required: true, message: 'Vui lòng tên đề kiểm tra' }]}
           name='name'
         >

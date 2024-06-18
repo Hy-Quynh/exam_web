@@ -33,6 +33,7 @@ export interface ExamKitType {
   semester: number;
   startTime: string;
   openExamStatus: boolean;
+  poems: {date: string, time: string}[]
 }
 
 const AdminExamKit: React.FC = () => {

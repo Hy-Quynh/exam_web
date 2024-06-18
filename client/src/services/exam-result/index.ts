@@ -1,49 +1,50 @@
-  import axiosConfig from '../axiosConfig';
+import axiosConfig from '../axiosConfig';
 
-  const URL = '/exam-result';
+const URL = '/exam-result';
 
-  type submitData = {
-    examId?: string;
-    disciplineId?: string;
-    answer?: any;
-    questionData?: any;
-    score?: number;
-    totalTime?: number;
-    studentCode?: string;
-    studentName?: string;
-  };
+type submitData = {
+  examId?: string;
+  disciplineId?: string;
+  answer?: any;
+  questionData?: any;
+  score?: number;
+  totalTime?: number;
+  studentCode?: string;
+  studentName?: string;
+};
 
-  export const examResultAPI = {
-    getExamResultByStudent: async (
-      studentCode?: string,
-      limit?: number,
-      offset?: number,
-      disciplineId?: string,
-      teacherCode?: string,
-      isGetAll?: boolean
-    ) => {
-      const response = await axiosConfig.get(
-        `${URL}?studentCode=${studentCode}&limit=${limit}&offset=${offset}&disciplineId=${disciplineId}&teacherCode=${teacherCode}&isGetAll=${isGetAll}`
-      );
-      return response;
-    },
+export const examResultAPI = {
+  getExamResultByStudent: async (
+    studentCode?: string,
+    limit?: number,
+    offset?: number,
+    disciplineId?: string,
+    teacherCode?: string,
+    isGetAll?: boolean,
+    year?: string
+  ) => {
+    const response = await axiosConfig.get(
+      `${URL}?studentCode=${studentCode}&limit=${limit}&offset=${offset}&disciplineId=${disciplineId}&teacherCode=${teacherCode}&isGetAll=${isGetAll}&year=${year}`
+    );
+    return response;
+  },
 
-    submitExam: async (submitData: submitData) => {
-      const response = await axiosConfig.post(`${URL}/submit`, submitData);
-      return response;
-    },
+  submitExam: async (submitData: submitData) => {
+    const response = await axiosConfig.post(`${URL}/submit`, submitData);
+    return response;
+  },
 
-    getExamProgress: async (studentCode: string, examId: string) => {
-      const response = await axiosConfig.get(
-        `${URL}/progress?studentCode=${studentCode}&examId=${examId}`
-      );
-      return response;
-    },
+  getExamProgress: async (studentCode: string, examId: string) => {
+    const response = await axiosConfig.get(
+      `${URL}/progress?studentCode=${studentCode}&examId=${examId}`
+    );
+    return response;
+  },
 
-    statisticExamResult: async (startDate: string, endDate: string) => {
-      const response = await axiosConfig.get(
-        `${URL}/statistic?startDate=${startDate}&endDate=${endDate}`
-      );
-      return response;
-    },
-  };
+  statisticExamResult: async (startDate: string, endDate: string) => {
+    const response = await axiosConfig.get(
+      `${URL}/statistic?startDate=${startDate}&endDate=${endDate}`
+    );
+    return response;
+  },
+};

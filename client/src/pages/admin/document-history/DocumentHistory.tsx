@@ -45,7 +45,7 @@ function DocumentHistory() {
       render: (_, record, index) => <div>{index + 1}</div>,
     },
     {
-      title: 'Tên tài liệu',
+      title: 'Tên bộ đề',
       dataIndex: 'examName',
       key: 'examName',
     },
@@ -142,7 +142,7 @@ function DocumentHistory() {
         <CSVLink
           data={listDocument?.map((item: any) => {
             return {
-              'Tên tài liệu': item?.examName,
+              'Tên bộ đề': item?.examName,
               'Môn học': item?.disciplineName,
               'Tên học sinh': item?.studentName,
               'Mã học sinh': item?.studentCode,

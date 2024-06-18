@@ -101,7 +101,7 @@ const HomePage: React.FC = () => {
         <>
           <div className='mb-[50px]'>
             <Divider orientation='left'>
-              <p className='text-primary text-2xl'>TÀI LIỆU MÔN HỌC</p>
+              <p className='text-primary text-2xl'>DANH SÁCH BỘ ĐỀ</p>
             </Divider>
           </div>
 
@@ -109,7 +109,7 @@ const HomePage: React.FC = () => {
             <Col md={7} span={24}>
               <SideList
                 headerColor='bg-purple'
-                headerText='TÀI LIỆU'
+                headerText='MÔN HỌC'
                 dataList={disciplineList}
                 currentSelect={currentDocument}
                 handleChangeSelect={(id: string) => setCurrentDocument(id)}
@@ -158,7 +158,7 @@ const HomePage: React.FC = () => {
             <Col md={7} span={24}>
               <SideList
                 headerColor='bg-purple'
-                headerText='ĐỀ THI'
+                headerText='MÔN HỌC'
                 dataList={disciplineList}
                 currentSelect={currentDiscipline}
                 handleChangeSelect={(id: string) => setCurrentDiscipline(id)}
@@ -174,6 +174,9 @@ const HomePage: React.FC = () => {
                       extraTitleDesc: (
                         <div>
                           <div>
+                            <p className='text-base font-bold'>
+                              Năm học: {item?.year}
+                            </p>
                             <p className='text-base font-bold'>
                               Thời lượng làm bài: {item?.testTime}p
                             </p>
@@ -212,7 +215,7 @@ const HomePage: React.FC = () => {
                 Nền tảng thi Online chuyên nghiệp
               </p>
               <p className='md:text-xl text-base'>
-                Nơi đây cung cấp toàn bộ tài liệu của tất cả môn học để ôn tham
+                Nơi đây cung cấp toàn bộ bộ đề của tất cả môn học để ôn tham
                 và tham gia thi trực tuyến, kết quả sẽ được chấm sau khi vừa nộp
                 bài
               </p>

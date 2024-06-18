@@ -7,21 +7,47 @@ import { DisciplineType } from '../../admin/discipline/Discipline';
 import { displayDate } from '../../../utils/datetime';
 import { examKitAPI } from '../../../services/exam-kit';
 import { ExamKitType } from '../../admin/exam-kit/ExamKit';
+import { SubjectType } from '../../admin/subject/Subject';
+import { subjectAPI } from '../../../services/subjects';
+import { useSearchParams } from 'react-router-dom';
 
 const ExamPage: React.FC = () => {
+  const [subjectList, setSubjectList] = useState<SubjectType[]>([]);
+  const [currentSubject, setCurrentSubject] = useState<string>('');
   const [disciplineList, setDisciplineList] = useState<DisciplineType[]>([]);
   const [currentDiscipline, setCurrentDiscipline] = useState<string>('');
   const [examList, setExamList] = useState<ExamKitType[]>([]);
+  const [searchParams] = useSearchParams();
 
-  const getDisciplineList = async () => {
+  const getSubjectList = async () => {
     try {
-      const res = await disciplineAPI.getAllDiscipline(undefined, undefined, undefined, undefined, true);
+      const res = await subjectAPI.getAllSubject(
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
+
+      if (res?.data?.success) {
+        setSubjectList(res?.data?.payload?.subject);
+      }
+    } catch (error) {
+      console.log('get subject list error >>> ', error);
+    }
+  };
+
+  const getDisciplineList = async (subject: string) => {
+    try {
+      const res = await disciplineAPI.getAllDiscipline(
+        undefined,
+        undefined,
+        undefined,
+        subject,
+        true
+      );
 
       if (res?.data?.success) {
         const discipline = res?.data?.payload?.discipline;
-        if (discipline?.length) {
-          setCurrentDiscipline(res?.data?.payload?.discipline?.[0]?._id);
-        }
         setDisciplineList(discipline);
       }
     } catch (error) {
@@ -29,15 +55,16 @@ const ExamPage: React.FC = () => {
     }
   };
 
-  const getExamKitData = async (discipline: string) => {
+  const getExamKitData = async (discipline: string, subject: string) => {
     try {
       const res = await examKitAPI.getAllExamKit(
         undefined,
         undefined,
         '',
         discipline,
-        undefined, 
-        true
+        undefined,
+        true,
+        subject
       );
       if (res?.data?.success) {
         setExamList(res?.data?.payload?.examKit);
@@ -48,12 +75,26 @@ const ExamPage: React.FC = () => {
   };
 
   useEffect(() => {
-    getDisciplineList();
+    getSubjectList();
   }, []);
 
   useEffect(() => {
-    getExamKitData(currentDiscipline);
-  }, [currentDiscipline]);
+    const paramSubject = searchParams.get('subject');
+    const paramDiscipline = searchParams.get('discipline');
+
+    if (paramSubject) {
+      setCurrentSubject(paramSubject);
+      getDisciplineList(paramSubject);
+    } else {
+      getDisciplineList('');
+    }
+
+    if (paramDiscipline) {
+      setCurrentDiscipline(paramDiscipline);
+    }
+
+    getExamKitData(paramDiscipline || '', paramSubject || '');
+  }, []);
 
   return (
     <div>
@@ -69,34 +110,46 @@ const ExamPage: React.FC = () => {
           ]}
         />
       </div>
-      {/* <Row wrap={true} justify={'start'} className='mb-[50px]'>
+      <Row wrap={true} justify={'start'} className='mb-[50px]'>
         <Typography.Paragraph className='text-xl font-medium w-[40%] text-left'>
-          Sắp xếp
+          Bộ lọc
         </Typography.Paragraph>
-        <div className='flex items-center gap-[16px]'>
-          <Typography.Paragraph className='text-lg mt-[10px]'>
-            Ngày đăng tải:{' '}
-          </Typography.Paragraph>
-          <Select
-            style={{ width: 200 }}
-            options={[
-              { value: 'desc', label: 'Giảm dần' },
-              { value: 'asc', label: 'Tăng dần' },
-            ]}
-            onChange={(value) => {
-              message.info('Tính năng đang được phát triển');
-            }}
-          />
+        <div className='flex justify-around items-center gap-[16px] w-[100%] flex-wrap'>
+          <div className='flex items-center gap-[8px]'>
+            <Typography.Paragraph className='text-lg mt-[10px]'>
+              Bộ môn:{' '}
+            </Typography.Paragraph>
+            <Select
+              style={{ width: 200 }}
+              options={subjectList?.map((item) => {
+                return {
+                  value: item?._id,
+                  label: item?.name,
+                };
+              })}
+              value={currentSubject}
+              onChange={async(value) => {
+                setCurrentDiscipline('');
+                setCurrentSubject(value);
+                await getDisciplineList(value)
+                getExamKitData('', value);
+              }}
+            />
+          </div>
         </div>
-      </Row> */}
+      </Row>
+
       <Row wrap={true}>
         <Col md={7} span={24}>
           <SideList
             headerColor='bg-purple'
-            headerText='ĐỀ THI'
+            headerText='MÔN HỌC'
             dataList={disciplineList}
             currentSelect={currentDiscipline}
-            handleChangeSelect={(id: string) => setCurrentDiscipline(id)}
+            handleChangeSelect={(id: string) => {
+              setCurrentDiscipline(id);
+              getExamKitData(id, currentSubject);
+            }}
           />
         </Col>
         <Col md={1} />
