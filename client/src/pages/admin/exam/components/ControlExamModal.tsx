@@ -23,6 +23,7 @@ import CustomQuillEditor from '../../../../components/customQuillEditor';
 import { AnswerTypeEnum } from '../../../../enums/exams';
 import { parseJSON } from '../../../../utils/handleData';
 import { LOGIN_KEY } from '../../../../constants/table';
+import { LOGIN_TYPE } from '../../../../enums';
 
 type ControlExamProps = {
   isOpen: boolean;
@@ -163,6 +164,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
       title={props.title}
       handleSubmit={() => submitForm()}
       width={'70vw'}
+      disableSubmitBtn={customerData.type === LOGIN_TYPE.ADMIN}
     >
       <Form
         layout={'vertical'}
@@ -174,6 +176,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
           description: props?.initData?.description,
           chapterId: props?.initData?.chapterId,
         }}
+        disabled={customerData.type === LOGIN_TYPE.ADMIN}
       >
         <Form.Item
           label='Tên bộ đề'
@@ -278,6 +281,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
                           value
                         );
                       }}
+                      disabled={customerData.type === LOGIN_TYPE.ADMIN}
                     />
                   </Form.Item>
 

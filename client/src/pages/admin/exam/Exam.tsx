@@ -116,7 +116,7 @@ const AdminExam: React.FC = () => {
             setOpenControlModal(true);
           }}
           handleDelete={() => handleDelete(record?._id)}
-          disableUpdate={customerData.type === LOGIN_TYPE.ADMIN}
+          updateText={customerData.type === LOGIN_TYPE.ADMIN ? 'Xem' : 'Sửa'}
         />
       ),
     },

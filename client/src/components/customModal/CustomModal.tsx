@@ -10,6 +10,7 @@ type CustomModalProps = {
   handleSubmit?: () => Promise<void>;
   handCanel: () => void;
   children?: React.ReactNode;
+  disableSubmitBtn?: boolean
 };
 
 const CustomModal: React.FC<CustomModalProps> = (props) => {
@@ -29,7 +30,7 @@ const CustomModal: React.FC<CustomModalProps> = (props) => {
       onCancel={() => props.handCanel()}
       okText={props.okText || 'Lưu'}
       cancelText={props?.cancelText || 'Huỷ'}
-      okButtonProps={{ className: 'bg-primary', loading: isSubmit }}
+      okButtonProps={{ className: 'bg-primary', loading: isSubmit, disabled: props.disableSubmitBtn }}
       maskClosable={false}
       width={props?.width}
     >

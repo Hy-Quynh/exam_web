@@ -128,6 +128,10 @@ function ExamDetail() {
     }
   };
 
+  console.log('questionData >>> ', questionData);
+  console.log('examKitDetail?.questionData >> ', examKitDetail?.questionData);
+  
+  
   return (
     <Card style={{ justifyContent: 'flex-start', minHeight: '500px' }}>
       <Typography.Paragraph className='text-2xl font-bold'>

@@ -7,9 +7,10 @@ import 'react-quill/dist/quill.snow.css';
 type QuillEditorProps = {
   initValue: string;
   handleChange: (value: string) => void;
+  disabled?: boolean
 };
 
-function CustomQuillEditor({ initValue, handleChange }: QuillEditorProps) {
+function CustomQuillEditor({ initValue, handleChange, disabled }: QuillEditorProps) {
   const [value, setValue] = useState('');
   const reactQuillRef = useRef<ReactQuill>(null);
 
@@ -101,6 +102,7 @@ function CustomQuillEditor({ initValue, handleChange }: QuillEditorProps) {
         handleChange?.(value);
         setValue(value);
       }}
+      readOnly={!!disabled}
     />
   );
 }

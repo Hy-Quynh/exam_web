@@ -20,6 +20,7 @@ import { ExamKitDataType } from '../../../../types/examKit';
 import dayjs from 'dayjs';
 import { parseJSON } from '../../../../utils/handleData';
 import { LOGIN_KEY, YEAR_OPTION } from '../../../../constants/table';
+import { LOGIN_TYPE } from '../../../../enums';
 
 type ControlExamKitProps = {
   isOpen: boolean;
@@ -198,6 +199,7 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
       title={props.title}
       handleSubmit={() => submitForm()}
       width={'70vw'}
+      disableSubmitBtn={customerData.type === LOGIN_TYPE.ADMIN}
     >
       <Form
         layout={'vertical'}
@@ -217,10 +219,8 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
               time: dayjs(item.time, 'HH:mm:ss')
             }
           })
-          // startTime: props?.initData?.startTime
-          //   ? dayjs(props?.initData?.startTime)
-          //   : '',
         }}
+        disabled={customerData.type === LOGIN_TYPE.ADMIN}
       >
         <Form.Item
           label='Tên đề kiểm tra'

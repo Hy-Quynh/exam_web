@@ -5,6 +5,7 @@ type TableActionProps = {
   disableUpdate?: boolean;
   handleUpdate?: () => void;
   handleDelete?: () => void;
+  updateText?: string;
 };
 
 const TableAction = ({
@@ -12,6 +13,7 @@ const TableAction = ({
   disableUpdate,
   handleUpdate,
   handleDelete,
+  updateText
 }: TableActionProps) => {
   return (
     <Space size='middle'>
@@ -21,7 +23,7 @@ const TableAction = ({
         disabled={disableUpdate}
         onClick={() => handleUpdate?.()}
       >
-        Sửa
+        {updateText || 'Sửa'}
       </Button>
       <Popconfirm
         title='Xoá dữ liệu'

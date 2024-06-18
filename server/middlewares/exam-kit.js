@@ -446,6 +446,8 @@ module.exports = {
               },
             },
           ]);
+          console.log('examStructure?.[i]?.chapterId >> ', examStructure?.[i]?.chapterId);
+          console.log('question?.[0]?.questionData?.length >> ', question?.[0]?.questionData?.length);
 
           if (question?.length && question?.[0]?.questionData?.length) {
             const choiceQuestion = getRandomValues(
