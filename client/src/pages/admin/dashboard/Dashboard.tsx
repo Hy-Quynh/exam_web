@@ -81,8 +81,8 @@ export const AdminDashboard = () => {
         )}
       </div>
 
-      <div className='flex items-center justify-center mt-[50px] gap-x-[100px] flex-wrap gap-y-[20px] mb-[50px]'>
-        <div className='bg-[#6aa84f] py-[30px] px-[75px] rounded-[16px]'>
+      <div className='flex items-center justify-center mt-[50px] gap-x-[70px] flex-wrap gap-y-[20px] mb-[50px]'>
+        <div className='bg-[#6aa84f] py-[30px] px-[45px] rounded-[16px]'>
           <p className='text-xl font-bold text-center text-white'>
             Tổng số sinh viên
           </p>
@@ -91,7 +91,7 @@ export const AdminDashboard = () => {
           </p>
         </div>
 
-        <div className='bg-[#6aa84f] py-[30px] px-[50px] rounded-[16px]'>
+        <div className='bg-[#6aa84f] py-[30px] px-[20px] rounded-[16px]'>
           <p className='text-xl font-bold text-center text-white'>
             Bài thi dưới trung bình
           </p>
@@ -100,7 +100,7 @@ export const AdminDashboard = () => {
           </p>
         </div>
 
-        <div className='bg-[#6aa84f] py-[30px] px-[50px] rounded-[16px]'>
+        <div className='bg-[#6aa84f] py-[30px] px-[20px] rounded-[16px]'>
           <p className='text-xl font-bold text-center  text-white'>
             Bài thi trên trung bình
           </p>
