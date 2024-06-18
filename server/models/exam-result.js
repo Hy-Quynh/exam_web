@@ -58,7 +58,11 @@ const examResultSchema = new mongoose.Schema(
     studentName: {
       type: String,
       required: true,
-    }
+    },
+    year: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

@@ -3,7 +3,7 @@ const Exam = require('../models/exam');
 const { getRandomValues } = require('../utils/handleArray');
 
 module.exports = {
-  getAllExamKit: async (limit, offset, search, discipline, teacherCode, status) => {
+  getAllExamKit: async (limit, offset, search, discipline, teacherCode, status, subject) => {
     try {
       const newSearch = search && search !== 'undefined' ? search : '';
 
@@ -57,8 +57,23 @@ module.exports = {
           {
             $unwind: '$discipline',
           },
+          {
+            $match: {
+              'discipline.status': true
+            }
+          }
         ]
       );
+
+      if (subject && subject !== 'undefined') {
+        query.push({
+          $match: {
+            $expr: {
+              $eq: [{ $toString: '$discipline.subjectId' }, subject],
+            },
+          },
+        });
+      }
 
       if (offset === 'undefined' && limit && limit !== 'undefined') {
         query.push(
@@ -103,8 +118,8 @@ module.exports = {
           reverseAnswer: 1,
           year: 1,
           semester: 1,
-          startTime: 1,
           openExamStatus: 1,
+          poems: 1,
           disciplineChapters: '$discipline.chapters',
         },
       });
@@ -141,7 +156,8 @@ module.exports = {
     year,
     semester,
     startTime,
-    teacherCode
+    teacherCode,
+    poems
   }) => {
     try {
       const addRes = await ExamKit.insertMany([
@@ -152,10 +168,11 @@ module.exports = {
           testTime,
           totalQuestion,
           examStructure,
-          year: Number(year),
+          year: year,
           semester: Number(semester),
           startTime,
-          teacherCode
+          teacherCode,
+          poems
         },
       ]);
       
@@ -217,7 +234,8 @@ module.exports = {
     year,
     semester,
     startTime,
-    teacherCode
+    teacherCode,
+    poems
   ) => {
     try {
       const updateRes = await ExamKit.findOneAndUpdate(
@@ -229,10 +247,11 @@ module.exports = {
           testTime,
           totalQuestion,
           examStructure,
-          year: Number(year),
+          year: year,
           semester: Number(semester),
           startTime,
-          teacherCode
+          teacherCode,
+          poems
         }
       );
 
@@ -292,8 +311,8 @@ module.exports = {
             reverseAnswer: 1,
             year: 1,
             semester: 1,
-            startTime: 1,
             openExamStatus: 1,
+            poems: 1,
             disciplineChapters: '$discipline.chapters',
           },
         },

@@ -45,6 +45,9 @@ const renderNavItem = (textColor?: string) => {
       label: (
         <a href={ROUTER.EXAM_PAGE} className={`${linkColor} text-base`}>
           Đề thi
+          <span className='ml-[5px]'>
+            <DownOutlined />
+          </span>
         </a>
       ),
     },
@@ -52,7 +55,7 @@ const renderNavItem = (textColor?: string) => {
       key: 'document',
       label: (
         <a href={ROUTER.DOCUMENT_PAGE} className={`${linkColor} text-base`}>
-          Tài liệu
+          Bộ đề
           <span className='ml-[5px]'>
             <DownOutlined />
           </span>
@@ -61,26 +64,6 @@ const renderNavItem = (textColor?: string) => {
       children: [] as any,
     },
   ];
-
-  // const navNotLogin = [
-  //   {
-  //     key: 'about',
-  //     label: (
-  //       <a href={ROUTER.ABOUT} className={`${linkColor} text-base`}>
-  //         Giới thiệu chung
-  //       </a>
-  //     ),
-  //   },
-  //   {
-  //     key: 'contact',
-  //     label: (
-  //       <a href={ROUTER.CONTACT} className={`${linkColor} text-base`}>
-  //         Liên hệ
-  //       </a>
-  //     ),
-  //     children: [] as any,
-  //   },
-  // ];
 
   return useInfo?.username ? navLogined : [];
 };
@@ -127,6 +110,29 @@ const ClientLayout: React.FC = () => {
 
       if (res?.data?.payload?.length && useInfo.type === LOGIN_TYPE.STUDENT) {
         const nav = [...renderNavItem()];
+        nav[0].children = [...res?.data?.payload]?.map((item) => {
+          return {
+            key: 'exam' + item?._id,
+            label: (
+              <a href={`${ROUTER.EXAM_PAGE}?subject=${item?._id}`}>
+                {item?.name}
+              </a>
+            ),
+            children: item?.listDiscipline?.map((it: any) => {
+              return {
+                key: 'exam' + it?._id,
+                label: (
+                  <a
+                    href={`${ROUTER.EXAM_PAGE}?subject=${item?._id}&discipline=${it?._id}`}
+                  >
+                    {it?.name}
+                  </a>
+                )
+              };
+            }),
+          };
+        });
+
         nav[1].children = [...res?.data?.payload]?.map((item) => {
           return {
             key: item?._id,

@@ -35,7 +35,7 @@ function Documentpage() {
     }
   };
 
-  const getDisciplineList = async (subject: string) => {
+  const getDisciplineList = async (subject: string, discipline: string) => {
     try {
       const res = await disciplineAPI.getAllDiscipline(
         undefined,
@@ -48,10 +48,10 @@ function Documentpage() {
       if (res?.data?.success) {
         setDisciplineList(res?.data?.payload?.discipline);
 
-        if (currentDiscipline) {
+        if (discipline) {
           setChapterList(
             res?.data?.payload?.discipline?.find(
-              (it: any) => it?._id === currentDiscipline
+              (it: any) => it?._id === discipline
             )?.chapters
           );
         }
@@ -81,7 +81,7 @@ function Documentpage() {
         setExamList(exam?.data?.payload?.exam);
       }
     } catch (error) {
-      message.error('Lấy thông tin tài liệu thất bại');
+      message.error('Lấy thông tin bộ đề thất bại');
     }
   };
 
@@ -90,16 +90,15 @@ function Documentpage() {
   }, []);
 
   useEffect(() => {
-    getDisciplineList(currentSubject);
-  }, [currentSubject]);
-
-  useEffect(() => {
     const paramSubject = searchParams.get('subject');
     const paramDiscipline = searchParams.get('discipline');
     const paramChapter = searchParams.get('chapter');
 
     if (paramSubject) {
       setCurrentSubject(paramSubject);
+      getDisciplineList(paramSubject, paramDiscipline || '')
+    }else {
+      getDisciplineList('', paramDiscipline || '')
     }
 
     if (paramDiscipline) {
@@ -109,6 +108,7 @@ function Documentpage() {
     if (paramChapter) {
       setCurrentChapter(paramChapter);
     }
+
     getExamList(paramSubject || '', paramDiscipline || '', paramChapter || '');
   }, []);
 
@@ -121,7 +121,7 @@ function Documentpage() {
               title: <a href='/'>Trang chủ</a>,
             },
             {
-              title: 'Tài liệu',
+              title: 'Bộ đề',
             },
           ]}
         />
@@ -144,10 +144,11 @@ function Documentpage() {
                 };
               })}
               value={currentSubject}
-              onChange={(value) => {
+              onChange={async (value) => {
                 setCurrentDiscipline('');
                 setCurrentChapter('');
                 setCurrentSubject(value);
+                await getDisciplineList(value, currentDiscipline)
                 getExamList(value, '', '');
               }}
             />

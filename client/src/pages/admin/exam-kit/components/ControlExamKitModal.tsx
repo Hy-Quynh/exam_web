@@ -17,10 +17,9 @@ import { disciplineAPI } from '../../../../services/disciplines';
 import { ExamKitType } from '../ExamKit';
 import { examKitAPI } from '../../../../services/exam-kit';
 import { ExamKitDataType } from '../../../../types/examKit';
-import moment from 'moment';
 import dayjs from 'dayjs';
 import { parseJSON } from '../../../../utils/handleData';
-import { LOGIN_KEY } from '../../../../constants/table';
+import { LOGIN_KEY, YEAR_OPTION } from '../../../../constants/table';
 
 type ControlExamKitProps = {
   isOpen: boolean;
@@ -50,7 +49,13 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
 
   const getDisciplineList = async () => {
     try {
-      const res = await disciplineAPI.getAllDiscipline(undefined, undefined, undefined, undefined, true);
+      const res = await disciplineAPI.getAllDiscipline(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
       if (res?.data?.success) {
         setDisciplineList(res?.data?.payload?.discipline);
       } else {
@@ -92,10 +97,18 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
         testTime: formData?.testTime,
         totalQuestion: formData?.totalQuestion,
         examStructure: formData?.examStructure,
-        year: formData?.year?.year(),
+        year: formData?.year,
         semester: formData?.semester,
-        startTime: formData?.startTime,
-        teacherCode: customerData?.username
+        teacherCode: customerData?.username,
+        poems: formData.poems?.map((item: any) => {
+          console.log("dayjs(item.time).format('HH:mm:ss') >> ", dayjs(item.time).format('HH:mm:ss'));
+          console.log("dayjs(item.time) >> ", dayjs(item.time));
+          
+          return {
+            date: dayjs(item.date).format('DD-MM-YYYY'),
+            time: dayjs(item.time).format('HH:mm:ss')
+          }
+        }),
       };
 
       const res = await examKitAPI.addNewExamKit(examKitData);
@@ -124,10 +137,15 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
           testTime: formData?.testTime,
           totalQuestion: formData?.totalQuestion,
           examStructure: formData?.examStructure,
-          year: formData?.year?.year(),
+          year: formData?.year,
           semester: formData?.semester,
-          startTime: formData?.startTime,
-          teacherCode: customerData?.username
+          teacherCode: customerData?.username,
+          poems: formData.poems?.map((item: any) => {
+            return {
+              date: dayjs(item.date).format('DD-MM-YYYY'),
+              time: dayjs(item.time).format('HH:mm:ss')
+            }
+          }),
         };
 
         const res = await examKitAPI.updateExamKit(
@@ -191,13 +209,17 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
           testTime: props?.initData?.testTime,
           totalQuestion: props?.initData?.totalQuestion,
           examStructure: props?.initData?.examStructure,
-          year: props?.initData?.year
-            ? dayjs(moment(props?.initData?.year, 'YYYY').format('YYYY-DD-MM'))
-            : '',
+          year: props?.initData?.year,
           semester: props?.initData?.semester,
-          startTime: props?.initData?.startTime
-            ? dayjs(props?.initData?.startTime)
-            : '',
+          poems: props?.initData?.poems?.map((item) => {
+            return {
+              date: dayjs(item.date, 'DD-MM-YYYY'),
+              time: dayjs(item.time, 'HH:mm:ss')
+            }
+          })
+          // startTime: props?.initData?.startTime
+          //   ? dayjs(props?.initData?.startTime)
+          //   : '',
         }}
       >
         <Form.Item
@@ -275,21 +297,19 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
         </Form.Item>
 
         <Form.Item
-          label='Năm thi'
-          rules={[
-            { required: true, message: 'Vui lòng chọn năm thi' },
-            {
-              validator: async (_, year) => {
-                if (year.year() < new Date().getFullYear()) {
-                  return Promise.reject('Năm thi cần lớn hơn năm hiện tại');
-                }
-                return Promise.resolve();
-              },
-            },
-          ]}
+          label='Năm học'
           name='year'
+          rules={[{ required: true, message: 'Vui lòng chọn năm học' }]}
         >
-          <DatePicker picker='year' style={{ width: '100%' }}></DatePicker>
+          <Select>
+            {YEAR_OPTION?.map((item: any) => {
+              return (
+                <Select.Option value={item?.key} key={item?.key + 'year'}>
+                  {item?.label}
+                </Select.Option>
+              );
+            })}
+          </Select>
         </Form.Item>
 
         <Form.Item
@@ -310,33 +330,78 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
           <Input type='number' placeholder='Nhập vào học kì' />
         </Form.Item>
 
-        <Form.Item
-          label='Ngày thi'
+        <p>Ca thi</p>
+        <Form.List
+          name='poems'
           rules={[
-            { required: true, message: 'Vui lòng chọn ngày thi' },
             {
-              validator: async (_, date) => {
-                if (
-                  moment(
-                    date.format('DD-MM-YYYY HH:mm'),
-                    'DD-MM-YYYY HH:mm'
-                  ).isBefore(moment(moment(), 'DD-MM-YYYY HH:mm'))
-                ) {
-                  return Promise.reject('Ngày thi cần lớn hơn ngày hiện tại');
+              validator: async (_, poems) => {
+                if (!poems || poems.length < 1) {
+                  return Promise.reject(new Error('Cần thêm ít nhất 1 ca thi'));
                 }
-                return Promise.resolve();
               },
             },
           ]}
-          name='startTime'
         >
-          <DatePicker
-            picker='date'
-            style={{ width: '100%' }}
-            showTime
-            popupClassName='exam-kit-datetime'
-          ></DatePicker>
-        </Form.Item>
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name, ...restField }) => (
+                <div
+                  key={key}
+                  style={{ display: 'flex', marginBottom: 8, gap: '10px' }}
+                >
+                  <div className='w-[40%]'>
+                    <Form.Item
+                      {...restField}
+                      validateTrigger={['onChange', 'onBlur']}
+                      name={[name, 'date']}
+                      rules={[
+                        { required: true, message: 'Vui lòng chọn ngày thi' },
+                      ]}
+                    >
+                      <DatePicker
+                        picker='date'
+                        style={{ width: '100%' }}
+                        popupClassName='exam-kit-datetime'
+                        placeholder='Ngày thi'
+                      ></DatePicker>
+                    </Form.Item>
+                  </div>
+                  <div className='w-[40%]'>
+                    <Form.Item
+                      {...restField}
+                      validateTrigger={['onChange', 'onBlur']}
+                      name={[name, 'time']}
+                      rules={[
+                        { required: true, message: 'Vui lòng chọn giờ thi' },
+                      ]}
+                    >
+                      <DatePicker
+                        picker='time'
+                        style={{ width: '100%' }}
+                        popupClassName='exam-kit-datetime'
+                        placeholder='Giờ thi'
+                      ></DatePicker>
+                    </Form.Item>
+                  </div>
+
+                  <MinusCircleOutlined onClick={() => remove(name)} className='mt-[-25px]'/>
+                </div>
+              ))}
+
+              <Form.Item>
+                <Button
+                  type='dashed'
+                  onClick={() => add()}
+                  block
+                  icon={<PlusOutlined />}
+                >
+                  Thêm ca thi
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
 
         <Form.Item
           label='Mô tả'
@@ -349,7 +414,11 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
         {props?.type === 'UPDATE' ? (
           <div className='mb-[20px]'>
             <Button
-              className={`${props?.initData?.openExamStatus ? 'bg-[red] hover:!bg-[red]' : 'bg-primary hover:!bg-primary '} hover:!text-white text-white border-none`}
+              className={`${
+                props?.initData?.openExamStatus
+                  ? 'bg-[red] hover:!bg-[red]'
+                  : 'bg-primary hover:!bg-primary '
+              } hover:!text-white text-white border-none`}
               onClick={() => handleChangeOpenStatus()}
             >
               {props?.initData?.openExamStatus ? 'Kết thúc thi' : 'Bắt đầu thi'}

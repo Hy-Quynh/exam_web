@@ -148,7 +148,7 @@ module.exports = {
           },
         };
       } else {
-        throw new Error('Lấy thông tin tài liệu thất bại');
+        throw new Error('Lấy thông tin bộ đề thất bại');
       }
     } catch (error) {
       return {
@@ -182,7 +182,7 @@ module.exports = {
           payload: getExam,
         };
       } else {
-        throw new Error('Thêm tài liệu thất bại');
+        throw new Error('Thêm bộ đề thất bại');
       }
     } catch (error) {
       return {
@@ -206,7 +206,7 @@ module.exports = {
           success: true,
         };
       } else {
-        throw new Error('Xoá tài liệu thất bại');
+        throw new Error('Xoá bộ đề thất bại');
       }
     } catch (error) {
       return {
@@ -238,7 +238,7 @@ module.exports = {
           success: true,
         };
       } else {
-        throw new Error('Cập nhật tài liệu thất bại');
+        throw new Error('Cập nhật bộ đề thất bại');
       }
     } catch (error) {
       return {
@@ -299,7 +299,7 @@ module.exports = {
           payload: getExam[0],
         };
       } else {
-        throw new Error('Lấy thông tin tài liệu thất bại');
+        throw new Error('Lấy thông tin bộ đề thất bại');
       }
     } catch (error) {
       return {
@@ -323,7 +323,7 @@ module.exports = {
           success: true,
         };
       } else {
-        throw new Error('Cập nhật tài liệu thất bại');
+        throw new Error('Cập nhật bộ đề thất bại');
       }
     } catch (error) {
       return {

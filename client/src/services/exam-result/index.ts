@@ -20,10 +20,11 @@ export const examResultAPI = {
     offset?: number,
     disciplineId?: string,
     teacherCode?: string,
-    isGetAll?: boolean
+    isGetAll?: boolean,
+    year?: string
   ) => {
     const response = await axiosConfig.get(
-      `${URL}?studentCode=${studentCode}&limit=${limit}&offset=${offset}&disciplineId=${disciplineId}&teacherCode=${teacherCode}&isGetAll=${isGetAll}`
+      `${URL}?studentCode=${studentCode}&limit=${limit}&offset=${offset}&disciplineId=${disciplineId}&teacherCode=${teacherCode}&isGetAll=${isGetAll}&year=${year}`
     );
     return response;
   },

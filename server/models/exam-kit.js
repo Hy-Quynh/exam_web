@@ -33,18 +33,24 @@ const examKitSchema = new mongoose.Schema(
       default: 0,
     },
     year: {
-      type: Number,
+      type: String,
       required: true,
-      default: new Date().getFullYear(),
     },
     semester: {
       type: Number,
       required: true,
     },
-    startTime: {
-      type: String,
-      required: true,
-    },
+    poems: [
+      {
+        date: {
+          type: String,
+          required: true,
+        },
+        time: {
+          type: String,
+        },
+      },
+    ],
     openExamStatus: {
       type: Boolean,
       required: false,

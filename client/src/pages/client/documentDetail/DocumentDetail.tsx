@@ -1,12 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  Button,
-  Card,
-  Popconfirm,
-  Typography,
-  message,
-} from 'antd';
+import { Button, Card, Popconfirm, Typography, message } from 'antd';
 import {
   CheckSquareOutlined,
   FieldTimeOutlined,
@@ -39,7 +33,7 @@ function DocumentDetail() {
   const getDocumentDetail = async (examId?: string) => {
     try {
       if (!examId) {
-        return message.error('Mã tài liệu không chính xác');
+        return message.error('Mã bộ đề không chính xác');
       }
       const res = await examAPI.getExamById(examId);
       if (res?.data?.success) {
@@ -149,7 +143,7 @@ function DocumentDetail() {
         }
       </Typography.Paragraph>
       <div className='flex justify-around p-[20px] bg-[#d4d9d5] rounded-lg sticky top-0 z-50'>
-        <div className='text-base'>
+        <div className='text-base w-[30%]'>
           <CheckSquareOutlined className='mr-[5px]' />
           {examStatus === 'NOT_START'
             ? `${
@@ -161,13 +155,42 @@ function DocumentDetail() {
                   ?.length
               } câu`}
         </div>
-        <div className='text-lg font-bold'>
+        <div className='text-lg font-bold w-[30%]'>
           <FieldTimeOutlined className='mr-[5px]' />
           {formatCountDownTime(countDownTime)}
         </div>
-        <div className='text-base'>
-          <UserOutlined className='mr-[5px]' />
-          ... lượt làm đề
+        <div className='flex gap-[5px] w-[30%] flex-wrap'>
+          {(questionData?.length
+            ? questionData
+            : examDetail?.questionData
+          )?.map((item: any, index: number) => {
+            return (
+              <div
+                className='border-[1px] border-solid border-[gray] cursor-pointer w-[28px] rounded-[15px]'
+                style={{
+                  background: answerList[item?._id]?.length ? '#6BA74F' : '',
+                  color: answerList[item?._id]?.length ? 'white' : '',
+                }}
+                onClick={() => {
+                  if (examStatus === 'START' || examStatus === 'RESULT') {
+                    const targetDiv: any = document.getElementById(
+                      `question-${item?._id}`
+                    );
+                    if (!targetDiv) {
+                      return;
+                    }
+
+                    window.scrollTo({
+                      behavior: 'smooth',
+                      top: targetDiv.offsetTop - 200,
+                    });
+                  }
+                }}
+              >
+                {index + 1}
+              </div>
+            );
+          })}
         </div>
       </div>
       {examStatus === 'START' || examStatus === 'RESULT' ? (

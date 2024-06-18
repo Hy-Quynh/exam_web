@@ -3,14 +3,15 @@ const examKitMiddleware = require('../middlewares/exam-kit');
 
 module.exports = {
   getAllExamKit: asyncHandler(async (req, res) => {
-    const { limit, offset, search, discipline, teacherCode, status } = req.query;
+    const { limit, offset, search, discipline, teacherCode, status, subject } = req.query;
     const results = await examKitMiddleware.getAllExamKit(
       limit,
       offset,
       search,
       discipline,
       teacherCode,
-      status
+      status,
+      subject
     );
     res.json(results);
   }),
@@ -32,7 +33,8 @@ module.exports = {
       year,
       semester,
       startTime,
-      teacherCode
+      teacherCode,
+      poems
     } = req.body;
 
     const results = await examKitMiddleware.addNewExamKit({
@@ -45,7 +47,8 @@ module.exports = {
       year,
       semester,
       startTime,
-      teacherCode
+      teacherCode,
+      poems
     });
     res.json(results);
   }),
@@ -68,7 +71,8 @@ module.exports = {
       year,
       semester,
       startTime,
-      teacherCode
+      teacherCode,
+      poems
     } = req.body;
 
     const results = await examKitMiddleware.updateExamKit(
@@ -82,7 +86,8 @@ module.exports = {
       year,
       semester,
       startTime,
-      teacherCode
+      teacherCode,
+      poems
     );
     
     res.json(results);

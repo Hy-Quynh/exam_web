@@ -12,7 +12,7 @@ const AdminDocument: React.FC = () => {
               title: 'Admin',
             },
             {
-              title: 'Tài liệu',
+              title: 'bộ đề',
             },
           ]}
         />

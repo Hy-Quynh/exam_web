@@ -35,7 +35,7 @@ function DocumentHistory() {
       render: (_, record, index) => <div>{index + 1}</div>,
     },
     {
-      title: 'Tên tài liệu',
+      title: 'Tên bộ đề',
       dataIndex: 'examName',
       key: 'examName',
     },

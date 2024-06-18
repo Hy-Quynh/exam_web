@@ -3,7 +3,7 @@ const examResultMiddleware = require('../middlewares/exam-result');
 
 module.exports = {
   getExamResultByStudent: asyncHandler(async (req, res) => {
-    const { studentCode, limit, offset, disciplineId, teacherCode, isGetAll } =
+    const { studentCode, limit, offset, disciplineId, teacherCode, isGetAll, year } =
       req?.query;
 
     const results = await examResultMiddleware.getExamResultByStudent(
@@ -12,7 +12,8 @@ module.exports = {
       offset,
       disciplineId,
       teacherCode,
-      isGetAll
+      isGetAll,
+      year
     );
 
     res.json(results);
