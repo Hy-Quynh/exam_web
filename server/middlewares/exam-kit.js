@@ -3,7 +3,15 @@ const Exam = require('../models/exam');
 const { getRandomValues } = require('../utils/handleArray');
 
 module.exports = {
-  getAllExamKit: async (limit, offset, search, discipline, teacherCode, status, subject) => {
+  getAllExamKit: async (
+    limit,
+    offset,
+    search,
+    discipline,
+    teacherCode,
+    status,
+    subject
+  ) => {
     try {
       const newSearch = search && search !== 'undefined' ? search : '';
 
@@ -39,9 +47,9 @@ module.exports = {
       if (status !== 'undefined') {
         query.push({
           $match: {
-            status: !!status
+            status: !!status,
           },
-        })
+        });
       }
 
       query.push(
@@ -59,9 +67,9 @@ module.exports = {
           },
           {
             $match: {
-              'discipline.status': true
-            }
-          }
+              'discipline.status': true,
+            },
+          },
         ]
       );
 
@@ -108,7 +116,6 @@ module.exports = {
           status: 1,
           isDelete: 1,
           testTime: 1,
-          totalQuestion: 1,
           examStructure: 1,
           isReverse: 1,
           createdAt: 1,
@@ -117,9 +124,7 @@ module.exports = {
           description: 1,
           reverseAnswer: 1,
           year: 1,
-          semester: 1,
           openExamStatus: 1,
-          poems: 1,
           disciplineChapters: '$discipline.chapters',
         },
       });
@@ -151,13 +156,10 @@ module.exports = {
     disciplineId,
     description,
     testTime,
-    totalQuestion,
     examStructure,
     year,
-    semester,
     startTime,
     teacherCode,
-    poems
   }) => {
     try {
       const addRes = await ExamKit.insertMany([
@@ -166,16 +168,12 @@ module.exports = {
           disciplineId,
           description,
           testTime,
-          totalQuestion,
           examStructure,
           year: year,
-          semester: Number(semester),
           startTime,
           teacherCode,
-          poems
         },
       ]);
-      
 
       if (addRes) {
         const getExamKit = await ExamKit.find({ isDelete: false })
@@ -229,13 +227,10 @@ module.exports = {
     disciplineId,
     description,
     testTime,
-    totalQuestion,
     examStructure,
     year,
-    semester,
     startTime,
-    teacherCode,
-    poems
+    teacherCode
   ) => {
     try {
       const updateRes = await ExamKit.findOneAndUpdate(
@@ -245,13 +240,10 @@ module.exports = {
           disciplineId,
           description,
           testTime,
-          totalQuestion,
           examStructure,
           year: year,
-          semester: Number(semester),
           startTime,
           teacherCode,
-          poems
         }
       );
 
@@ -301,7 +293,6 @@ module.exports = {
             status: 1,
             isDelete: 1,
             testTime: 1,
-            totalQuestion: 1,
             examStructure: 1,
             isReverse: 1,
             createdAt: 1,
@@ -310,9 +301,7 @@ module.exports = {
             description: 1,
             reverseAnswer: 1,
             year: 1,
-            semester: 1,
             openExamStatus: 1,
-            poems: 1,
             disciplineChapters: '$discipline.chapters',
           },
         },
@@ -441,13 +430,10 @@ module.exports = {
           const question = await Exam.aggregate([
             {
               $match: {
-                chapterId: examStructure?.[i]?.chapterId,
-                disciplineId: getExamKit?.[0]?.disciplineId,
+                _id: examStructure?.[i]?.examId,
               },
             },
           ]);
-          console.log('examStructure?.[i]?.chapterId >> ', examStructure?.[i]?.chapterId);
-          console.log('question?.[0]?.questionData?.length >> ', question?.[0]?.questionData?.length);
 
           if (question?.length && question?.[0]?.questionData?.length) {
             const choiceQuestion = getRandomValues(

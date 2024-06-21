@@ -1,11 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Card, Modal, Typography, message } from 'antd';
-import {
-  CheckSquareOutlined,
-  FieldTimeOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { CheckSquareOutlined, FieldTimeOutlined } from '@ant-design/icons';
 import { shuffleArray } from '../../../utils/array';
 import { examKitAPI } from '../../../services/exam-kit';
 import { ExamKitType } from '../../admin/exam-kit/ExamKit';
@@ -130,8 +126,7 @@ function ExamDetail() {
 
   console.log('questionData >>> ', questionData);
   console.log('examKitDetail?.questionData >> ', examKitDetail?.questionData);
-  
-  
+
   return (
     <Card style={{ justifyContent: 'flex-start', minHeight: '500px' }}>
       <Typography.Paragraph className='text-2xl font-bold'>
@@ -147,11 +142,18 @@ function ExamDetail() {
         <div className='text-base  w-[30%]'>
           <CheckSquareOutlined className='mr-[5px]' />
           {examStatus === 'NOT_START'
-            ? `${examKitDetail?.totalQuestion} câu`
+            ? `${
+                questionData?.length
+                  ? questionData?.length
+                  : examKitDetail?.questionData?.length || 0
+              } câu`
             : `${Object.keys(answerList).length}/${
-                examKitDetail?.totalQuestion
+                questionData?.length
+                  ? questionData?.length
+                  : examKitDetail?.questionData?.length || 0
               } câu`}
         </div>
+
         <div className='text-lg font-bold  w-[30%]'>
           <FieldTimeOutlined className='mr-[5px]' />
           {examStatus === 'NOT_START'

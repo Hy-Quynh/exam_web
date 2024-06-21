@@ -53,7 +53,13 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
 
   const getDisciplineList = async () => {
     try {
-      const res = await disciplineAPI.getAllDiscipline(undefined, undefined, undefined, undefined, true);
+      const res = await disciplineAPI.getAllDiscipline(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
       if (res?.data?.success) {
         setDisciplineList(res?.data?.payload?.discipline);
       } else {
@@ -94,7 +100,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
         questionData: formData?.questionData,
         description: formData?.description,
         chapterId: formData?.chapterId,
-        teacherCode: customerData?.username
+        teacherCode: customerData?.username,
       };
 
       const res = await examAPI.addNewExam(examData);
@@ -121,7 +127,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
           questionData: formData?.questionData,
           description: formData?.description,
           chapterId: formData?.chapterId,
-          teacherCode: customerData?.username
+          teacherCode: customerData?.username,
         };
 
         const res = await examAPI.updateExam(props?.initData?._id, examData);
@@ -215,7 +221,9 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
           name='chapterId'
           rules={[{ required: true, message: 'Vui lòng chọn chương' }]}
         >
-          <Select onChange={(value) => handlChangeChapter(value)}>
+          <Select
+          // onChange={(value) => handlChangeChapter(value)}
+          >
             {disciplineChapter?.map((item: any, index: number) => {
               return (
                 <Select.Option value={item?._id} key={item?._id}>
@@ -336,14 +344,14 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
                                 'Vui lòng thêm câu trả lời'
                               );
                             }
-                            
-                            const filterTrue = answer?.filter((item: any) => item?.isTrue)
+
+                            const filterTrue = answer?.filter(
+                              (item: any) => item?.isTrue
+                            );
                             if (!filterTrue?.length) {
-                              return Promise.reject(
-                                'Vui lòng chọn đáp án'
-                              );
+                              return Promise.reject('Vui lòng chọn đáp án');
                             }
-                            
+
                             return Promise.resolve();
                           },
                         },

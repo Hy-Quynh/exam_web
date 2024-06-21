@@ -159,27 +159,47 @@ module.exports = {
         isSubmit,
       } = submitData;
 
-      await DocumentResult.deleteOne({ documentId, studentCode });
+      // await DocumentResult.deleteOne({ documentId, studentCode });
 
-      const addRes = await DocumentResult.insertMany([
-        {
-          documentId,
-          disciplineId,
-          answer,
-          questionData,
-          score,
-          totalTime,
-          studentCode,
-          studentName,
-          isSubmit,
-        },
-      ]);
+      const lastest = await DocumentResult.findOne({
+        documentId,
+        studentCode,
+      }).sort({ updatedAt: -1 });
 
-      if (addRes) {
-        return {
-          success: true,
-        };
+      if (lastest?.isSubmit) {
+        await DocumentResult.insertMany([
+          {
+            documentId,
+            disciplineId,
+            answer,
+            questionData,
+            score,
+            totalTime,
+            studentCode,
+            studentName,
+            isSubmit,
+          },
+        ]);
+      } else {
+        await DocumentResult.findOneAndUpdate(
+          { _id: lastest?._id },
+          {
+            documentId,
+            disciplineId,
+            answer,
+            questionData,
+            score,
+            totalTime,
+            studentCode,
+            studentName,
+            isSubmit,
+          }
+        );
       }
+
+      return {
+        success: true,
+      };
     } catch (error) {
       return {
         success: false,
@@ -192,7 +212,10 @@ module.exports = {
 
   getDocumentProgress: async (studentCode, documentId) => {
     try {
-      const res = await DocumentResult.findOne({ documentId, studentCode });
+      const res = await DocumentResult.findOne({
+        documentId,
+        studentCode,
+      }).sort({ updatedAt: -1 });
 
       if (res) {
         return {

@@ -34,9 +34,7 @@ const { Header, Content, Footer } = Layout;
 const { useBreakpoint } = Grid;
 const { Paragraph } = Typography;
 
-const renderNavItem = (textColor?: string) => {
-  const useInfo = parseJSON(localStorage.getItem(LOGIN_KEY), {});
-
+const renderNavItem = (useInfo: any, textColor?: string) => {
   const linkColor = textColor || '!text-white';
 
   const navLogined = [
@@ -70,14 +68,16 @@ const renderNavItem = (textColor?: string) => {
 
 const ClientLayout: React.FC = () => {
   const screens = useBreakpoint();
+  let useInfo = parseJSON(localStorage.getItem(LOGIN_KEY), {});
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
-  const [navItem, setNavItem] = useState(renderNavItem());
+  const [navItem, setNavItem] = useState(renderNavItem(useInfo));
   const navigate = useNavigate();
-  const useInfo = parseJSON(localStorage.getItem(LOGIN_KEY), {});
 
   useEffect(() => {
     if (useInfo?.type !== LOGIN_TYPE.STUDENT) {
       localStorage.clear();
+      useInfo = {};
+      setNavItem([]);
     }
   }, []);
 
@@ -109,7 +109,7 @@ const ClientLayout: React.FC = () => {
       const res = await subjectAPI.getSubjectDiscipline(true);
 
       if (res?.data?.payload?.length && useInfo.type === LOGIN_TYPE.STUDENT) {
-        const nav = [...renderNavItem()];
+        const nav = [...renderNavItem(useInfo)];
         nav[0].children = [...res?.data?.payload]?.map((item) => {
           return {
             key: 'exam' + item?._id,
@@ -127,7 +127,7 @@ const ClientLayout: React.FC = () => {
                   >
                     {it?.name}
                   </a>
-                )
+                ),
               };
             }),
           };
@@ -322,11 +322,11 @@ const ClientLayout: React.FC = () => {
           key={'drawer-menu'}
           width={200}
         >
-          {renderNavItem?.('!text-black')?.map((item, index) => {
+          {renderNavItem?.(useInfo, '!text-black')?.map((item, index) => {
             return (
               <div key={item?.key}>
                 {item?.label}
-                {index + 1 !== renderNavItem()?.length ? (
+                {index + 1 !== renderNavItem(useInfo)?.length ? (
                   <Divider className='my-[10px]' />
                 ) : (
                   <></>

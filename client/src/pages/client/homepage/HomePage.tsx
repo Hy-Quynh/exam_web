@@ -180,9 +180,6 @@ const HomePage: React.FC = () => {
                             <p className='text-base font-bold'>
                               Thời lượng làm bài: {item?.testTime}p
                             </p>
-                            <p className='text-base font-bold'>
-                              Số câu hỏi: {item?.totalQuestion}
-                            </p>
                           </div>
                         </div>
                       ),
@@ -215,8 +212,8 @@ const HomePage: React.FC = () => {
                 Nền tảng thi Online chuyên nghiệp
               </p>
               <p className='md:text-xl text-base'>
-                Nơi đây cung cấp toàn bộ bộ đề của tất cả môn học để ôn tham
-                và tham gia thi trực tuyến, kết quả sẽ được chấm sau khi vừa nộp
+                Nơi đây cung cấp toàn bộ bộ đề của tất cả môn học để ôn tham và
+                tham gia thi trực tuyến, kết quả sẽ được chấm sau khi vừa nộp
                 bài
               </p>
             </div>

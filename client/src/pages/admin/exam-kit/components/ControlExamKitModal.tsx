@@ -1,12 +1,4 @@
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Typography,
-  message,
-} from 'antd';
+import { Button, Form, Input, Select, Typography, message } from 'antd';
 import CustomModal from '../../../../components/customModal/CustomModal';
 import { ModalControlType } from '../../../../types/modal';
 import { useEffect, useState } from 'react';
@@ -17,10 +9,10 @@ import { disciplineAPI } from '../../../../services/disciplines';
 import { ExamKitType } from '../ExamKit';
 import { examKitAPI } from '../../../../services/exam-kit';
 import { ExamKitDataType } from '../../../../types/examKit';
-import dayjs from 'dayjs';
 import { parseJSON } from '../../../../utils/handleData';
 import { LOGIN_KEY, YEAR_OPTION } from '../../../../constants/table';
 import { LOGIN_TYPE } from '../../../../enums';
+import { examAPI } from '../../../../services/exams';
 
 type ControlExamKitProps = {
   isOpen: boolean;
@@ -36,6 +28,8 @@ const { TextArea } = Input;
 const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
   const [disciplineList, setDisciplineList] = useState<DisciplineType[]>([]);
   const [disciplineChapter, setDisciplineChapter] = useState<any>([]);
+  const [chapterExam, setChapterExam] = useState<any>([]);
+
   const [form] = Form.useForm();
   const customerData = parseJSON(localStorage.getItem(LOGIN_KEY), {});
 
@@ -45,6 +39,7 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
         (it) => it?._id === props?.initData?.disciplineId
       );
       setDisciplineChapter(findDiscipline?.chapters);
+      getExamList(props?.initData?.disciplineId);
     }
   }, [props?.initData?.disciplineId, disciplineList]);
 
@@ -96,20 +91,9 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
         disciplineId: formData?.disciplineId,
         description: formData?.description,
         testTime: formData?.testTime,
-        totalQuestion: formData?.totalQuestion,
         examStructure: formData?.examStructure,
         year: formData?.year,
-        semester: formData?.semester,
         teacherCode: customerData?.username,
-        poems: formData.poems?.map((item: any) => {
-          console.log("dayjs(item.time).format('HH:mm:ss') >> ", dayjs(item.time).format('HH:mm:ss'));
-          console.log("dayjs(item.time) >> ", dayjs(item.time));
-          
-          return {
-            date: dayjs(item.date).format('DD-MM-YYYY'),
-            time: dayjs(item.time).format('HH:mm:ss')
-          }
-        }),
       };
 
       const res = await examKitAPI.addNewExamKit(examKitData);
@@ -136,17 +120,9 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
           disciplineId: formData?.disciplineId,
           description: formData?.description,
           testTime: formData?.testTime,
-          totalQuestion: formData?.totalQuestion,
           examStructure: formData?.examStructure,
           year: formData?.year,
-          semester: formData?.semester,
           teacherCode: customerData?.username,
-          poems: formData.poems?.map((item: any) => {
-            return {
-              date: dayjs(item.date).format('DD-MM-YYYY'),
-              time: dayjs(item.time).format('HH:mm:ss')
-            }
-          }),
         };
 
         const res = await examKitAPI.updateExamKit(
@@ -192,6 +168,37 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
     }
   };
 
+  const getExamList = async (discipline?: string) => {
+    try {
+      const exam = await examAPI.getAllExam(
+        undefined,
+        undefined,
+        '',
+        discipline,
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
+      if (exam?.data?.success) {
+        const examData = exam?.data?.payload?.exam;
+        const groupExam = examData?.reduce((pre: any, curr: any) => {
+          const groupKey = curr['chapterId'];
+          if (!pre[groupKey]) {
+            pre[groupKey] = [];
+          }
+          pre[groupKey].push(curr);
+
+          return pre;
+        }, {});
+
+        setChapterExam(groupExam);
+      }
+    } catch (error) {
+      message.error('Lấy thông tin bộ đề thất bại');
+    }
+  };
+
   return (
     <CustomModal
       isOpen={props?.isOpen}
@@ -209,16 +216,8 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
           disciplineId: props?.initData?.disciplineId,
           description: props?.initData?.description,
           testTime: props?.initData?.testTime,
-          totalQuestion: props?.initData?.totalQuestion,
           examStructure: props?.initData?.examStructure,
           year: props?.initData?.year,
-          semester: props?.initData?.semester,
-          poems: props?.initData?.poems?.map((item) => {
-            return {
-              date: dayjs(item.date, 'DD-MM-YYYY'),
-              time: dayjs(item.time, 'HH:mm:ss')
-            }
-          })
         }}
         disabled={customerData.type === LOGIN_TYPE.ADMIN}
       >
@@ -244,10 +243,12 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
           <Select
             onChange={(value) => {
               form.setFieldValue('disciplineId', value);
+              form.setFieldValue('examStructure', []);
               const findDiscipline = disciplineList?.find(
                 (it) => it?._id === value
               );
               setDisciplineChapter(findDiscipline?.chapters);
+              getExamList(findDiscipline?._id);
             }}
           >
             {disciplineList?.map((item: any) => {
@@ -279,24 +280,6 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
         </Form.Item>
 
         <Form.Item
-          label='Số lượng câu hỏi'
-          rules={[
-            { required: true, message: 'Vui lòng nhập số lượng câu hỏi' },
-            {
-              validator: async (_, testTime) => {
-                if (testTime <= 0) {
-                  return Promise.reject('Số lượng câu hỏi cần lớn hơn 0');
-                }
-                return Promise.resolve();
-              },
-            },
-          ]}
-          name='totalQuestion'
-        >
-          <Input type='number' placeholder='Nhập vào số lượng câu hỏi' />
-        </Form.Item>
-
-        <Form.Item
           label='Năm học'
           name='year'
           rules={[{ required: true, message: 'Vui lòng chọn năm học' }]}
@@ -311,97 +294,6 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
             })}
           </Select>
         </Form.Item>
-
-        <Form.Item
-          label='Học kì'
-          rules={[
-            { required: true, message: 'Vui lòng chọn học kì' },
-            {
-              validator: async (_, semester) => {
-                if (semester <= 0) {
-                  return Promise.reject('Học kì cần lớn hơn 0');
-                }
-                return Promise.resolve();
-              },
-            },
-          ]}
-          name='semester'
-        >
-          <Input type='number' placeholder='Nhập vào học kì' />
-        </Form.Item>
-
-        <p>Ca thi</p>
-        <Form.List
-          name='poems'
-          rules={[
-            {
-              validator: async (_, poems) => {
-                if (!poems || poems.length < 1) {
-                  return Promise.reject(new Error('Cần thêm ít nhất 1 ca thi'));
-                }
-              },
-            },
-          ]}
-        >
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map(({ key, name, ...restField }) => (
-                <div
-                  key={key}
-                  style={{ display: 'flex', marginBottom: 8, gap: '10px' }}
-                >
-                  <div className='w-[40%]'>
-                    <Form.Item
-                      {...restField}
-                      validateTrigger={['onChange', 'onBlur']}
-                      name={[name, 'date']}
-                      rules={[
-                        { required: true, message: 'Vui lòng chọn ngày thi' },
-                      ]}
-                    >
-                      <DatePicker
-                        picker='date'
-                        style={{ width: '100%' }}
-                        popupClassName='exam-kit-datetime'
-                        placeholder='Ngày thi'
-                      ></DatePicker>
-                    </Form.Item>
-                  </div>
-                  <div className='w-[40%]'>
-                    <Form.Item
-                      {...restField}
-                      validateTrigger={['onChange', 'onBlur']}
-                      name={[name, 'time']}
-                      rules={[
-                        { required: true, message: 'Vui lòng chọn giờ thi' },
-                      ]}
-                    >
-                      <DatePicker
-                        picker='time'
-                        style={{ width: '100%' }}
-                        popupClassName='exam-kit-datetime'
-                        placeholder='Giờ thi'
-                      ></DatePicker>
-                    </Form.Item>
-                  </div>
-
-                  <MinusCircleOutlined onClick={() => remove(name)} className='mt-[-25px]'/>
-                </div>
-              ))}
-
-              <Form.Item>
-                <Button
-                  type='dashed'
-                  onClick={() => add()}
-                  block
-                  icon={<PlusOutlined />}
-                >
-                  Thêm ca thi
-                </Button>
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
 
         <Form.Item
           label='Mô tả'
@@ -439,19 +331,6 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
                   return Promise.reject('Vui lòng thêm câu hỏi cho chương');
                 }
 
-                const totalQuestion = form.getFieldValue('totalQuestion');
-                const count = examStructure?.reduce(
-                  (pre: number, cur: any) =>
-                    Number(pre) + Number(cur?.numberQuestion),
-                  [0]
-                );
-
-                if (Number(totalQuestion) !== Number(count)) {
-                  return Promise.reject(
-                    'Số lượng câu hỏi từng chương phải bằng tổng số lượng'
-                  );
-                }
-
                 return Promise.resolve();
               },
             },
@@ -461,7 +340,7 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
             <div className='question-structure-modal'>
               <div className='list-title'>
                 <div className='title'>Chương</div>
-
+                <div className='title'>Tên đề</div>
                 <div className='number-question'>Số lượng câu hỏi</div>
               </div>
 
@@ -472,26 +351,16 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
                       name={[name, 'chapterId']}
                       rules={[
                         { required: true, message: 'Vui lòng chọn chương' },
-                        {
-                          validator: async (_, chapter) => {
-                            const allStructure =
-                              form.getFieldValue('examStructure');
-                            const find = allStructure?.filter(
-                              (it: any) => it?.chapterId === chapter
-                            );
-
-                            if (find?.length > 1) {
-                              return Promise.reject(
-                                'Chương này đã được lựa chọn'
-                              );
-                            }
-
-                            return Promise.resolve();
-                          },
-                        },
                       ]}
                     >
-                      <Select>
+                      <Select
+                        onChange={(value) => {
+                          form.setFieldValue(
+                            ['examStructure', name, 'examId'],
+                            ''
+                          );
+                        }}
+                      >
                         {disciplineChapter?.map((item: any, index: number) => {
                           return (
                             <Select.Option value={item?._id} key={item?._id}>
@@ -500,6 +369,78 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
                           );
                         })}
                       </Select>
+                    </Form.Item>
+                  </div>
+
+                  <div className='structure-chapter'>
+                    <Form.Item
+                      shouldUpdate={(prevValues: any, currentValues) => {
+                        return (
+                          prevValues?.examStructure !==
+                          currentValues?.examStructure
+                        );
+                      }}
+                      noStyle
+                    >
+                      {({ getFieldValue }) => {
+                        const chapterId = getFieldValue([
+                          'examStructure',
+                          name,
+                          'chapterId',
+                        ]);
+
+                        return (
+                          <Form.Item
+                            name={[name, 'examId']}
+                            rules={[
+                              {
+                                required: true,
+                                message: 'Vui lòng chọn tên đề',
+                              },
+                              {
+                                validator: async (_, examId) => {
+                                  const allStructure =
+                                    form.getFieldValue('examStructure');
+                                  const chapter = form.getFieldValue([
+                                    'examStructure',
+                                    name,
+                                    'chapterId',
+                                  ]);
+
+                                  const find = allStructure?.filter(
+                                    (it: any) =>
+                                      it?.chapterId === chapter &&
+                                      it?.examId === examId
+                                  );
+
+                                  if (find?.length > 1) {
+                                    return Promise.reject(
+                                      'Đề này đã được lựa chọn'
+                                    );
+                                  }
+
+                                  return Promise.resolve();
+                                },
+                              },
+                            ]}
+                          >
+                            <Select>
+                              {chapterExam[chapterId]?.map(
+                                (item: any, index: number) => {
+                                  return (
+                                    <Select.Option
+                                      value={item?._id}
+                                      key={item?._id}
+                                    >
+                                      {item?.name}
+                                    </Select.Option>
+                                  );
+                                }
+                              )}
+                            </Select>
+                          </Form.Item>
+                        );
+                      }}
                     </Form.Item>
                   </div>
 

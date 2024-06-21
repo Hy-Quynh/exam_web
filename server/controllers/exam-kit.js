@@ -28,13 +28,10 @@ module.exports = {
       disciplineId,
       description,
       testTime,
-      totalQuestion,
       examStructure,
       year,
-      semester,
       startTime,
       teacherCode,
-      poems
     } = req.body;
 
     const results = await examKitMiddleware.addNewExamKit({
@@ -42,13 +39,10 @@ module.exports = {
       disciplineId,
       description,
       testTime,
-      totalQuestion,
       examStructure,
       year,
-      semester,
       startTime,
       teacherCode,
-      poems
     });
     res.json(results);
   }),
@@ -66,13 +60,10 @@ module.exports = {
       disciplineId,
       description,
       testTime,
-      totalQuestion,
       examStructure,
       year,
-      semester,
       startTime,
-      teacherCode,
-      poems
+      teacherCode
     } = req.body;
 
     const results = await examKitMiddleware.updateExamKit(
@@ -81,13 +72,10 @@ module.exports = {
       disciplineId,
       description,
       testTime,
-      totalQuestion,
       examStructure,
       year,
-      semester,
       startTime,
-      teacherCode,
-      poems
+      teacherCode
     );
     
     res.json(results);

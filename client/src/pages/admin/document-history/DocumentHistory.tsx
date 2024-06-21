@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Breadcrumb, Button, Table, TableProps, message } from 'antd';
+import {
+  Breadcrumb,
+  Button,
+  Row,
+  Select,
+  Table,
+  TableProps,
+  Typography,
+  message,
+} from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
 import DocumentHistoryDrawer from './components/DocumentHistoryDrawer';
 import { parseJSON } from '../../../utils/handleData';
@@ -8,22 +17,50 @@ import { documentResultAPI } from '../../../services/document-result';
 import { displayDate } from '../../../utils/datetime';
 import { LOGIN_TYPE } from '../../../enums';
 import { CSVLink } from 'react-csv';
+import { disciplineAPI } from '../../../services/disciplines';
 
 function DocumentHistory() {
   const [listDocument, setListDocument] = useState([]);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [drawerDocumentId, setDrawerDocumentId] = useState('');
   const [studentCode, setStudentCode] = useState('');
+  const [disciplineList, setDisciplineList] = useState<any>([]);
+  const [currentDiscipline, setCurrentDiscipline] = useState<string>('');
 
   const useInfo = parseJSON(localStorage.getItem(LOGIN_KEY), {});
 
-  const getListDocument = async () => {
+  const getDisciplineList = async () => {
+    try {
+      const res = await disciplineAPI.getAllDiscipline(
+        undefined,
+        undefined,
+        '',
+        undefined,
+        true
+      );
+
+      if (res?.data?.success) {
+        const discipline = res?.data?.payload?.discipline;
+        setDisciplineList(discipline);
+        if (discipline?.length) {
+          setCurrentDiscipline(discipline?.[0]?._id);
+          return discipline?.[0]?._id
+        }
+      }
+      return ''
+    } catch (error) {
+      console.log('get discipline list error >>> ', error);
+      return ''
+    }
+  };
+
+  const getListDocument = async (discipline?: string) => {
     try {
       const res = await documentResultAPI.getDocumentResultByStudent(
         undefined,
         undefined,
         undefined,
-        undefined,
+        discipline,
         useInfo.type === LOGIN_TYPE.TEACHER && useInfo.username
           ? useInfo.username
           : undefined
@@ -120,7 +157,10 @@ function DocumentHistory() {
   ];
 
   useEffect(() => {
-    getListDocument();
+    (async () => {
+      const dicipline = await getDisciplineList();
+      getListDocument(dicipline);
+    })();
   }, []);
 
   return (
@@ -137,6 +177,30 @@ function DocumentHistory() {
           ]}
         />
       </div>
+
+      <Row wrap={true} justify={'start'} className='mb-[10px] mt-[10px]'>
+        <div className='flex flex-start items-center gap-[16px] w-[100%] flex-wrap'>
+          <div className='flex items-center'>
+            <Typography.Paragraph className='text-sm mt-[10px] mr-[5px]'>
+              Môn học:{' '}
+            </Typography.Paragraph>
+            <Select
+              style={{ width: 200 }}
+              options={disciplineList?.map((item: any) => {
+                return {
+                  value: item?._id,
+                  label: item?.name,
+                };
+              })}
+              value={currentDiscipline}
+              onChange={async (value) => {
+                setCurrentDiscipline(value);
+                await getListDocument(value);
+              }}
+            />
+          </div>
+        </div>
+      </Row>
 
       <div className='flex justify-end mb-[20px]'>
         <CSVLink

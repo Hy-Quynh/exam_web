@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Breadcrumb, Button, Switch, Table, message } from 'antd';
+import {
+  Breadcrumb,
+  Button,
+  Row,
+  Select,
+  Switch,
+  Table,
+  Typography,
+  message,
+} from 'antd';
 import type { TableProps } from 'antd';
 import TableAction from '../../../components/table/TableAction';
 import { displayDate } from '../../../utils/datetime';
@@ -9,6 +18,9 @@ import ControlExamModal from './components/ControlExamModal';
 import { examAPI } from '../../../services/exams';
 import { parseJSON } from '../../../utils/handleData';
 import { LOGIN_TYPE } from '../../../enums';
+import { subjectAPI } from '../../../services/subjects';
+import { disciplineAPI } from '../../../services/disciplines';
+import { SubjectType } from '../subject/Subject';
 
 export interface ExamType {
   _id: string;
@@ -31,6 +43,13 @@ const AdminExam: React.FC = () => {
   const [examList, setExamList] = useState<ExamType[]>([]);
   const [openControlModal, setOpenControlModal] = useState<boolean>(false);
   const [modalInitData, setModalInitData] = useState<ExamType>();
+  const [subjectList, setSubjectList] = useState<SubjectType[]>([]);
+  const [currentSubject, setCurrentSubject] = useState<string>('');
+  const [disciplineList, setDisciplineList] = useState<any>([]);
+  const [currentDiscipline, setCurrentDiscipline] = useState<string>('');
+  const [chapterList, setChapterList] = useState<any>([]);
+  const [currentChapter, setCurrentChapter] = useState<string>('');
+
   const controlModalType = useRef<ModalControlType>('');
   const customerData = parseJSON(localStorage.getItem(LOGIN_KEY), {});
 
@@ -70,7 +89,7 @@ const AdminExam: React.FC = () => {
       render: (_, record: any) => <div>{displayDate(record)}</div>,
     },
     {
-      title: 'Đảo đề',
+      title: 'Đảo câu hỏi',
       dataIndex: 'isReverse',
       key: 'isReverse',
       render: (_, record) => (
@@ -132,15 +151,70 @@ const AdminExam: React.FC = () => {
     }`;
   };
 
-  const getExamList = async () => {
+  const getSubjectList = async () => {
+    try {
+      const res = await subjectAPI.getAllSubject(
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
+
+      if (res?.data?.success) {
+        const subject = res?.data?.payload?.subject;
+        setSubjectList(subject);
+
+        if (subject?.length) {
+          setCurrentSubject(subject?.[0]?._id);
+          return subject?.[0]?._id;
+        }
+      }
+      return '';
+    } catch (error) {
+      console.log('get subject list error >>> ', error);
+      return '';
+    }
+  };
+
+  const getDisciplineList = async (subject: string) => {
+    try {
+      const res = await disciplineAPI.getAllDiscipline(
+        undefined,
+        undefined,
+        '',
+        subject,
+        true
+      );
+
+      if (res?.data?.success) {
+        const disciptline = res?.data?.payload?.discipline;
+        setDisciplineList(disciptline);
+
+        if (disciptline?.length) {
+          const chapters = disciptline?.find(
+            (it: any) => it?._id === disciptline?.[0]?._id
+          )?.chapters;
+          setChapterList(chapters);
+        }
+      }
+    } catch (error) {
+      console.log('get discipline list error >>> ', error);
+    }
+  };
+
+  const getExamList = async (
+    subject?: string,
+    discipline?: string,
+    chapter?: string
+  ) => {
     try {
       const res = await examAPI.getAllExam(
         undefined,
         undefined,
         undefined,
-        undefined,
-        undefined,
-        undefined,
+        discipline,
+        subject,
+        chapter,
         customerData.type === LOGIN_TYPE.TEACHER
           ? customerData.username
           : undefined
@@ -158,7 +232,11 @@ const AdminExam: React.FC = () => {
   };
 
   useEffect(() => {
-    getExamList();
+    (async () => {
+      const subject = await getSubjectList();
+      await getDisciplineList(subject)
+      await getExamList(subject);
+    })();
   }, []);
 
   const handleCancelControlModal = () => {
@@ -176,7 +254,7 @@ const AdminExam: React.FC = () => {
       const res = await examAPI.updateExamStatus(examId, checked);
       if (res?.data?.success) {
         message.success('Cập nhật trạng thái thành công');
-        getExamList();
+        getExamList(currentSubject, currentDiscipline, currentChapter);
       } else {
         message.error(
           res?.data?.error?.message || 'Cập nhật thông tin thất bại'
@@ -193,7 +271,7 @@ const AdminExam: React.FC = () => {
       const res = await examAPI.deleteExam(examId);
       if (res?.data?.success) {
         message.success('Xoá bộ đề thành công');
-        getExamList();
+        getExamList(currentSubject, currentDiscipline, currentChapter);
       } else {
         message.error(res?.data?.error?.message || 'Xoá thông tin thất bại');
       }
@@ -208,7 +286,7 @@ const AdminExam: React.FC = () => {
       const res = await examAPI.updateExamReverse(examId, checked);
       if (res?.data?.success) {
         message.success('Cập nhật đảo đề thành công');
-        getExamList();
+        getExamList(currentSubject, currentDiscipline, currentChapter);
       } else {
         message.error(
           res?.data?.error?.message || 'Cập nhật thông tin thất bại'
@@ -228,7 +306,7 @@ const AdminExam: React.FC = () => {
       const res = await examAPI.updateExamReverseAnswer(examId, checked);
       if (res?.data?.success) {
         message.success('Cập nhật đảo đề thành công');
-        getExamList();
+        getExamList(currentSubject, currentDiscipline, currentChapter);
       } else {
         message.error(
           res?.data?.error?.message || 'Cập nhật thông tin thất bại'
@@ -249,11 +327,82 @@ const AdminExam: React.FC = () => {
               title: 'Admin',
             },
             {
-              title: 'bộ đề',
+              title: 'Bộ đề',
             },
           ]}
         />
       </div>
+      <Row wrap={true} justify={'start'} className='mb-[10px] mt-[10px]'>
+        <div className='flex flex-start items-center gap-[16px] w-[100%] flex-wrap'>
+          <div className='flex items-center gap-[8px]'>
+            <Typography.Paragraph className='text-sm mt-[10px]'>
+              Bộ môn:{' '}
+            </Typography.Paragraph>
+            <Select
+              style={{ width: 200 }}
+              options={subjectList?.map((item) => {
+                return {
+                  value: item?._id,
+                  label: item?.name,
+                };
+              })}
+              value={currentSubject}
+              onChange={async (value) => {
+                setCurrentDiscipline('');
+                setCurrentChapter('');
+                setCurrentSubject(value);
+                await getDisciplineList(value);
+                getExamList(value, '', '');
+              }}
+            />
+          </div>
+
+          <div className='flex items-center gap-[8px]'>
+            <Typography.Paragraph className='text-sm mt-[10px]'>
+              Môn học:{' '}
+            </Typography.Paragraph>
+            <Select
+              style={{ width: 200 }}
+              options={disciplineList?.map((item: any) => {
+                return {
+                  value: item?._id,
+                  label: item?.name,
+                };
+              })}
+              value={currentDiscipline}
+              onChange={(value) => {
+                setCurrentChapter('');
+                setChapterList(
+                  disciplineList?.find((it: any) => it?._id === value)?.chapters
+                );
+                setCurrentDiscipline(value);
+                getExamList(currentSubject, value, '');
+              }}
+            />
+          </div>
+
+          <div className='flex items-center gap-[8px]'>
+            <Typography.Paragraph className='text-sm mt-[10px]'>
+              Chương:{' '}
+            </Typography.Paragraph>
+            <Select
+              style={{ width: 200 }}
+              options={chapterList?.map((item: any) => {
+                return {
+                  value: item?._id,
+                  label: item?.name,
+                };
+              })}
+              value={currentChapter}
+              onChange={(value) => {
+                setCurrentChapter(value);
+                getExamList(currentSubject, currentDiscipline, value);
+              }}
+            />
+          </div>
+        </div>
+      </Row>
+
       <div className='flex justify-end mb-[20px]'>
         <Button
           type='primary'
@@ -287,7 +436,7 @@ const AdminExam: React.FC = () => {
           initData={modalInitData}
           reloadData={() => {
             setOpenControlModal(false);
-            getExamList();
+            getExamList(currentSubject, currentDiscipline, currentChapter);
           }}
         />
       ) : (

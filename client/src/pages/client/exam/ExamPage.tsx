@@ -10,6 +10,7 @@ import { ExamKitType } from '../../admin/exam-kit/ExamKit';
 import { SubjectType } from '../../admin/subject/Subject';
 import { subjectAPI } from '../../../services/subjects';
 import { useSearchParams } from 'react-router-dom';
+import { ExamKitQuestionStructure } from '../../../types/examKit';
 
 const ExamPage: React.FC = () => {
   const [subjectList, setSubjectList] = useState<SubjectType[]>([]);
@@ -128,10 +129,10 @@ const ExamPage: React.FC = () => {
                 };
               })}
               value={currentSubject}
-              onChange={async(value) => {
+              onChange={async (value) => {
                 setCurrentDiscipline('');
                 setCurrentSubject(value);
-                await getDisciplineList(value)
+                await getDisciplineList(value);
                 getExamKitData('', value);
               }}
             />
@@ -164,9 +165,6 @@ const ExamPage: React.FC = () => {
                       <div>
                         <p className='text-lg font-bold'>
                           Thời lượng làm bài: {item?.testTime}p
-                        </p>
-                        <p className='text-lg font-bold'>
-                          Số câu hỏi: {item?.totalQuestion}
                         </p>
                       </div>
                     </div>

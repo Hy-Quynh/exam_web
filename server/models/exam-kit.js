@@ -27,30 +27,10 @@ const examKitSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
-    totalQuestion: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
     year: {
       type: String,
       required: true,
     },
-    semester: {
-      type: Number,
-      required: true,
-    },
-    poems: [
-      {
-        date: {
-          type: String,
-          required: true,
-        },
-        time: {
-          type: String,
-        },
-      },
-    ],
     openExamStatus: {
       type: Boolean,
       required: false,
@@ -59,6 +39,10 @@ const examKitSchema = new mongoose.Schema(
     examStructure: [
       {
         chapterId: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+        },
+        examId: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
         },

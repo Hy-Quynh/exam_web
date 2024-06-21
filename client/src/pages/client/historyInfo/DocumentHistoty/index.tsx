@@ -1,23 +1,62 @@
 import React, { useEffect, useState } from 'react';
 import { parseJSON } from '../../../../utils/handleData';
 import { LOGIN_KEY, TABLE_ITEM_PER_PAGE } from '../../../../constants/table';
-import { Button, Table, TableProps, message } from 'antd';
+import {
+  Button,
+  Row,
+  Select,
+  Table,
+  TableProps,
+  Typography,
+  message,
+} from 'antd';
 import { documentResultAPI } from '../../../../services/document-result';
 import { displayDate } from '../../../../utils/datetime';
 import { EyeOutlined } from '@ant-design/icons';
 import DocumentHistoryDrawer from './components/DocumentHistoryDrawer';
+import { disciplineAPI } from '../../../../services/disciplines';
 
 function DocumentHistory() {
   const [listDocument, setListDocument] = useState([]);
   const [visibleDrawer, setVisibleDrawer] = useState(false);
   const [drawerDocumentId, setDrawerDocumentId] = useState('');
+  const [disciplineList, setDisciplineList] = useState<any>([]);
+  const [currentDiscipline, setCurrentDiscipline] = useState<string>('');
 
   const useInfo = parseJSON(localStorage.getItem(LOGIN_KEY), {});
 
-  const getListDocument = async () => {
+  const getDisciplineList = async () => {
+    try {
+      const res = await disciplineAPI.getAllDiscipline(
+        undefined,
+        undefined,
+        '',
+        undefined,
+        true
+      );
+
+      if (res?.data?.success) {
+        const discipline = res?.data?.payload?.discipline;
+        setDisciplineList(discipline);
+        if (discipline?.length) {
+          setCurrentDiscipline(discipline?.[0]?._id);
+          return discipline?.[0]?._id;
+        }
+      }
+      return '';
+    } catch (error) {
+      console.log('get discipline list error >>> ', error);
+      return '';
+    }
+  };
+
+  const getListDocument = async (discipline: string) => {
     try {
       const res = await documentResultAPI.getDocumentResultByStudent(
-        useInfo.username
+        useInfo.username,
+        undefined,
+        undefined,
+        discipline
       );
       if (res?.data?.success) {
         setListDocument(res?.data?.payload?.documentResult);
@@ -65,6 +104,14 @@ function DocumentHistory() {
       },
     },
     {
+      title: 'Điểm số',
+      dataIndex: 'score',
+      key: 'score',
+      render: (_, record: any) => {
+        return <div>{typeof(record?.score) === 'number' ? record?.score :  '_'} </div>;
+      },
+    },
+    {
       title: 'Ngày thực hiện',
       dataIndex: 'createdAt',
       key: 'createdAt',
@@ -99,11 +146,38 @@ function DocumentHistory() {
   ];
 
   useEffect(() => {
-    getListDocument();
+    (async () => {
+      const discipline = await getDisciplineList();
+      getListDocument(discipline);
+    })();
   }, []);
 
   return (
     <div>
+      <Row wrap={true} justify={'start'} className='mb-[10px] mt-[10px]'>
+        <div className='flex flex-start items-center gap-[16px] w-[100%] flex-wrap'>
+          <div className='flex items-center'>
+            <Typography.Paragraph className='text-sm mt-[10px] mr-[5px]'>
+              Môn học:{' '}
+            </Typography.Paragraph>
+            <Select
+              style={{ width: 200 }}
+              options={disciplineList?.map((item: any) => {
+                return {
+                  value: item?._id,
+                  label: item?.name,
+                };
+              })}
+              value={currentDiscipline}
+              onChange={async (value) => {
+                setCurrentDiscipline(value);
+                await getListDocument(value);
+              }}
+            />
+          </div>
+        </div>
+      </Row>
+
       <Table
         columns={columns}
         dataSource={listDocument}
@@ -116,8 +190,8 @@ function DocumentHistory() {
         <DocumentHistoryDrawer
           open={visibleDrawer}
           handleClose={() => {
-            setVisibleDrawer(false)
-            setDrawerDocumentId('')
+            setVisibleDrawer(false);
+            setDrawerDocumentId('');
           }}
           documentId={drawerDocumentId}
         />

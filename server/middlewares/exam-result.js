@@ -207,7 +207,7 @@ module.exports = {
   getExamProgress: async (studentCode, examId) => {
     try {
       const res = await ExamResult.findOne({ examId, studentCode });
-
+      
       if (res) {
         return {
           success: true,

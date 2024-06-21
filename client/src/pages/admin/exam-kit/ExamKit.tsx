@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Breadcrumb, Button, Switch, Table, message } from 'antd';
+import {
+  Breadcrumb,
+  Button,
+  Row,
+  Select,
+  Switch,
+  Table,
+  Typography,
+  message,
+} from 'antd';
 import type { TableProps } from 'antd';
 import TableAction from '../../../components/table/TableAction';
 import { displayDate } from '../../../utils/datetime';
@@ -10,6 +19,10 @@ import { ExamKitQuestionStructure } from '../../../types/examKit';
 import ControlExamKitModal from './components/ControlExamKitModal';
 import { parseJSON } from '../../../utils/handleData';
 import { LOGIN_TYPE } from '../../../enums';
+import { subjectAPI } from '../../../services/subjects';
+import { disciplineAPI } from '../../../services/disciplines';
+import { SubjectType } from '../subject/Subject';
+import { DisciplineType } from '../discipline/Discipline';
 
 export interface ExamKitType {
   _id: string;
@@ -19,7 +32,6 @@ export interface ExamKitType {
   status: boolean;
   isDelete: boolean;
   testTime: number;
-  totalQuestion: number;
   examStructure: ExamKitQuestionStructure[];
   isReverse: boolean;
   createdAt: string;
@@ -30,16 +42,19 @@ export interface ExamKitType {
   disciplineChapters: { _id: string; name: string }[];
   questionData?: any;
   year: number;
-  semester: number;
   startTime: string;
   openExamStatus: boolean;
-  poems: {date: string, time: string}[]
 }
 
 const AdminExamKit: React.FC = () => {
   const [examKitList, setExamKitList] = useState<ExamKitType[]>([]);
   const [openControlModal, setOpenControlModal] = useState<boolean>(false);
   const [modalInitData, setModalInitData] = useState<ExamKitType>();
+  const [subjectList, setSubjectList] = useState<SubjectType[]>([]);
+  const [currentSubject, setCurrentSubject] = useState<string>('');
+  const [disciplineList, setDisciplineList] = useState<DisciplineType[]>([]);
+  const [currentDiscipline, setCurrentDiscipline] = useState<string>('');
+
   const controlModalType = useRef<ModalControlType>('');
   const customerData = parseJSON(localStorage.getItem(LOGIN_KEY), {});
 
@@ -64,6 +79,15 @@ const AdminExamKit: React.FC = () => {
       title: 'Tổng câu hỏi',
       dataIndex: 'totalQuestion',
       key: 'totalQuestion',
+      render: (_, record: any) => (
+        <div>
+          {record?.examStructure?.reduce(
+            (pre: number, curr: ExamKitQuestionStructure) =>
+              pre + curr.numberQuestion,
+            0
+          )}
+        </div>
+      ),
     },
     {
       title: 'Thời gian làm bài',
@@ -130,16 +154,62 @@ const AdminExamKit: React.FC = () => {
     },
   ];
 
-  const getExamKitList = async () => {
+  const getSubjectList = async () => {
+    try {
+      const res = await subjectAPI.getAllSubject(
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
+
+      if (res?.data?.success) {
+        const subject = res?.data?.payload?.subject;
+        setSubjectList(subject);
+
+        if (subject?.length) {
+          setCurrentSubject(subject?.[0]?._id);
+          return subject?.[0]?._id;
+        }
+      }
+      return '';
+    } catch (error) {
+      console.log('get subject list error >>> ', error);
+      return '';
+    }
+  };
+
+  const getDisciplineList = async (subject: string) => {
+    try {
+      const res = await disciplineAPI.getAllDiscipline(
+        undefined,
+        undefined,
+        undefined,
+        subject,
+        true
+      );
+
+      if (res?.data?.success) {
+        const discipline = res?.data?.payload?.discipline;
+        setDisciplineList(discipline);
+      }
+    } catch (error) {
+      console.log('get exam list error >>> ', error);
+    }
+  };
+
+  const getExamKitList = async (discipline?: string, subject?: string) => {
     try {
       const res = await examKitAPI.getAllExamKit(
         undefined,
         undefined,
         undefined,
-        undefined,
+        discipline,
         customerData.type === LOGIN_TYPE.TEACHER
           ? customerData.username
-          : undefined
+          : undefined,
+        undefined,
+        subject
       );
 
       if (res?.data?.success) {
@@ -154,7 +224,11 @@ const AdminExamKit: React.FC = () => {
   };
 
   useEffect(() => {
-    getExamKitList();
+    (async () => {
+      const subject = await getSubjectList();
+      await getDisciplineList(subject);
+      await getExamKitList(undefined, subject);
+    })();
   }, []);
 
   const handleCancelControlModal = () => {
@@ -172,7 +246,7 @@ const AdminExamKit: React.FC = () => {
       const res = await examKitAPI.updateExamKitStatus(examKitId, checked);
       if (res?.data?.success) {
         message.success('Cập nhật trạng thái thành công');
-        getExamKitList();
+        getExamKitList(currentDiscipline, currentSubject);
       } else {
         message.error(
           res?.data?.error?.message || 'Cập nhật thông tin thất bại'
@@ -206,7 +280,7 @@ const AdminExamKit: React.FC = () => {
       const res = await examKitAPI.deleteExamKit(examKitId);
       if (res?.data?.success) {
         message.success('Xoá đề kiểm tra thành công');
-        getExamKitList();
+        getExamKitList(currentDiscipline, currentSubject);
       } else {
         message.error(res?.data?.error?.message || 'Xoá thông tin thất bại');
       }
@@ -227,7 +301,7 @@ const AdminExamKit: React.FC = () => {
       );
       if (res?.data?.success) {
         message.success('Cập nhật đảo đề thành công');
-        getExamKitList();
+        getExamKitList(currentDiscipline, currentSubject);
       } else {
         message.error(
           res?.data?.error?.message || 'Cập nhật thông tin thất bại'
@@ -253,6 +327,53 @@ const AdminExamKit: React.FC = () => {
           ]}
         />
       </div>
+
+      <Row wrap={true} justify={'start'} className='mb-[10px] mt-[10px]'>
+        <div className='flex flex-start items-center gap-[16px] w-[100%] flex-wrap'>
+          <div className='flex items-center gap-[8px]'>
+            <Typography.Paragraph className='text-sm mt-[10px]'>
+              Bộ môn:{' '}
+            </Typography.Paragraph>
+            <Select
+              style={{ width: 200 }}
+              options={subjectList?.map((item) => {
+                return {
+                  value: item?._id,
+                  label: item?.name,
+                };
+              })}
+              value={currentSubject}
+              onChange={async (value) => {
+                setCurrentDiscipline('');
+                setCurrentSubject(value);
+                await getDisciplineList(value);
+                getExamKitList('', value);
+              }}
+            />
+          </div>
+
+          <div className='flex items-center gap-[8px]'>
+            <Typography.Paragraph className='text-sm mt-[10px]'>
+              Môn học:{' '}
+            </Typography.Paragraph>
+            <Select
+              style={{ width: 200 }}
+              options={disciplineList?.map((item: any) => {
+                return {
+                  value: item?._id,
+                  label: item?.name,
+                };
+              })}
+              value={currentDiscipline}
+              onChange={(value) => {
+                setCurrentDiscipline(value);
+                getExamKitList(value, '');
+              }}
+            />
+          </div>
+        </div>
+      </Row>
+
       <div className='flex justify-end mb-[20px]'>
         <Button
           type='primary'
@@ -286,7 +407,7 @@ const AdminExamKit: React.FC = () => {
           initData={modalInitData}
           reloadData={() => {
             setOpenControlModal(false);
-            getExamKitList();
+            getExamKitList(currentDiscipline, currentSubject);
           }}
         />
       ) : (
