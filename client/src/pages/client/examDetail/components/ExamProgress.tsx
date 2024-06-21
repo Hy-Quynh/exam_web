@@ -4,6 +4,7 @@ import { parseJSON } from '../../../../utils/handleData';
 import { LOGIN_KEY } from '../../../../constants/table';
 import { examResultAPI } from '../../../../services/exam-result';
 import { useParams } from 'react-router-dom';
+import { roundToTwo } from '../../../../utils/number';
 
 type ExamProgressProps = {
   handleSetAnswer: (answer: any) => void;
@@ -57,7 +58,7 @@ function ExamProgress({
     })();
   }, []);
 
-  return <Progress type='circle' percent={percent} />;
+  return <Progress type='circle' percent={roundToTwo(percent)} />;
 }
 
 export default ExamProgress;

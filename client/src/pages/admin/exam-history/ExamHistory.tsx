@@ -22,6 +22,7 @@ import { displayDate } from '../../../utils/datetime';
 import { LOGIN_TYPE } from '../../../enums';
 import { CSVLink } from 'react-csv';
 import { disciplineAPI } from '../../../services/disciplines';
+import { roundToTwo } from '../../../utils/number';
 
 function ExamHistory() {
   const [listExam, setListExam] = useState([]);
@@ -119,11 +120,20 @@ function ExamHistory() {
       },
     },
     {
+      title: 'Phần trăm hoàn thành',
+      dataIndex: 'progress',
+      key: 'proesss',
+      render: (_, record, index) => {
+        const progress = (Object.keys(record?.answer).length / record?.questionData?.length) * 100
+        return <div>{progress ? roundToTwo(Number(progress)) + '%' : '_'}</div>
+      },
+    },
+    {
       title: 'Điểm số',
       dataIndex: 'score',
       key: 'score',
       render: (_, record: any) => {
-        return <div>{record?.score} </div>;
+        return <div>{roundToTwo(record?.score)} </div>;
       },
     },
     {
@@ -222,6 +232,8 @@ function ExamHistory() {
       <div className='flex justify-end mb-[20px]'>
         <CSVLink
           data={listExam?.map((item: any) => {
+            const progress = Object.keys(item?.answer).length / (item?.questionData?.length) * 100
+
             return {
               'Tên bài thi': item?.examKitName,
               'Môn học': item?.disciplineName,
@@ -229,7 +241,8 @@ function ExamHistory() {
               'Mã học sinh': item?.studentCode,
               'Thời gian thực hiện':
                 Number(item?.testTime * 60) - item?.totalTime + 's',
-              'Điểm số': item?.score,
+              'Phần trăm hoàn thành': progress ? roundToTwo(progress) + '%' : '_',
+              'Điểm số': roundToTwo(item?.score),
               'Ngày thực hiện': displayDate(item?.createdAt),
             };
           })}

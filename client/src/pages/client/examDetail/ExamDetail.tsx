@@ -12,6 +12,7 @@ import { parseJSON } from '../../../utils/handleData';
 import { LOGIN_KEY } from '../../../constants/table';
 import ExamProgress from './components/ExamProgress';
 import QuesionData from '../../../components/quesionData/QuesionData';
+import { roundToTwo } from '../../../utils/number';
 
 function ExamDetail() {
   const [examStatus, setExamStatus] = useState<
@@ -124,9 +125,6 @@ function ExamDetail() {
     }
   };
 
-  console.log('questionData >>> ', questionData);
-  console.log('examKitDetail?.questionData >> ', examKitDetail?.questionData);
-
   return (
     <Card style={{ justifyContent: 'flex-start', minHeight: '500px' }}>
       <Typography.Paragraph className='text-2xl font-bold'>
@@ -207,7 +205,7 @@ function ExamDetail() {
       ) : examStatus === 'SUBMIT' ? (
         <div>
           <p className='mt-[100px] mb-[150px] text-3xl font-bold text-[#669404]'>
-            Điểm số: {score.toFixed(1)} / 10
+            Điểm số: {roundToTwo(score)} / 10
           </p>
         </div>
       ) : (
@@ -226,7 +224,7 @@ function ExamDetail() {
             handleSetIsSubmit={(isSubmit) => setIsSubmit(isSubmit)}
           />
           <p className='mt-[20px] text-xl font-bold text-[red]'>
-            Điểm số: {score}
+            Điểm số: {roundToTwo(score)}
           </p>
         </div>
       ) : (

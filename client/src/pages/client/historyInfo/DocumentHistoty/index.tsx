@@ -15,6 +15,7 @@ import { displayDate } from '../../../../utils/datetime';
 import { EyeOutlined } from '@ant-design/icons';
 import DocumentHistoryDrawer from './components/DocumentHistoryDrawer';
 import { disciplineAPI } from '../../../../services/disciplines';
+import { roundToTwo } from '../../../../utils/number';
 
 function DocumentHistory() {
   const [listDocument, setListDocument] = useState([]);
@@ -87,13 +88,10 @@ function DocumentHistory() {
       title: 'Tiến độ',
       dataIndex: 'progress',
       key: 'proesss',
-      render: (_, record, index) => (
-        <div>
-          {(Object.keys(record?.answer).length / record?.questionData?.length) *
-            100}
-          %
-        </div>
-      ),
+      render: (_, record, index) => {
+        const progress = (Object.keys(record?.answer).length / record?.questionData?.length) * 100
+        return <div>{progress ? roundToTwo(Number(progress)) + '%' : '_'}</div>
+      },
     },
     {
       title: 'Thời gian thực hiện',
@@ -108,7 +106,7 @@ function DocumentHistory() {
       dataIndex: 'score',
       key: 'score',
       render: (_, record: any) => {
-        return <div>{typeof(record?.score) === 'number' ? record?.score :  '_'} </div>;
+        return <div>{typeof(record?.score) === 'number' ? roundToTwo(record?.score) :  '_'} </div>;
       },
     },
     {

@@ -10,6 +10,7 @@ import { parseJSON } from '../../../utils/handleData';
 import { LOGIN_KEY } from '../../../constants/table';
 import { documentResultAPI } from '../../../services/document-result';
 import QuesionData from '../../../components/quesionData/QuesionData';
+import { roundToTwo } from '../../../utils/number';
 
 function DocumentDetail() {
   const [examStatus, setExamStatus] = useState<
@@ -251,7 +252,7 @@ function DocumentDetail() {
           <p className='text-xl font-bold text-[#6aa84f] mb-[20px]'>
             Tiến độ làm bài:{' '}
           </p>
-          <Progress type='circle' percent={percent} />
+          <Progress type='circle' percent={roundToTwo(Number(percent))} />
         </div>
       ) : (
         <></>

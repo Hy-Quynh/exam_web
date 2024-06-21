@@ -18,6 +18,7 @@ import { displayDate } from '../../../utils/datetime';
 import { LOGIN_TYPE } from '../../../enums';
 import { CSVLink } from 'react-csv';
 import { disciplineAPI } from '../../../services/disciplines';
+import { roundToTwo } from '../../../utils/number';
 
 function DocumentHistory() {
   const [listDocument, setListDocument] = useState([]);
@@ -105,13 +106,10 @@ function DocumentHistory() {
       title: 'Tiến độ',
       dataIndex: 'progress',
       key: 'proesss',
-      render: (_, record, index) => (
-        <div>
-          {(Object.keys(record?.answer).length / record?.questionData?.length) *
-            100}
-          %
-        </div>
-      ),
+      render: (_, record, index) => {
+        const progress = (Object.keys(record?.answer).length / record?.questionData?.length) * 100
+        return <div>{progress ? roundToTwo(Number(progress)) + '%' : '_'}</div>
+      },
     },
     {
       title: 'Thời gian thực hiện',
@@ -119,6 +117,14 @@ function DocumentHistory() {
       key: 'totalTime',
       render: (_, record: any) => {
         return <div>{record?.totalTime + 's'} </div>;
+      },
+    },
+    {
+      title: 'Điểm số',
+      dataIndex: 'score',
+      key: 'score',
+      render: (_, record: any) => {
+        return <div>{typeof(record?.score) === 'number' ? roundToTwo(record?.score) :  '_'} </div>;
       },
     },
     {
@@ -205,17 +211,16 @@ function DocumentHistory() {
       <div className='flex justify-end mb-[20px]'>
         <CSVLink
           data={listDocument?.map((item: any) => {
+            const progress = Object.keys(item?.answer).length / (item?.questionData?.length) * 100
+       
             return {
               'Tên bộ đề': item?.examName,
               'Môn học': item?.disciplineName,
               'Tên học sinh': item?.studentName,
               'Mã học sinh': item?.studentCode,
-              'Tiến độ':
-                (Object.keys(item?.answer).length /
-                  item?.questionData?.length) *
-                  100 +
-                '%',
+              'Tiến độ': progress ? roundToTwo(progress) + '%' : '_',
               'Thời gian thực hiện': Number(item?.totalTime) + 's',
+              'Điểm số': typeof(item?.score) === 'number' ? roundToTwo(item?.score) :  '_',
               'Ngày thực hiện': displayDate(item?.createdAt),
               'Trạng thái': item?.isSubmit ? 'Đã nộp' : 'Chưa nộp',
             };

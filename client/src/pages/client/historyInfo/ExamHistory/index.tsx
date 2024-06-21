@@ -19,6 +19,7 @@ import { displayDate } from '../../../../utils/datetime';
 import { EyeOutlined } from '@ant-design/icons';
 import ExamHistoryDrawer from './components/ExamHistoryDrawer';
 import { disciplineAPI } from '../../../../services/disciplines';
+import { roundToTwo } from '../../../../utils/number';
 
 function ExamHistory() {
   const [listExam, setListExam] = useState([]);
@@ -92,20 +93,17 @@ function ExamHistory() {
       title: 'Tiến độ',
       dataIndex: 'progress',
       key: 'proesss',
-      render: (_, record, index) => (
-        <div>
-          {(Object.keys(record?.answer).length / record?.questionData?.length) *
-            100}
-          %
-        </div>
-      ),
+      render: (_, record, index) => {
+        const progress = (Object.keys(record?.answer).length / record?.questionData?.length) * 100
+        return <div>{progress ? roundToTwo(Number(progress)) + '%' : '_'}</div>
+      },
     },
     {
       title: 'Điểm số',
       dataIndex: 'score',
       key: 'score',
       render: (_, record: any) => {
-        return <div>{record?.score} </div>;
+        return <div>{roundToTwo(record?.score)} </div>;
       },
     },
     {
