@@ -1,11 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Card, Popconfirm, Typography, message } from 'antd';
-import {
-  CheckSquareOutlined,
-  FieldTimeOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { Button, Card, Popconfirm, Progress, Typography, message } from 'antd';
+import { CheckSquareOutlined, FieldTimeOutlined } from '@ant-design/icons';
 import './style.scss';
 import { formatCountDownTime } from '../../../utils/datetime';
 import { examAPI } from '../../../services/exams';
@@ -13,7 +9,6 @@ import { shuffleArray } from '../../../utils/array';
 import { parseJSON } from '../../../utils/handleData';
 import { LOGIN_KEY } from '../../../constants/table';
 import { documentResultAPI } from '../../../services/document-result';
-import DocumentProgress from './components/DocumentProgress';
 import QuesionData from '../../../components/quesionData/QuesionData';
 
 function DocumentDetail() {
@@ -25,6 +20,8 @@ function DocumentDetail() {
   const [countDownTime, setCountDownTime] = useState<number>(0);
   const [examDetail, setDocumentDetail] = useState<any>();
   const [score, setScore] = useState<number>(0);
+  const [percent, setPercent] = useState(0);
+
   const params = useParams();
   const timer = useRef<any>(null);
   const useInfo = parseJSON(localStorage.getItem(LOGIN_KEY), {});
@@ -51,17 +48,66 @@ function DocumentDetail() {
           });
         }
         setDocumentDetail(payload);
+        return payload.questionData;
       }
+      return [];
     } catch (error) {
       console.log('get exam detail error >> ', error);
+      return [];
+    }
+  };
+
+  const getProgress = async () => {
+    try {
+      if (!useInfo?.username) {
+        return;
+      }
+
+      if (!params.examId) {
+        return;
+      }
+
+      const progress = await documentResultAPI.getDocumentProgress(
+        useInfo?.username,
+        params.examId
+      );
+
+      if (progress?.data?.success) {
+        const payload = progress?.data?.payload;
+        const percent =
+          (Object.keys(payload?.answer).length /
+            payload?.questionData?.length) *
+          100;
+
+        setPercent(percent);
+
+        if (!payload?.isSubmit) {
+          setAnswerList(payload?.answer);
+
+          return payload?.questionData;
+        }
+      }
+      return [];
+    } catch (error) {
+      console.log('get progress error >> ', error);
+      return [];
     }
   };
 
   useEffect(() => {
-    if (params.examId) {
-      getDocumentDetail(params.examId);
-    }
-  }, [params.examId]);
+    (async () => {
+      if (params.examId) {
+        const questionProgress = await getProgress();
+        const questionSetup = await getDocumentDetail(params.examId);
+        
+        if (questionProgress?.length) {
+          setQuestionData(questionProgress);
+        } else {
+          setQuestionData(questionSetup);
+        }
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     if (examStatus === 'START') {
@@ -76,9 +122,7 @@ function DocumentDetail() {
 
   const submitDocument = async (type: 'SUBMIT' | 'CANCEL') => {
     try {
-      const question = [
-        ...(questionData?.length ? questionData : examDetail?.questionData),
-      ];
+      const question = [...questionData];
       const sentenceScore = 10 / question?.length;
       let totalScore = 0;
 
@@ -98,9 +142,7 @@ function DocumentDetail() {
         documentId: examDetail?._id,
         disciplineId: examDetail?.disciplineId,
         answer: answerList,
-        questionData: questionData?.length
-          ? questionData
-          : examDetail?.questionData,
+        questionData: questionData,
         score: totalScore,
         totalTime: countDownTime,
         studentCode: useInfo?.username,
@@ -126,6 +168,9 @@ function DocumentDetail() {
     }
   };
 
+  // console.log('question data >>> ', questionData);
+  
+
   return (
     <Card style={{ justifyContent: 'flex-start', minHeight: '500px' }}>
       <Typography.Paragraph className='text-2xl font-bold'>
@@ -146,24 +191,15 @@ function DocumentDetail() {
         <div className='text-base w-[30%]'>
           <CheckSquareOutlined className='mr-[5px]' />
           {examStatus === 'NOT_START'
-            ? `${
-                (questionData?.length ? questionData : examDetail?.questionData)
-                  ?.length
-              } câu`
-            : `${Object.keys(answerList).length}/${
-                (questionData?.length ? questionData : examDetail?.questionData)
-                  ?.length
-              } câu`}
+            ? `${questionData?.length} câu`
+            : `${Object.keys(answerList).length}/${questionData?.length} câu`}
         </div>
         <div className='text-lg font-bold w-[30%]'>
           <FieldTimeOutlined className='mr-[5px]' />
           {formatCountDownTime(countDownTime)}
         </div>
         <div className='flex gap-[5px] w-[30%] flex-wrap'>
-          {(questionData?.length
-            ? questionData
-            : examDetail?.questionData
-          )?.map((item: any, index: number) => {
+          {questionData?.map((item: any, index: number) => {
             return (
               <div
                 className='border-[1px] border-solid border-[gray] cursor-pointer w-[28px] rounded-[15px]'
@@ -195,9 +231,7 @@ function DocumentDetail() {
       </div>
       {examStatus === 'START' || examStatus === 'RESULT' ? (
         <QuesionData
-          questionData={
-            questionData?.length ? questionData : examDetail?.questionData
-          }
+          questionData={questionData}
           answerList={answerList}
           examStatus={examStatus}
           setAnswerList={(newAnswer) => setAnswerList(newAnswer)}
@@ -217,10 +251,7 @@ function DocumentDetail() {
           <p className='text-xl font-bold text-[#6aa84f] mb-[20px]'>
             Tiến độ làm bài:{' '}
           </p>
-          <DocumentProgress
-            handleSetAnswer={(anwser) => setAnswerList(anwser)}
-            handleSetQuestion={(question) => setQuestionData(question)}
-          />
+          <Progress type='circle' percent={percent} />
         </div>
       ) : (
         <></>
@@ -261,13 +292,7 @@ function DocumentDetail() {
                 }
 
                 case 'START': {
-                  if (
-                    Object.keys(answerList).length !==
-                    (questionData?.length
-                      ? questionData
-                      : examDetail?.questionData
-                    )?.length
-                  ) {
+                  if (Object.keys(answerList).length !== questionData?.length) {
                     return message.error(
                       'Cần trả lời đầy đủ câu hỏi trước khi nộp bài'
                     );
