@@ -455,9 +455,28 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
                         },
                         {
                           validator: async (_, numberQuestion) => {
-                            if (numberQuestion <= 0) {
+                            if (numberQuestion && numberQuestion <= 0) {
                               return Promise.reject(
                                 'Số lượng câu hỏi cần lớn hơn 0'
+                              );
+                            }
+                            const examId = form.getFieldValue([
+                              'examStructure',
+                              name,
+                              'examId',
+                            ]);
+
+                            const chapterId = form.getFieldValue([
+                              'examStructure',
+                              name,
+                              'chapterId',
+                            ]);
+                     
+                            const findExam = chapterExam[chapterId]?.find((item: any) => item?._id === examId)
+
+                            if ( findExam && numberQuestion > findExam?.questionData?.length) {
+                              return Promise.reject(
+                                'Số lượng lớn hơn tổng câu hỏi của đề'
                               );
                             }
                             return Promise.resolve();
@@ -468,6 +487,7 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
                       <Input
                         type='number'
                         placeholder='Vui lòng nhập số lượng câu hỏi'
+                        className='w-[100%] max-w-[100%]'
                       />
                     </Form.Item>
                   </div>
