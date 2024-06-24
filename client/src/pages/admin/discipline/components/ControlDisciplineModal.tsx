@@ -202,11 +202,11 @@ const ControlDisciplineModal: React.FC<ControlDisciplineProps> = (props) => {
                   ) : null}
                 </Form.Item>
               ))}
-              <Form.Item>
+              <Form.Item className='flex justify-center'>
                 <Button
                   type='dashed'
                   onClick={() => add()}
-                  style={{ width: '60%' }}
+                  
                   icon={<PlusOutlined />}
                 >
                   Thêm chương mới

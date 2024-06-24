@@ -410,7 +410,7 @@ const ControlExamKitModal: React.FC<ControlExamKitProps> = (props) => {
                                   const find = allStructure?.filter(
                                     (it: any) =>
                                       it?.chapterId === chapter &&
-                                      it?.examId === examId
+                                      it?.examId === examId && chapter
                                   );
 
                                   if (find?.length > 1) {

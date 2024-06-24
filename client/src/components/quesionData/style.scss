@@ -1,0 +1,89 @@
+.question-data-ql {
+  /* Nếu cần thêm các kiểu font cụ thể */
+  .ql-font-arial {
+    font-family: 'Arial, sans-serif';
+  }
+  .ql-font-comic-sans {
+    font-family: 'Comic Sans MS, cursive';
+  }
+  .ql-font-courier-new {
+    font-family: 'Courier New, monospace';
+  }
+  .ql-font-georgia {
+    font-family: 'Georgia, serif';
+  }
+  .ql-font-helvetica {
+    font-family: 'Helvetica, sans-serif';
+  }
+  .ql-font-lucida {
+    font-family: 'Lucida Sans, sans-serif';
+  }
+
+  /* Định dạng kích thước font */
+  .ql-size-small {
+    font-size: 0.75em;
+  }
+  .ql-size-large {
+    font-size: 1.5em;
+  }
+  .ql-size-huge {
+    font-size: 2.5em;
+  }
+
+  blockquote {
+    border-left: 4px solid #ccc;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    padding-left: 16px;
+  }
+
+  a {
+    text-decoration: underline;
+    color: #06c;
+
+    &:hover {
+      color: #06c;
+    }
+  }
+
+  h2 {
+    font-size: 1.5em;
+  }
+
+  h1 {
+    font-size: 2em;
+  }
+
+  .ql-indent-1 {
+    padding-left: 3em;
+  }
+  .ql-indent-2 {
+    padding-left: 6em;
+  }
+  .ql-indent-3 {
+    padding-left: 9em;
+  }
+  .ql-indent-4 {
+    padding-left: 12em;
+  }
+  .ql-indent-5 {
+    padding-left: 15em;
+  }
+  .ql-indent-6 {
+    padding-left: 18em;
+  }
+  .ql-indent-7 {
+    padding-left: 21em;
+  }
+  .ql-indent-8 {
+    padding-left: 24em;
+  }
+
+  .ql-font-serif {
+    font-family: Georgia, "Times New Roman", serif;
+  }
+
+  .ql-font-monospace {
+    font-family: "Monaco", "Courier New", monospace;
+  }
+}

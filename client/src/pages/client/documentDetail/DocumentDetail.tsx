@@ -174,13 +174,13 @@ function DocumentDetail() {
 
   return (
     <Card style={{ justifyContent: 'flex-start', minHeight: '500px' }}>
-      <Typography.Paragraph className='text-2xl font-bold'>
+      <Typography.Paragraph className='text-2xl font-bold text-center'>
         {examDetail?.name}
       </Typography.Paragraph>
-      <Typography.Paragraph className='text-lg font-bold'>
+      <Typography.Paragraph className='text-lg font-bold text-center'>
         Môn học: {examDetail?.disciplineName}
       </Typography.Paragraph>
-      <Typography.Paragraph className='text-lg font-bold'>
+      <Typography.Paragraph className='text-lg font-bold text-center'>
         Chương:{' '}
         {
           examDetail?.disciplineChapters?.find(
@@ -188,7 +188,7 @@ function DocumentDetail() {
           )?.name
         }
       </Typography.Paragraph>
-      <div className='flex justify-around p-[20px] bg-[#d4d9d5] rounded-lg sticky top-0 z-50'>
+      <div className='flex justify-around p-[20px] bg-[#d4d9d5] rounded-lg sticky top-0 z-50 text-center'>
         <div className='text-base w-[30%]'>
           <CheckSquareOutlined className='mr-[5px]' />
           {examStatus === 'NOT_START'
@@ -199,7 +199,7 @@ function DocumentDetail() {
           <FieldTimeOutlined className='mr-[5px]' />
           {formatCountDownTime(countDownTime)}
         </div>
-        <div className='flex gap-[5px] w-[30%] flex-wrap'>
+        <div className='flex gap-[5px] w-[30%] flex-wrap text-center'>
           {questionData?.map((item: any, index: number) => {
             return (
               <div
@@ -238,7 +238,7 @@ function DocumentDetail() {
           setAnswerList={(newAnswer) => setAnswerList(newAnswer)}
         />
       ) : examStatus === 'SUBMIT' ? (
-        <div>
+        <div className='text-center'>
           <p className='mt-[100px] mb-[150px] text-3xl font-bold text-[#669404]'>
             Điểm số: {score.toFixed(1)} / 10
           </p>
@@ -248,7 +248,7 @@ function DocumentDetail() {
       )}
 
       {examStatus === 'NOT_START' ? (
-        <div className='mt-[100px] mb-[100px]'>
+        <div className='mt-[100px] mb-[100px] text-center'>
           <p className='text-xl font-bold text-[#6aa84f] mb-[20px]'>
             Tiến độ làm bài:{' '}
           </p>
@@ -309,7 +309,7 @@ function DocumentDetail() {
                   setAnswerList({});
                   setCountDownTime(0);
                   setExamStatus('NOT_START');
-                  setQuestionData([]);
+                  setQuestionData(examDetail?.questionData);
                   break;
                 }
                 default:

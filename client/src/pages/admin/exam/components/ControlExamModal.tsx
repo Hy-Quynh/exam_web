@@ -349,7 +349,7 @@ const ControlExamModal: React.FC<ControlExamProps> = (props) => {
                               (item: any) => item?.isTrue
                             );
                             if (!filterTrue?.length) {
-                              return Promise.reject('Vui lòng chọn đáp án');
+                              return Promise.reject('Vui lòng chọn đáp án chính xác');
                             }
 
                             return Promise.resolve();

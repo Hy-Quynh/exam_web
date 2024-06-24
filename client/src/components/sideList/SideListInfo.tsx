@@ -66,7 +66,7 @@ const SideListInfo: React.FC<SideListInfoProps> = (props) => {
               Ngày đăng tải: {item?.createdAt}
             </p>
             {props?.dislayActionBtn ? (
-              <div className='mt-[24px]'>
+              <div className='mt-[24px] text-center'>
                 <Button
                   className={`bg-primary text-white text-lg pb-[35px] px-[40px]  ${
                     !item?.disabledBtn ? 'hover:!bg-primary' : ''

@@ -140,7 +140,7 @@ const HomePage: React.FC = () => {
               </div>
             </Col>
           </Row>
-          <div className='mt-[24px]'>
+          <div className='mt-[24px] text-center'>
             <Button
               className='bg-purple text-white text-xl pb-[35px] pt-[5px] px-[40px] hover:!bg-purple hover:!text-white'
               onClick={() => navigate('/document')}
@@ -195,7 +195,7 @@ const HomePage: React.FC = () => {
               </div>
             </Col>
           </Row>
-          <div className='mt-[24px]'>
+          <div className='mt-[24px] text-center'>
             <Button
               className='bg-purple text-white text-xl pb-[35px] pt-[5px] px-[40px] hover:!bg-purple hover:!text-white'
               onClick={() => navigate('/exam')}
@@ -222,7 +222,7 @@ const HomePage: React.FC = () => {
             </div>
           </div>
 
-          <div className='mt-[70px] mb-[100px]'>
+          <div className='mt-[70px] mb-[100px] text-center'>
             <Button
               className='bg-[#448A1E] text-white pb-[40px] pt-[10px] md:text-xl text-xl font-bold hover:!text-[#448A1E] hover:!border-[#448A1E]'
               onClick={() => navigate('/login')}

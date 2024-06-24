@@ -3,6 +3,7 @@ import React from 'react';
 import { AnswerTypeEnum } from '../../enums/exams';
 import { Checkbox, Radio } from 'antd';
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import './style.scss';
 
 type QuesionDataProps = {
   questionData: any;
@@ -27,7 +28,7 @@ function QuesionData({
             id={`question-${item?._id}`}
           >
             <p className='font-bold text-lg text-left'>Câu hỏi {index + 1}:</p>
-            <div className='question-content mb-[10px]'>
+            <div className='question-content mb-[10px] question-data-ql'>
               <Markup content={item?.question || ''} />
             </div>
 
